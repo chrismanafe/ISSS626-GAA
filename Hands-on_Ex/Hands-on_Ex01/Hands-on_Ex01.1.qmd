@@ -1,6 +1,14 @@
 ---
 title: "Hands-on Exercise 1.1: Geospatial Data Wrangling with R"
 author: "Christover Manafe"
+date: "2024-08-24"
+date-modified: "last-modified"
+format: 
+  html:
+    code-fold: true
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
 ---
 
 # Overview
@@ -26,7 +34,8 @@ Dataset sources:
 -   Cycling Path from [LTADataMall](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=Cycling%20Path)
 -   Latest version of Singapore Airbnb listing data from [Inside Airbnb](https://insideairbnb.com/get-the-data/)
 
-Using [st_read()](https://r-spatial.github.io/sf/reference/st_read.html) to import the dataset. \### Polygon data in shapefile format
+Using [st_read()](https://r-spatial.github.io/sf/reference/st_read.html) to import the dataset.
+### Polygon data in shapefile format
 
 ```{r}
 mpsz = st_read(dsn = "data/geospatial",
