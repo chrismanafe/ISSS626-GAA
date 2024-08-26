@@ -1,0 +1,54 @@
+---
+title: "In-class Exercise 1: WIP"
+author: "Christover Manafe"
+date: "2024-08-26"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: true
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# Loading the R packages
+Loading following packages in R environment
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, ggstatsplot)
+```
+
+
+# Loading Master Plan Planning Sub-zone Data
+We'll create a sub-folder called data in `in_class_ex01` folder.
+
+To imports shapefile:
+```{r}
+mpsz14_shp <- st_read(dsn = "data/",
+                      layer = "MP14_SUBZONE_WEB_PL")
+```
+
+To import KML file:
+```{r}
+st_write(mpsz14_shp, 
+         "data/MP14_SUBZONE_WEB_PL.kml",
+         delete_dsn = T)
+mpsz14_kml <- st_read("data/MP14_SUBZONE_WEB_PL.kml")
+```
+# Loading Master Plan 2019 Subzone Boundary Data
+### To import shapefile
+
+```{r}
+mpsz19_shp <- st_read(dsn = "data/",
+                      layer = "MPSZ-2019")
+```
+### To import kml
+```{r}
+mpsz19_kml <- st_read("data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
+```
+

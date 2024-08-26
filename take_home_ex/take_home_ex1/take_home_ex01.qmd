@@ -1,0 +1,11 @@
+---
+title: "Take-home Exercise 1: WIP"
+author: "Christover Manafe"
+date-modified: "last-modified"
+format: 
+  html:
+    code-fold: true
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
