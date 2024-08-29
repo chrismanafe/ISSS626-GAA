@@ -340,7 +340,7 @@
     "href": "hands_on_ex/hands_on_ex01/hands_on_ex01.2.html#data-preparation",
     "title": "Hands-on Exercise 1b: Choropleth Mapping",
     "section": "3.3 Data Preparation",
-    "text": "3.3 Data Preparation\nBefore making a thematic map, we need to prepare a data table with year 2020 values. The data table should include following variables:\n\nYOUNG: age group 0 to 4 until age group 20 to 24,\nECONOMY ACTIVE: age group 25-29 until age group 60-64,\nAGED: age group 65 and above,\nTOTAL: all age group, and\nDEPENDENCY: the ratio between young and aged against economy active group\n\n\n3.3.1 Data Wrangling\nWe will use following data wrangling and transformation functions to shape our data into the way we want:\n\npivot_wider() of tidyr package, and\nmutate(), filter(), group_by() and select() of dplyr package\n\n\n\ncode chunk\npopdata2020 &lt;- popdata %&gt;%\n  filter(Time == 2020) %&gt;%\n  group_by(PA, SZ, AG) %&gt;%\n  summarise(`POP` = sum(`Pop`)) %&gt;%\n  ungroup()%&gt;%\n  pivot_wider(names_from=AG, \n              values_from=POP) %&gt;%\n  mutate(YOUNG = rowSums(.[3:6])\n         +rowSums(.[12])) %&gt;%\nmutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+\nrowSums(.[13:15]))%&gt;%\nmutate(`AGED`=rowSums(.[16:21])) %&gt;%\nmutate(`TOTAL`=rowSums(.[3:21])) %&gt;%  \nmutate(`DEPENDENCY` = (`YOUNG` + `AGED`)\n/`ECONOMY ACTIVE`) %&gt;%\n  select(`PA`, `SZ`, `YOUNG`, \n       `ECONOMY ACTIVE`, `AGED`, \n       `TOTAL`, `DEPENDENCY`)\n\n\n`summarise()` has grouped output by 'PA', 'SZ'. You can override using the\n`.groups` argument.\n\n\n\n\n3.3.2 Joining the Attribute Data and Geospatial Data\nBefore we can perform georelational join, we need to make sure the values in the PA and SZ fields are all in uppercase. This is because these values have a mix of upper- and lowercase, while SUBZONE_N and PLN_AREA_N are all in uppercase.\n\n\ncode chunk\npopdata2020 &lt;- popdata2020 %&gt;%\n  mutate_at(.vars = vars(PA, SZ), \n          .funs = list(toupper)) %&gt;%\n  filter(`ECONOMY ACTIVE` &gt; 0)\n\n\nNow, we’ll use left_join() from the dplyr package to connect our attribute data and geospatial data using planning subzone name(e.g.: SUBZONE_N and SZ as the common identifier.).\n\n\ncode chunk\nmpsz_pop2020 &lt;- left_join(mpsz, popdata2020,\n                          by = c(\"SUBZONE_N\" = \"SZ\"))\n\n\nleft_join() is used with mpsz simple feature data frame as the left data table to ensure that the output will be a simple features data frame.\nFinally, use write_rds() function to save our combined data into an RDS file.\n\n\ncode chunk\nwrite_rds(mpsz_pop2020, \"data/rds/mpszpop2020.rds\")"
+    "text": "3.3 Data Preparation\nBefore making a thematic map, we need to prepare a data table with year 2020 values. The data table should include following variables:\n\nYOUNG: age group 0 to 4 until age group 20 to 24,\nECONOMY ACTIVE: age group 25-29 until age group 60-64,\nAGED: age group 65 and above,\nTOTAL: all age group, and\nDEPENDENCY: the ratio between young and aged against economy active group\n\n\n3.3.1 Data Wrangling\nWe will use following data wrangling and transformation functions to shape our data into the way we want:\n\npivot_wider() of tidyr package, and\nmutate(), filter(), group_by() and select() of dplyr package\n\n\n\ncode chunk\npopdata2020 &lt;- popdata %&gt;%\n  filter(Time == 2020) %&gt;%\n  group_by(PA, SZ, AG) %&gt;%\n  summarise(`POP` = sum(`Pop`)) %&gt;%\n  ungroup()%&gt;%\n  pivot_wider(names_from=AG, \n              values_from=POP) %&gt;%\n  mutate(YOUNG = rowSums(.[3:6])\n         +rowSums(.[14])) %&gt;%\nmutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+\nrowSums(.[13:15]))%&gt;%\nmutate(`AGED`=rowSums(.[16:21])) %&gt;%\nmutate(`TOTAL`=rowSums(.[3:21])) %&gt;%  \nmutate(`DEPENDENCY` = (`YOUNG` + `AGED`)\n/`ECONOMY ACTIVE`) %&gt;%\n  select(`PA`, `SZ`, `YOUNG`, \n       `ECONOMY ACTIVE`, `AGED`, \n       `TOTAL`, `DEPENDENCY`)\n\n\n`summarise()` has grouped output by 'PA', 'SZ'. You can override using the\n`.groups` argument.\n\n\n\n\n3.3.2 Joining the Attribute Data and Geospatial Data\nBefore we can perform georelational join, we need to make sure the values in the PA and SZ fields are all in uppercase. This is because these values have a mix of upper- and lowercase, while SUBZONE_N and PLN_AREA_N are all in uppercase.\n\n\ncode chunk\npopdata2020 &lt;- popdata2020 %&gt;%\n  mutate_at(.vars = vars(PA, SZ), \n          .funs = list(toupper)) %&gt;%\n  filter(`ECONOMY ACTIVE` &gt; 0)\n\n\nNow, we’ll use left_join() from the dplyr package to connect our attribute data and geospatial data using planning subzone name(e.g.: SUBZONE_N and SZ as the common identifier.).\n\n\ncode chunk\nmpsz_pop2020 &lt;- left_join(mpsz, popdata2020,\n                          by = c(\"SUBZONE_N\" = \"SZ\"))\n\n\n\n\ncode chunk\nclass(mpsz)\n\n\n[1] \"sf\"         \"data.frame\"\n\n\nleft_join() is used with mpsz simple feature data frame as the left data table to ensure that the output will be a simple features data frame.\nFinally, use write_rds() function to save our combined data into an RDS file.\n\n\ncode chunk\nwrite_rds(mpsz_pop2020, \"data/rds/mpszpop2020.rds\")"
   },
   {
     "objectID": "hands_on_ex/hands_on_ex01/hands_on_ex01.2.html#choropleth-mapping-geospatial-data-using-tmap",
@@ -361,6 +361,90 @@
     "href": "in_class_ex/in_class_ex01/in_class_ex01.html",
     "title": "In-class Exercise 1: WIP",
     "section": "",
-    "text": "1 Loading the R packages\nLoading following packages in R environment\n\n\ncode chunk\npacman::p_load(sf, tidyverse, tmap, ggstatsplot)\n\n\n\n\n2 Loading Master Plan Planning Sub-zone Data\nWe’ll create a sub-folder called data in in_class_ex01 folder.\nTo imports shapefile:\n\n\ncode chunk\nmpsz14_shp &lt;- st_read(dsn = \"data/\",\n                      layer = \"MP14_SUBZONE_WEB_PL\")\n\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data' \n  using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\n\nTo import KML file:\n\n\ncode chunk\nst_write(mpsz14_shp, \n         \"data/MP14_SUBZONE_WEB_PL.kml\",\n         delete_dsn = T)\n\n\nDeleting source `data/MP14_SUBZONE_WEB_PL.kml' using driver `KML'\nWriting layer `MP14_SUBZONE_WEB_PL' to data source \n  `data/MP14_SUBZONE_WEB_PL.kml' using driver `KML'\nWriting 323 features with 15 fields and geometry type Multi Polygon.\n\n\ncode chunk\nmpsz14_kml &lt;- st_read(\"data/MP14_SUBZONE_WEB_PL.kml\")\n\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data/MP14_SUBZONE_WEB_PL.kml' \n  using driver `KML'\nSimple feature collection with 323 features and 2 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775\nGeodetic CRS:  WGS 84\n\n\n\n\n3 Loading Master Plan 2019 Subzone Boundary Data\n\n3.0.1 To import shapefile\n\n\ncode chunk\nmpsz19_shp &lt;- st_read(dsn = \"data/\",\n                      layer = \"MPSZ-2019\")\n\n\nReading layer `MPSZ-2019' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data' \n  using driver `ESRI Shapefile'\nSimple feature collection with 332 features and 6 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775\nGeodetic CRS:  WGS 84\n\n\n\n\n3.0.2 To import kml\n\n\ncode chunk\nmpsz19_kml &lt;- st_read(\"data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml\")\n\n\nReading layer `URA_MP19_SUBZONE_NO_SEA_PL' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml' \n  using driver `KML'\nSimple feature collection with 332 features and 2 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY, XYZ\nBounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84"
+    "text": "Loading following packages in R environment\n\n\ncode chunk\npacman::p_load(sf, tidyverse, tmap, ggstatsplot)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#loading-the-kml-file",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#loading-the-kml-file",
+    "title": "In-class Exercise 1: WIP",
+    "section": "3.1 Loading the kml file",
+    "text": "3.1 Loading the kml file\n\n\ncode chunk\npreschool_kml &lt;- st_read(\"data/PreSchoolsLocation.kml\")\n\n\nReading layer `PRESCHOOLS_LOCATION' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data/PreSchoolsLocation.kml' \n  using driver `KML'\nSimple feature collection with 2290 features and 2 fields\nGeometry type: POINT\nDimension:     XYZ\nBounding box:  xmin: 103.6878 ymin: 1.247759 xmax: 103.9897 ymax: 1.462134\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#loading-the-geojson-file",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#loading-the-geojson-file",
+    "title": "In-class Exercise 1: WIP",
+    "section": "3.2 Loading the geojson file",
+    "text": "3.2 Loading the geojson file\n\n\ncode chunk\npreschool_kml &lt;- st_read(\"data/PreSchoolsLocation.kml\")\n\n\nReading layer `PRESCHOOLS_LOCATION' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data/PreSchoolsLocation.kml' \n  using driver `KML'\nSimple feature collection with 2290 features and 2 fields\nGeometry type: POINT\nDimension:     XYZ\nBounding box:  xmin: 103.6878 ymin: 1.247759 xmax: 103.9897 ymax: 1.462134\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#handling-coordinate-systems",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#handling-coordinate-systems",
+    "title": "In-class Exercise 1: WIP",
+    "section": "4.1 Handling coordinate systems",
+    "text": "4.1 Handling coordinate systems\nCheck the project for the imported sf objects.\n\n\ncode chunk\nst_crs(mpsz19_shp)\n\n\nCoordinate Reference System:\n  User input: WGS 84 \n  wkt:\nGEOGCRS[\"WGS 84\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433]],\n    CS[ellipsoidal,2],\n        AXIS[\"latitude\",north,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        AXIS[\"longitude\",east,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n    ID[\"EPSG\",4326]]\n\n\nThe CRS of mpsz19 is in WGS 84, which is a Geographical Coordinate System, useful in GPS to pinpoint a specific location, and the unit of measurement is in decimal degree. However, it is not suitable for geospatial analysis as the distance measurement of decimal degree is distorted. We will transform it from geographic coordinate system to projected coordinate system.\n\n\ncode chunk\nmpsz19_shp &lt;- st_read(dsn = \"data/\",\n                layer = \"MPSZ-2019\") %&gt;%\n  st_transform(crs = 3414)\n\n\nReading layer `MPSZ-2019' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data' \n  using driver `ESRI Shapefile'\nSimple feature collection with 332 features and 6 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775\nGeodetic CRS:  WGS 84\n\n\ncode chunk\npreschool &lt;- st_read(\"data/PreSchoolsLocation.kml\") %&gt;%\n  st_transform(crs = 3414)\n\n\nReading layer `PRESCHOOLS_LOCATION' from data source \n  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/in_class_ex/in_class_ex01/data/PreSchoolsLocation.kml' \n  using driver `KML'\nSimple feature collection with 2290 features and 2 fields\nGeometry type: POINT\nDimension:     XYZ\nBounding box:  xmin: 103.6878 ymin: 1.247759 xmax: 103.9897 ymax: 1.462134\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#geospatial-data-wrangling",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#geospatial-data-wrangling",
+    "title": "In-class Exercise 1: WIP",
+    "section": "4.2 Geospatial Data Wrangling",
+    "text": "4.2 Geospatial Data Wrangling\n\n4.2.1 Point-in-polygon count\nWe’ll need to count the number of pre-schools in each planning sub-zone.\n\n\ncode chunk\nmpsz19_shp &lt;- mpsz19_shp %&gt;%\n  mutate(`PreSch Count` = lengths(\n    st_intersects(mpsz19_shp, preschool)))\n\n\nThen to compute the density of pre-school at the planning sub-zone level\n\n\ncode chunk\nmpsz19_shp &lt;- mpsz19_shp %&gt;%\n  mutate(Area = units::drop_units(\n    st_area(.)),\n    `PreSch Density` = `PreSch Count` / Area * 1000000\n  )"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#data-preparation",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#data-preparation",
+    "title": "In-class Exercise 1: WIP",
+    "section": "9.1 Data preparation",
+    "text": "9.1 Data preparation\nFirstly, we’ll exclude records with NA\n\n\ncode chunk\nmpsz_pop2023 &lt;- mpsz_pop2023 %&gt;%\n  drop_na()"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#define-get-function",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#define-get-function",
+    "title": "In-class Exercise 1: WIP",
+    "section": "9.2 Define get function",
+    "text": "9.2 Define get function\nDefines a function to get the input data and field to be used for creating the percentile map.\n\n\ncode chunk\nget.var &lt;- function(vname,df) {\n  v &lt;- df[vname] %&gt;% \n    st_set_geometry(NULL)\n  v &lt;- unname(v[,1])\n  return(v)\n}"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#define-percentile-mapping-function",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#define-percentile-mapping-function",
+    "title": "In-class Exercise 1: WIP",
+    "section": "9.3 Define percentile mapping function",
+    "text": "9.3 Define percentile mapping function\nDefine function for computing and plotting the percentile map.\n\n\ncode chunk\npercentmap &lt;- function(vnam, df, legtitle=NA, mtitle=\"Percentile Map\"){\n  percent &lt;- c(0,.01,.1,.5,.9,.99,1)\n  var &lt;- get.var(vnam, df)\n  bperc &lt;- quantile(var, percent)\n  tm_shape(mpsz_pop2023) +\n  tm_polygons() +\n  tm_shape(df) +\n     tm_fill(vnam,\n             title=legtitle,\n             breaks=bperc,\n             palette=\"Blues\",\n          labels=c(\"&lt; 1%\", \"1% - 10%\", \"10% - 50%\", \"50% - 90%\", \"90% - 99%\", \"&gt; 99%\"))  +\n  tm_borders() +\n  tm_layout(main.title = mtitle, \n            title.position = c(\"right\",\"bottom\"))\n}"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#use-the-functions",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#use-the-functions",
+    "title": "In-class Exercise 1: WIP",
+    "section": "9.4 Use the functions",
+    "text": "9.4 Use the functions\nLet’s run the newly created percentile map function.\n\n\ncode chunk\npercentmap(\"DEPENDENCY\", mpsz_pop2023)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#define-the-boxbreaks-function",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#define-the-boxbreaks-function",
+    "title": "In-class Exercise 1: WIP",
+    "section": "10.1 Define the boxbreaks function",
+    "text": "10.1 Define the boxbreaks function\nLet’s define an R function that creating break points for a box map. The function accepts following arguments: - v: vector with observations - mult: multiplier for IQR (default 1.5)\nThe function returns: - bb: vector with 7 break points compute quartile and fences\n\n\ncode chunk\nboxbreaks &lt;- function(v,mult=1.5) {\n  qv &lt;- unname(quantile(v))\n  iqr &lt;- qv[4] - qv[2]\n  upfence &lt;- qv[4] + mult * iqr\n  lofence &lt;- qv[2] - mult * iqr\n  # initialize break points vector\n  bb &lt;- vector(mode=\"numeric\",length=7)\n  # logic for lower and upper fences\n  if (lofence &lt; qv[1]) {  # no lower outliers\n    bb[1] &lt;- lofence\n    bb[2] &lt;- floor(qv[1])\n  } else {\n    bb[2] &lt;- lofence\n    bb[1] &lt;- qv[1]\n  }\n  if (upfence &gt; qv[5]) { # no upper outliers\n    bb[7] &lt;- upfence\n    bb[6] &lt;- ceiling(qv[5])\n  } else {\n    bb[6] &lt;- upfence\n    bb[7] &lt;- qv[5]\n  }\n  bb[3:5] &lt;- qv[2:4]\n  return(bb)\n}\n\n\n\n\n\n\n\n\nNote\n\n\n\nWe’ll reuse the get.var function that we’ve initialized earlier"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#define-the-boxmap-function",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#define-the-boxmap-function",
+    "title": "In-class Exercise 1: WIP",
+    "section": "10.2 Define the boxmap function",
+    "text": "10.2 Define the boxmap function\nLet’s define an R function to create a box map.\n\narguments:\n\nvnam: variable name (as character, in quotes)\ndf: simple features polygon layer\nlegtitle: legend title\nmtitle: map title\nmult: multiplier for IQR\n\nreturns:\n\na tmap-element (plots a map)\n\n\n\n\ncode chunk\nboxmap &lt;- function(vnam, df, \n                   legtitle=NA,\n                   mtitle=\"Box Map\",\n                   mult=1.5){\n  var &lt;- get.var(vnam,df)\n  bb &lt;- boxbreaks(var)\n  tm_shape(df) +\n    tm_polygons() +\n  tm_shape(df) +\n     tm_fill(vnam,title=legtitle,\n             breaks=bb,\n             palette=\"Blues\",\n          labels = c(\"lower outlier\", \n                     \"&lt; 25%\", \n                     \"25% - 50%\", \n                     \"50% - 75%\",\n                     \"&gt; 75%\", \n                     \"upper outlier\"))  +\n  tm_borders() +\n  tm_layout(main.title = mtitle, \n            title.position = c(\"left\",\n                               \"top\"))\n}"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#plotting-box-map",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#plotting-box-map",
+    "title": "In-class Exercise 1: WIP",
+    "section": "10.3 Plotting box map",
+    "text": "10.3 Plotting box map\nLet’s use the functions to plot boxmap\n\n\ncode chunk\nboxmap(\"DEPENDENCY\", mpsz_pop2023)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex01/in_class_ex01.html#plotting-interactive-box-map",
+    "href": "in_class_ex/in_class_ex01/in_class_ex01.html#plotting-interactive-box-map",
+    "title": "In-class Exercise 1: WIP",
+    "section": "10.4 Plotting interactive box map",
+    "text": "10.4 Plotting interactive box map\nWe can also plot interactive box map using tmap and the functions that we’ve created\n\n\ncode chunk\ntmap_options(check.and.fix = TRUE)\ntmap_mode(\"view\")\n\n\ntmap mode set to interactive viewing\n\n\ncode chunk\nboxmap(\"DEPENDENCY\", mpsz_pop2023)\n\n\nWarning: The shape df is invalid (after reprojection). See sf::st_is_valid\nWarning: The shape df is invalid (after reprojection). See sf::st_is_valid"
   }
 ]
