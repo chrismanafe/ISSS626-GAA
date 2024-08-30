@@ -1,5 +1,5 @@
 ---
-title: "In-class Exercise 1: WIP"
+title: "In-class Exercise 1: Geospatial Analytics"
 author: "Christover Manafe"
 date: "2024-08-26"
 date-modified: "last-modified"
@@ -318,40 +318,45 @@ We'll reuse the `get.var` function that we've initialized earlier
 Let's define an R function to create a box map.
 
 -   arguments:
+
     -   vnam: variable name (as character, in quotes)
     -   df: simple features polygon layer
     -   legtitle: legend title
     -   mtitle: map title
     -   mult: multiplier for IQR
+
 -   returns:
+
     -   a tmap-element (plots a map)
-```{r}
-boxmap <- function(vnam, df, 
-                   legtitle=NA,
-                   mtitle="Box Map",
-                   mult=1.5){
-  var <- get.var(vnam,df)
-  bb <- boxbreaks(var)
-  tm_shape(df) +
-    tm_polygons() +
-  tm_shape(df) +
-     tm_fill(vnam,title=legtitle,
-             breaks=bb,
-             palette="Blues",
-          labels = c("lower outlier", 
-                     "< 25%", 
-                     "25% - 50%", 
-                     "50% - 75%",
-                     "> 75%", 
-                     "upper outlier"))  +
-  tm_borders() +
-  tm_layout(main.title = mtitle, 
-            title.position = c("left",
-                               "top"))
-}
-```
-    
+
+    ```{r}
+    boxmap <- function(vnam, df, 
+                       legtitle=NA,
+                       mtitle="Box Map",
+                       mult=1.5){
+      var <- get.var(vnam,df)
+      bb <- boxbreaks(var)
+      tm_shape(df) +
+        tm_polygons() +
+      tm_shape(df) +
+         tm_fill(vnam,title=legtitle,
+                 breaks=bb,
+                 palette="Blues",
+              labels = c("lower outlier", 
+                         "< 25%", 
+                         "25% - 50%", 
+                         "50% - 75%",
+                         "> 75%", 
+                         "upper outlier"))  +
+      tm_borders() +
+      tm_layout(main.title = mtitle, 
+                title.position = c("left",
+                                   "top"))
+    }
+    ```
+
 ## Plotting box map
+
 Let's use the functions to plot boxmap
 
 ```{r}
@@ -359,10 +364,11 @@ boxmap("DEPENDENCY", mpsz_pop2023)
 ```
 
 ## Plotting interactive box map
+
 We can also plot interactive box map using `tmap` and the functions that we've created
+
 ```{r}
 tmap_options(check.and.fix = TRUE)
 tmap_mode("view")
 boxmap("DEPENDENCY", mpsz_pop2023)
 ```
-
