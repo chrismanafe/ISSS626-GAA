@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 1: WIP"
+title: "Take-home Exercise 1: Geospatial Analytics for Social Good : "
 author: "Christover Manafe"
 date-modified: "last-modified"
 format: 

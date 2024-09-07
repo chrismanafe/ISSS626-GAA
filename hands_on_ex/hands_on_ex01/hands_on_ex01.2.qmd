@@ -10,7 +10,7 @@ execute:
   freeze: true
 format: 
   html:
-    code-fold: true
+    code-fold: false
     code-summary: "code chunk"
     number-sections: true
     number-depth: 4
@@ -480,3 +480,8 @@ tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N=="CENTRAL REGION", ])+
             frame = FALSE) +
   tm_borders(alpha = 0.5)
 ```
+
+
+# Reference
+
+Kam, T. S. Thematic Mapping and GeoVisualisation with R. R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/chap01.html

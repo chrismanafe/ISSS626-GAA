@@ -372,3 +372,8 @@ tmap_options(check.and.fix = TRUE)
 tmap_mode("view")
 boxmap("DEPENDENCY", mpsz_pop2023)
 ```
+
+
+# Reference
+
+Kam, T. S. In-class Exercise 1: Geospatial Data Science with R. ISSS626 Geospatial Analytics and Applications. https://isss626-ay2024-25aug.netlify.app/in-class_ex/in-class_ex01/in-class_ex01

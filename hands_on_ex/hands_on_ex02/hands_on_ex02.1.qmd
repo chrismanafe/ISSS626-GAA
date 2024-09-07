@@ -726,5 +726,7 @@ The locations of childcare centers in Tampines are significantly clustered, with
 
 :::
 
+# Reference
 
+Kam, T. S. 1st Order Spatial Point Patterns Analysis Methods. R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/chap04
 

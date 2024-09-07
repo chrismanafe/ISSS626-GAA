@@ -225,6 +225,7 @@ ggplot(data=mpsz3414,
 
 
 :::{.callout-note}
+
 **DIY:** Using ggplot2 method, plot a scatterplot showing the relationship between Pre-school Density and Pre-school Count.
 ```{r}
 ggplot(data=mpsz3414, 
@@ -240,9 +241,6 @@ ggplot(data=mpsz3414,
 ```
 :::
 
+# Reference
 
-
-
-
-
-
+Kam, T. S. Geospatial Data Science with R. R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/chap01.html

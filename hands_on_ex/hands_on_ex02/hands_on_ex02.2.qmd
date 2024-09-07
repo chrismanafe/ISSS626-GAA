@@ -650,3 +650,7 @@ plot(L_tm.csr, . - r ~ r,
 The L-function plot for Tampines reveals significant clustering in the distribution of childcare centers. The observed L-function consistently exceeds the envelope expected under complete spatial randomness, indicating that the centers are more densely packed together than a random distribution would predict. This strong deviation from randomness highlights the presence of spatial clustering in the area.
 
 :::
+
+# Reference
+
+Kam, T. S. 2nd Order Spatial Point Patterns Analysis Methods. R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/chap05

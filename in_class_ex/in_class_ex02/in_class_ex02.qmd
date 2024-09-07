@@ -20,7 +20,7 @@ format:
 
 ## Install **maptools** package
 
-**maptools** is retired and its binary is removed from CRAN.  However, we can download it from [Posit Public Package Manager](https://packagemanager.posit.co/client/#/repos/cran/setup?snapshot=2023-10-13&distribution=windows&r_environment=ide) snapshots by using following code
+**maptools** is retired and its binary is removed from CRAN. However, we can download it from [Posit Public Package Manager](https://packagemanager.posit.co/client/#/repos/cran/setup?snapshot=2023-10-13&distribution=windows&r_environment=ide) snapshots by using following code
 
 ```{r}
 #| eval: false
@@ -60,7 +60,6 @@ Data sets in this exercise are as follows:
     -   This dataset shows the national boundary of Singapore.
     -   Format: ESRI Shapefile
     -   Source: [Singapore Land Authority](https://www.sla.gov.sg/)
-
 
 We will use [st_read()](https://r-spatial.github.io/sf/reference/st_read.html) of **sf** package will be used to import these three geospatial data sets into R.
 
@@ -125,8 +124,8 @@ st_crs(mpsz_sf)
 ```
 :::
 
-
 ## working with `st_union()`
+
 is used to derive the coastal outline sf tibble data.frame
 
 ```{r}
@@ -137,8 +136,106 @@ sg_sf <- mpsz_sf %>%
 *sg_sf* will look similar to the figure below.
 
 ```{r}
-ggplot() +
-  geom_sf(data = sg_sf)
+plot(sg_sf)
+```
+
+# Creating ppp objects from sf data.frame
+
+We can use `as.ppp()` of [**spatstat.geom**](https://cran.r-project.org/web/packages/spatstat.geom/spatstat.geom.pdf) package to derive an **ppp** object layer directly from a sf tibble data.frame.
+
+```{r}
+childcare_ppp <- as.ppp(childcare_sf)
+plot(childcare_ppp)
+```
+
+Let's reveal the properties of the newly created ppp objects using `summary()`.
+
+```{r}
+summary(childcare_ppp)
+```
+
+# Creating *owin* object from sf data.frame
+
+We can use `as.owin()` of [**spatstat.geom**](https://cran.r-project.org/web/packages/spatstat.geom/spatstat.geom.pdf) package to create an **owin** object layer directly from a sf tibble data.frame.
+
+```{r}
+sg_owin <- as.owin(sg_sf)
+plot(sg_owin)
+```
+
+
+Let's reveal the properties of the newly created owin objects using `summary()`.
+
+```{r}
+summary(sg_owin)
+```
+
+# Combining point events object and owin object
+
+Now we'll create an ppp object by combining childcare_ppp and sg_owin then plot the output.
+
+```{r}
+childcareSG_ppp = childcare_ppp[sg_owin]
+plot(childcareSG_ppp)
+```
+
+# Kernel Density Estimation of Spatial Point Event
+
+Before performing Kernel Density Estimation, we need to re-scale the unit of measurement from meter to kilometer.
+
+```{r}
+childcareSG_ppp.km <- rescale.ppp(childcareSG_ppp, 
+                                  1000, 
+                                  "km")
+
+kde_childcareSG_adaptive <- adaptive.density(
+  childcareSG_ppp.km, 
+  method="kernel")
+plot(kde_childcareSG_adaptive)
+```
+
+# Kernel Density Estimation
+
+There are two ways to convert KDE output into grid object
+
+::: panel-tabset
+
+## maptools method
+
+```{r}
+par(bg = '#E4D5C9')
+
+gridded_kde_childcareSG_ad <- maptools::as.SpatialGridDataFrame.im(
+  kde_childcareSG_adaptive)
+spplot(gridded_kde_childcareSG_ad)
+```
+
+## spatstat.geom method
+
+```{r}
+gridded_kde_childcareSG_ad <- as(
+  kde_childcareSG_adaptive,
+  "SpatialGridDataFrame")
+spplot(gridded_kde_childcareSG_ad)
+```
+
+:::
+
+## Visualising KDE using `tmap`
+
+We can plot the output raster by using tmap functions.
+
+```{r}
+kde_childcareSG_ad_raster <- raster(gridded_kde_childcareSG_ad)
+projection(kde_childcareSG_ad_raster) <- CRS("+init=EPSG:3414")
+```
+
+```{r}
+tm_shape(kde_childcareSG_ad_raster) + 
+  tm_raster(palette = "viridis") +
+  tm_layout(legend.position = c("right", "bottom"), 
+            frame = FALSE,
+            bg.color = "#E4D5C9")
 ```
 
 
@@ -162,10 +259,23 @@ rdacc_sf <- read_csv("data/thai_road_accident_2019_2022.csv") %>%
   st_transform(crs = 32647)
 ```
 
+```{r}
+st_crs(rdacc_sf)
+```
+
 # Visualising the accident data
 
 ```{r}
-rdacc_ppp <- as.ppp(rdacc_sf)
 
-plot(rdacc_ppp)
+tmap_mode("plot")
+rdacc_sf %>%
+  filter(year(incident_datetime) == 2020) %>%
+  tm_shape()+
+  tm_dots()
+tmap_mode("plot")
 ```
+
+
+# Reference
+
+Kam, T. S. In-class Exercise 2: Spatial Point Patterns Analysis: spatstat methods. ISSS626 Geospatial Analytics and Applications. https://isss626-ay2024-25aug.netlify.app/in-class_ex/in-class_ex02/in-class_ex02-sppa
