@@ -45,7 +45,7 @@ In this exercise, we will analyse the spatial distribution of childcare center i
 We will use following packages in this exercise:
 
 | Package                                                             | Description                                                                                                                                                                                                                                                                                                                     |
-|--------------------------|----------------------------------------------|
+|--------------------------|---------------------------------------------|
 | [**sf**](https://r-spatial.github.io/sf/)                           | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.                                                                                                            |
 | [**spNetwork**](https://cran.r-project.org/web/packages/spNetwork/) | Provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances. |
 | [**tidyverse**](https://www.tidyverse.org/)                         | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                                                                                                                              |
@@ -85,6 +85,14 @@ childcare <- st_read(dsn="data/geospatial",
 
 ```{r}
 childcare
+```
+
+We noticed that `geometry` attribute of `childcare` has 3D point, but we require 2D points for `NKDE` function. So we need to drop the Z-dimension of `geometry` attribute.
+
+```{r}
+childcare <- st_zm(childcare,
+                   drop = T,
+                   what = "ZM")
 ```
 
 ```{r}
@@ -176,7 +184,7 @@ densities <- nkde(network,
                   tol = 1,
                   grid_shape = c(1,1), 
                   max_depth = 8,
-                  # agg = 5, 
+                  agg = 5, 
                   sparse = TRUE,
                   verbose = FALSE)
 ```
@@ -252,7 +260,7 @@ kfun_childcare <- kfunctions(network,
                              end = 1000, 
                              step = 50, 
                              width = 50, 
-                             nsim = 50, 
+                             nsim = 49, 
                              resolution = 50,
                              verbose = FALSE, 
                              conf_int = 0.05)
@@ -260,7 +268,7 @@ kfun_childcare <- kfunctions(network,
 :::
 
 | **Argument** | **Description**                                                                                                                                                                                                                                      |
-|----------------|--------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | `lines`      | A `SpatialLinesDataFrame` containing the sampling points. The geometries must be valid; invalid geometries may cause crashes.                                                                                                                        |
 | `points`     | A `SpatialPointsDataFrame` representing the points on the network, which will be snapped onto the network.                                                                                                                                           |
 | `start`      | A double indicating the starting value for evaluating the k and g functions.                                                                                                                                                                         |
@@ -275,9 +283,9 @@ kfun_childcare <- kfunctions(network,
 
 The output of *kfunctions()* is a list with the following values:
 
--   *plotkA*, a ggplot2 object representing the values of the k-function
--   *plotgA*, a ggplot2 object representing the values of the g-function
--   *valuesA*, a DataFrame with the values used to build the plots
+-   *plotk*, a ggplot2 object representing the values of the k-function
+-   *plotg*, a ggplot2 object representing the values of the g-function
+-   *values*, a DataFrame with the values used to build the plots
 
 ## Visualise ggplot2 object of k-function {.unnumbered}
 
@@ -286,7 +294,6 @@ kfun_childcare$plotk
 ```
 
 ::: {.callout-note title="Interpretation"}
-
 #### Observations {.unnumbered}
 
 -   The blue line is the empirical network K-function of the childcare centres in Punggol planning area.
@@ -296,7 +303,6 @@ kfun_childcare$plotk
 #### Inference {.unnumbered}
 
 -   The childcare centres in Punggol planning area resemble regular pattern at the distance of 250m-400m.
-
 :::
 
 # Reference
