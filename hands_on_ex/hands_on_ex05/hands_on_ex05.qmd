@@ -1,0 +1,62 @@
+---
+title: "In-class Exercise 3: Advanced Spatial Point Patterns Analysis"
+author: "Christover Manafe"
+date: "2024-09-10"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: false
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# Overview
+
+In this hands-on exercise, we will learn how to compute spatial weights using R.
+
+# The Data
+
+We will use following geospatial datasets in this exercise:
+
+| Dataset      | Description                                                    | Format         |
+|-------------------|--------------------------------|---------------------|
+| *Hunan*      | Hunan county boundary layer geospatial data                    | ESRI shapefile |
+| *Hunan_2012* | Contains selected Hunan’s local development indicators in 2012 | CSV file       |
+
+: {tbl-colwidths="\[15,65,20\]"}
+
+# Installing and launching the R packages
+
+::: panel-tabset
+## Packages
+
+We will use following packages in this exercise:
+
+| Package                                                     | Description                                                                                                                                                                                                          |
+|---------------------------|---------------------------------------------|
+| [**sf**](https://r-spatial.github.io/sf/)                   | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons. |
+| [**spdep**](https://cran.r-project.org/web/packages/spdep/) | Provides collection of functions to create spatial weights matrix objects from polygon 'contiguities', from point patterns by distance and tessellations.                                                            |
+| [**tidyverse**](https://www.tidyverse.org/)                 | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                   |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/)           | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                                                                                                                              |
+| [**knitr**](https://cran.r-project.org/web/packages/knitr/) | Provides a general-purpose tool for dynamic report generation in R using Literate Programming techniques.                                                                                                            |
+
+: {tbl-colwidths="\[15,85\]"}
+
+## Code
+
+To install and launch the four R packages.
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr)
+```
+:::
+
+# Data Import and Preparation
+
+## Import

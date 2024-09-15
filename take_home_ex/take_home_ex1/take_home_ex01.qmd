@@ -1,11 +1,631 @@
 ---
-title: "Take-home Exercise 1: Geospatial Analytics for Social Good : "
+title: "Take-home Exercise 1: Geospatial Analytics for Social Good"
 author: "Christover Manafe"
+date: "2024-09-11"
 date-modified: "last-modified"
 format: 
   html:
-    code-fold: true
+    code-fold: false
     code-summary: "code chunk"
     number-sections: true
     number-depth: 4
 ---
+
+# Overview
+
+![Vehicles on a busy street in the Bangkok Metropolitan Region](images/cropped.png){fig-align="center"}
+
+Road traffic accidents are a global concern, causing around 1.19 million deaths and leaving millions injured annually. These accidents disproportionately affect vulnerable road users, including pedestrians, cyclists, and motorcyclists. Low- and middle-income countries, which hold 60% of the world’s vehicles, account for 90% of fatalities. Beyond human suffering, road accidents also pose a significant economic burden, costing nations 3% of their GDP.
+
+Thailand, with one of the highest road fatality rates in Southeast Asia, reports approximately 20,000 deaths annually, or 56 deaths each day. Between 2014 and 2021, the frequency of road accidents increased, particularly on national highways. Accident-prone areas, often referred to as "black spots," are primarily found on straight roads (66%), curves (13%), intersections, bridges, and slopes.
+
+This analysis will focus on the [Bangkok Metropolitan Region (BMR)](https://en.wikipedia.org/wiki/Bangkok_Metropolitan_Region), exploring the causes and patterns of road accidents using geospatial analytics. The study will consider both behavioral and environmental factors, and integrate temporal aspects, such as time of day, day of the week, and season, to provide a comprehensive understanding of road traffic accidents in the BMR.
+
+# Getting Started
+
+## The Packages
+
+In this exercise, we will use following packages:
+
+| Package                                                             | Description                                                                                                                                                                                                                                                                                                                     |
+|------------------------|-----------------------------------------------|
+| [**sf**](https://r-spatial.github.io/sf/)                           | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.                                                                                                            |
+| [**spNetwork**](https://cran.r-project.org/web/packages/spNetwork/) | Provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances. |
+| [**spatstat**](https://spatstat.org/)                               | Provides functions for spatial statistics with a strong focus on analysing spatial point patterns.                                                                                                                                                                                                                              |
+| [**raster**](https://cran.r-project.org/web/packages/raster/)       | Provides functions which reads, writes, manipulates, analyses and model of gridded spatial data (i.e. raster). In this hands-on exercise, it will be used to convert image output generate by spatstat into raster format.                                                                                                      |
+| [**tidyverse**](https://www.tidyverse.org/)                         | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                                                                                                                              |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/)           | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                                                                                                                              |
+
+```{r}
+pacman::p_load(sf, spNetwork, spatstat, raster, tmap, tidyverse)
+```
+
+## The Data
+
+| **Dataset Name**                                 | **Description**                                                              | **Format**     | **Source**                                                                              |
+|------------------|-------------------|------------------|------------------|
+| Thailand Road Accident \[2019-2022\]             | Data on road accidents in Thailand, including accident location and severity | CSV            | [Kaggle](https://www.kaggle.com/datasets/thaweewatboy/thailand-road-accident-2019-2022) |
+| Thailand Roads (OpenStreetMap Export)            | A detailed export of road networks in Thailand from OpenStreetMap            | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/hotosm_tha_roads)   |
+| Thailand - Subnational Administrative Boundaries | Administrative boundary data for Thailand's subnational divisions            | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/cod-ab-tha?)        |
+
+## Data Wrangling
+
+### Thailand Road Accident data
+
+We will load Thailand Road Accident data using [read_csv()](https://readr.tidyverse.org/reference/read_delim.html) function of **readr** package.
+
+```{r}
+accidents <- read_csv("data/aspatial/thai_road_accident_2019_2022.csv")
+glimpse(accidents)
+```
+
+The dataset consists of 81,735 rows and 18 columns. Below is a detailed description of each column, as provided on Kaggle:
+
+| **Column**                  | **Description**                                                                |
+|-------------------------|-----------------------------------------------|
+| acc_code                    | The accident code or identifier.                                               |
+| incident_datetime           | The date and time of the accident occurrence.                                  |
+| report_datetime             | The date and time when the accident was reported.                              |
+| province_th                 | The name of the province in Thailand, written in Thai.                         |
+| province_en                 | The name of the province in Thailand, written in English.                      |
+| agency                      | The government agency responsible for the road and traffic management.         |
+| route                       | The route or road segment where the accident occurred.                         |
+| vehicle_type                | The type of vehicle involved in the accident.                                  |
+| presumed_cause              | The presumed cause or reason for the accident.                                 |
+| accident_type               | The type or nature of the accident.                                            |
+| number_of_vehicles_involved | The number of vehicles involved in the accident.                               |
+| number_of_fatalities        | The number of fatalities resulting from the accident.                          |
+| number_of_injuries          | The number of injuries resulting from the accident.                            |
+| weather_condition           | The weather condition at the time of the accident.                             |
+| latitude                    | The latitude coordinate of the accident location.                              |
+| longitude                   | The longitude coordinate of the accident location.                             |
+| road_description            | The description of the road type or configuration where the accident occurred. |
+| slope_description           | The description of the slope condition at the accident location.               |
+
+```{r}
+colSums(is.na(accidents))
+```
+
+::: {.callout-note icon="false"}
+-   There are 359 rows with missing values in the `latitude` and `longitude` columns. We will drop rows with missing `latitude` and `longitude` values, as they represent a small portion(\<1%) of the dataset.
+-   We will remove the `agency`, `province_th`, `route`, and `report_datetime` columns, because of following reasons:
+    -   The `agency` column contains irrelevant information.
+    -   The `province_th` column is redundant because the English equivalent is already provided in the `province_en` column.
+    -   The `route` column, which lists road segment names in Thai, can be replaced with information provided by the `latitude` and `longitude` coordinates.
+    -   The `report_datetime` column is redundant because `incident_datetime` column already captures the time of the accident.
+-   Since the Bangkok Metropolitan Region consists of [six provinces](https://en.wikipedia.org/wiki/Bangkok_Metropolitan_Region) — Bangkok, Nonthaburi, Nakhon Pathom, Pathum Thani, Samut Prakan, and Samut Sakhon — we will filter the dataset using the *province_en* column to focus on these specific provinces.
+-   We will use the *latitude* and *longitude* columns to convert the data into a spatial (`sf`) object by specifying the appropriate Coordinate Reference System (CRS). The EPSG code for the latitude-longitude projection (WGS 84) is [4326](https://epsg.io/4326), which uses degrees for measurement.
+    -   For spatial analysis in Thailand, the preferred CRS is [EPSG:32647](https://epsg.io/32647), which uses meters as units and is based on the UTM Zone 47N projection.
+-   We will extend the dataset by extracting the year, month, day of the week, and hour of each incident from the \*incident_datetime\* column to enhance temporal analysis.
+:::
+
+```{r}
+bmr_provinces <- c("Bangkok", "Nonthaburi", "Nakhon Pathom", "Pathum Thani", "Samut Prakan", "Samut Sakhon")
+accidents_bmr <- accidents %>% 
+  filter(!is.na(longitude) & longitude != "",
+         !is.na(latitude) & latitude != "") %>%
+  select(-c(province_th, route, report_datetime, agency)) %>%
+  filter(province_en %in% bmr_provinces) %>%
+  mutate(
+    Year = year(incident_datetime),
+    Month_num = month(incident_datetime),
+    Month_lab = month(incident_datetime, label = TRUE),
+    Day_of_Week_num = wday(incident_datetime),
+    Day_of_Week_lab = wday(incident_datetime, label = TRUE),
+    Hour = hour(incident_datetime)
+  ) %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs=4326) %>%
+  st_transform(crs = 32647)
+
+```
+
+Using the extracted time data, we will classify each incident by season, identify whether it occurred during rush hours, determine if it took place on a weekday or weekend, and check if it coincided with Thailand's major festival, [Songkran](https://en.wikipedia.org/wiki/Songkran_(Thailand)).
+
+```{r}
+accidents_bmr <- accidents_bmr %>%
+  mutate(
+    season = case_when(
+      Month_num %in% c(3, 4, 5) ~ "summer",
+      Month_num %in% c(6, 7, 8, 9, 10) ~ "rainy",
+      Month_num %in% c(11, 12, 1, 2) ~ "winter"
+    ),
+    is_songkran = case_when(
+      Year == 2019 & Month_num == 4 & day(incident_datetime) %in% c(12:16) ~ TRUE,  # Songkran in 2019 (12-16 April)
+      Year != 2019 & Month_num == 4 & day(incident_datetime) %in% c(13:15) ~ TRUE,  # Songkran in other years (13-15 April)
+      TRUE ~ FALSE
+    ),
+    rush_hour = case_when(
+      wday(incident_datetime) %in% c(2:6) & hour(incident_datetime) %in% c(7:9) ~ TRUE,  # 7-9 AM on weekdays
+      wday(incident_datetime) %in% c(2:6) & hour(incident_datetime) %in% c(16:19) ~ TRUE,  # 4-7 PM on weekdays
+      TRUE ~ FALSE
+    ),
+    weekday_or_weekend = case_when(
+      wday(incident_datetime) %in% c(2:6) ~ "weekday",  # Monday to Friday
+      TRUE ~ "weekend"                      # Saturday and Sunday
+    )
+  )
+
+```
+
+We will simplify the `presumed_clause` column, as it currently contains 40 categories, making it too complex for effective analysis.
+
+```{r}
+# Define the categories
+driver_behavior <- c("speeding", "running red lights/traffic signals", "tailgating", 
+                     "illegal overtaking", "failure to yield/signal", "abrupt lane change", 
+                     "driving in the wrong lane", "failure to signal enter/exit parking", 
+                     "failure to yield right of way", "ignoring stop sign while leaving intersection", 
+                     "reversing vehicle", "straddling lanes", "using mobile phone while driving", 
+                     "using psychoactive substances", "loss of control", 
+                     "driving under the influence of alcohol", "falling asleep", "medical condition")
+
+road_environmental <- c("dangerous curve", "slippery road", "road in poor condition", 
+                        "inadequate visibility", "obstruction in sight", "no traffic signs", 
+                        "no road divider lines", "repair/construction on the road", 
+                        "debris/obstruction on the road", "cutting in closely by people/vehicles/animals", 
+                        "unfamiliarity with the route/unskilled driving", "sudden stop", 
+                        "no presumed cause related to driver")
+
+vehicle_related <- c("vehicle equipment failure", "worn-out/tire blowout", 
+                     "disabled vehicle without proper signals/signs", "vehicle electrical system failure", 
+                     "brake/anti-lock brake system failure", "overloaded vehicle", "insufficient light")
+
+accidents_bmr$presumed_cause_category <- ifelse(accidents_bmr$presumed_cause %in% driver_behavior, "Driver Behavior",
+                                               ifelse(accidents_bmr$presumed_cause %in% road_environmental, "Road/Environmental Conditions",
+                                                      ifelse(accidents_bmr$presumed_cause %in% vehicle_related, "Vehicle-Related Violations", "Other")))
+```
+
+We will also simplify `vehicle_type` column.
+
+```{r}
+motorcycles_bicycles <- c("motorcycle", "motorized tricycle", "bicycle")
+passenger_vehicles <- c("private/passenger car", "passenger pickup truck", "van", "large passenger vehicle")
+light_trucks <- c("4-wheel pickup truck")
+heavy_trucks <- c("6-wheel truck", "7-10-wheel truck", "large truck with trailer")
+non_motorized <- c("pedestrian")
+specialized_vehicles <- c("tractor/agricultural vehicle", "other")
+
+accidents_bmr$vehicle_category <- ifelse(accidents_bmr$vehicle_type %in% motorcycles_bicycles, 
+                                    "2-wheeled",
+                             ifelse(accidents_bmr$vehicle_type %in% passenger_vehicles, 
+                                    "Passenger Vehicles",
+                             ifelse(accidents_bmr$vehicle_type %in% light_trucks, 
+                                    "Light Trucks",
+                             ifelse(accidents_bmr$vehicle_type %in% heavy_trucks, 
+                                    "Heavy Trucks",
+                             ifelse(accidents_bmr$vehicle_type %in% non_motorized, 
+                                    "Pedestrian",
+                             ifelse(accidents_bmr$vehicle_type %in% specialized_vehicles, 
+                                    "SpecializedVehicles", 
+                                    "Unknown"))))))
+```
+
+Before saving the dataset in RDS format, let's check for any duplicated records to ensure data integrity.
+
+```{r}
+any(duplicated(accidents_bmr))
+```
+
+No duplicated records were found, so we can proceed to save the dataset in RDS format.
+
+```{r}
+#| eval: false
+write_rds(accidents_bmr, "data/rds/road_accident_bmr.rds")
+```
+
+```{r}
+accidents_bmr <- read_rds("data/rds/road_accident_bmr.rds")
+```
+
+Let's visualize the accident points in Bangkok Metropolitan Region.
+
+```{r}
+tmap_mode('plot')
+tm_shape(accidents_bmr) +
+  tm_dots(col='red',
+          alpha=0.4, 
+          size=0.04)
+```
+
+### Thailand Subnational Administration Boundary
+
+The Thailand subnational administrative boundaries dataset is available at four levels: administrative level 0 (country), level 1 (province), level 2 (district), and level 3 (sub-district or tambon). For this analysis, we will use administrative level 1 (province) and filter the data to focus on the Bangkok Metropolitan Region (BMR).
+
+We will load the province-level boundaries using the `st_read()` function and filter the dataset to include only the provinces in the BMR. The boundaries will then be transformed into [EPSG:32647](https://epsg.io/32647), which uses meters as units and is based on the UTM Zone 47N projection.
+
+```{r}
+admin_boundary_bmr <- st_read(dsn = "data/geospatial/",
+                           layer = "tha_admbnda_adm1_rtsd_20220121") %>%
+  filter(ADM1_EN %in% bmr_provinces) %>%
+  st_transform(crs = 32647)
+```
+
+Let's verify the coordinate reference system of `admin_boundary_bmr`.
+
+```{r}
+st_crs(admin_boundary_bmr)
+```
+
+```{r}
+#| eval: false
+write_rds(admin_boundary_bmr, "data/rds/admin_boundary_bmr.rds")
+```
+
+```{r}
+admin_boundary_bmr <- read_rds("data/rds/admin_boundary_bmr.rds")
+```
+
+Let's visualize the administrative boundaries map using **tmap**.
+
+```{r}
+tmap_mode('plot')
+
+tm_shape(admin_boundary_bmr) +
+  tm_polygons() +
+  tm_text("ADM1_EN", size = 0.8) +
+  tm_layout(title = "Bangkok Metropolitan Region (BMR) Administrative Boundaries",
+            frame = FALSE)
+```
+
+Let's plot the administrative boundaries along with the accident points from the earlier dataset to visualize their spatial distribution.
+
+```{r}
+tmap_mode('plot')
+
+tm_shape(admin_boundary_bmr) +
+  tm_polygons() +
+  tm_shape(accidents_bmr) +
+  tm_dots(col='red',
+          alpha=0.4, 
+          size=0.04) +
+  tm_layout(title = "BMR Administrative Boundaries and Road Accidents",
+            frame = FALSE)
+```
+
+### Thailand Roads
+
+Let us load Thailand Roads data using [*st_read()*](https://r-spatial.github.io/sf/reference/st_read.html) of **sf** package.
+
+```{r}
+#| eval: false
+roads_sf <- st_read(dsn = "data/geospatial",
+                    layer = "hotosm_tha_roads_lines_shp")
+```
+
+We observed that `road_sf` lacks a CRS. To correct this, we'll first use `st_set_crs()` to assign the correct EPSG code, then apply `st_transform()` to project the data into the appropriate coordinate reference system. This dataset contains geometries in the form of `MULTILINESTRING`. We will apply `st_cast()` function to convert it into `LINESTRING`.
+
+```{r}
+#| eval: false
+roads_sf <- st_set_crs(roads_sf, 4326)  %>%
+  st_transform(crs = 32647) %>% 
+  st_cast("LINESTRING")
+```
+
+Let us verify the CRS on \`roads_sf\`.
+
+```{r}
+#| eval: false
+st_crs(roads_sf)
+```
+
+Since the OpenStreetMap data includes a wide range of [road types](https://wiki.openstreetmap.org/wiki/Key:highway), we will filter the dataset to keep only the road classes that are relevant to our analysis.
+
+```{r}
+#| eval: false
+roads_sf <- roads_sf %>%
+  filter(highway %in% c("motorway", "trunk", "primary", "secondary", "tertiary", "unclassified",
+                        "residential", "motorway_link", "trunk_link", "primary_link", 
+                        "secondary_link", "tertiary_link", "living_street", "service"))
+
+```
+
+```{r}
+#| eval: false
+unique(roads_sf$highway)
+```
+
+The `roads_sf` dataset contains all road information across Thailand. Since our analysis focuses on the Bangkok Metropolitan Region (BMR), we will filter out roads located outside this area using [st_intersection()](https://r-spatial.github.io/sf/reference/geos_binary_ops.html) function from **sf** package.
+
+```{r}
+#| eval: false
+roads_bmr <- st_intersection(roads_sf, admin_boundary_bmr)
+```
+
+Let us check for any invalid geometries from `roads_bmr`.
+
+```{r}
+#| eval: false
+invalid_geometries <- st_is_valid(roads_bmr, reason=TRUE)
+```
+
+```{r}
+#| eval: false
+length(which(invalid_geometries != "Valid Geometry"))
+```
+
+```{r}
+#| eval: false
+write_rds(roads_bmr, "data/rds/roads_bmr.rds")
+```
+
+```{r}
+roads_bmr <- read_rds("data/rds/roads_bmr.rds")
+```
+
+Now, let's visualize the road network within the Bangkok Metropolitan Region (BMR).
+
+```{r}
+tmap_mode("plot")
+tm_shape(roads_bmr) +
+  tm_lines(col = "blue", lwd = 0.5) +
+  tm_layout(title = "Bangkok Metropolitan Region Road Network",
+            frame = FALSE)
+```
+
+### Converting sf data frame into spatstat's ppp format
+
+As we plan to carry out spatial point pattern analysis with the `spatstat` package, we need to convert the spatial data from the `sf` format into the `ppp` format.
+
+First, we create ppp objects from `accidents_bmr` data frame.
+
+```{r}
+accidents_bmr_ppp <- as.ppp(accidents_bmr)
+summary(accidents_bmr_ppp)
+```
+
+Then we create `owin` objects from `admin_boundary_bmr` data frame.
+
+```{r}
+admin_boundary_bmr_owin <- as.owin(admin_boundary_bmr)
+```
+
+Now, we can create a ppp object by combining `accidents_bmr_ppp` and `admin_boundary_bmr_owin`.
+
+```{r}
+accidents_bmr_ppp = accidents_bmr_ppp[admin_boundary_bmr_owin]
+plot(accidents_bmr_ppp)
+```
+
+Let us re-scale the unit of measurement from metre to kilometre before performing KDE.
+
+```{r}
+accidents_bmr_ppp.km <- rescale.ppp(accidents_bmr_ppp,
+                                    1000, 
+                                    "km")
+```
+
+# Exploratory Data Analysis
+
+Before conducting the Spatial Point Pattern Analysis, we will first perform Exploratory Data Analysis (EDA) to better understand the underlying patterns and distributions in the data.
+
+::: panel-tabset
+## Cause Category
+
+```{r}
+ggplot(accidents_bmr, aes(x=presumed_cause_category)) + 
+  geom_bar() +
+  labs(title = "Accidents Distribution by Cause Categories",
+       x = "Road Accident Cause Categories",
+       y = "# of Accidents")
+```
+
+## Vehicle Category
+
+```{r}
+ggplot(accidents_bmr, aes(x=vehicle_category)) + 
+  geom_bar() +
+  labs(title = "Accidents Distribution by Vehicle Categories",
+       x = "Vehicle Categories",
+       y = "# of Accidents")
+```
+
+## Season
+
+```{r}
+ggplot(accidents_bmr, aes(x=season)) + 
+  geom_bar() +
+  labs(title = "Accidents Distribution by Season",
+       x = "Season",
+       y = "# of Accidents")
+```
+
+## Weather
+
+```{r}
+ggplot(accidents_bmr, aes(x=weather_condition)) + 
+  geom_bar() +
+  labs(title = "Accidents Distribution by Weather",
+       x = "Weather",
+       y = "# of Accidents")
+```
+
+## Month
+
+```{r}
+ggplot(accidents_bmr, aes(x=Month_lab)) + 
+  geom_bar() +
+  labs(title = "Accident Distribution by Month",
+       x = "Month",
+       y = "# of Accidents")
+```
+
+## Day of the week
+
+```{r}
+ggplot(accidents_bmr, aes(x=Day_of_Week_lab)) + 
+  geom_bar() +
+  labs(title = "Accident Distribution by Day of the week",
+       x = " Day of the week",
+       y = "# of Accidents")
+```
+
+## Hour
+
+```{r}
+ggplot(accidents_bmr, aes(x=Hour)) + 
+  geom_bar() +
+  labs(title = "Accident Distribution by Hour of the Day",
+       x = "Hour of the Day",
+       y = "# of Accidents")
+```
+
+## Songkran
+
+```{r}
+ggplot(accidents_bmr, aes(x = is_songkran)) + 
+  geom_bar() +
+  labs(title = "Accident Frequency During Songkran Festival",
+       x = "Songkran",
+       y = "# of Accidents")
+```
+:::
+
+::: {.callout-note title="Observation"}
+The following observations summarize key trends and patterns identified from the exploratory data analysis of road accidents in the Bangkok Metropolitan Region (BMR):
+
+-   **Driver Behavior**: The majority of accidents in the BMR are caused by driver behavior.
+
+-   **Vehicle Involvement**: Trucks, both light and heavy, are the most frequently involved vehicle category in accidents.
+
+-   **Seasonal Trends**: While accidents are more common in the rainy season than in winter or summer, the difference is not significant.
+
+-   **Weather Conditions**: A large proportion of accidents occur in clear weather, with only a small portion happening during rainy conditions.
+
+-   **Day of the Week**: Accidents are slightly more frequent on Fridays and Saturdays compared to other days.
+
+-   **Time of Day**: Most accidents occur between 7 AM and 11 PM.
+
+-   **Monthly Trends**: Accident frequency remains fairly consistent across months, with no major variations.
+
+-   **Songkran**: A negligible number of accidents occur during the Songkran festival.
+:::
+
+# Spatial Point Pattern Analysis
+
+## First-order spatial point pattern analysis
+
+### Computing kernel density estimation using automatic bandwidth selection method
+
+We will compute the kernel density estimate (KDE) using different automatic bandwidth selection methods. Specifically, we will use `bw.diggle` and `bw.ppl` for the analysis to compare their results.
+
+```{r}
+kde_accidents_bmr_bw_diggle <- density(accidents_bmr_ppp.km,
+                                       sigma=bw.diggle,
+                                       edge=TRUE,
+                                       kernel="gaussian") 
+
+kde_accidents_bmr_bw_ppl <- density(accidents_bmr_ppp.km,
+                                    sigma=bw.ppl, 
+                                    edge=TRUE,
+                                    kernel="gaussian")
+par(mfrow=c(1,2))
+plot(kde_accidents_bmr_bw_diggle, main = "bw.diggle")
+plot(kde_accidents_bmr_bw_ppl, main = "bw.ppl")
+```
+
+::: callout-note
+#### Observation
+
+-   Both **`bw.diggle`** and **`bw.ppl`** methods produce similar overall density patterns, with high-density areas highlighted in yellow and low-density areas in blue.
+
+-   High-density zones appear to cluster along key road networks or points of interest in both estimates, indicating consistency between the two methods.
+:::
+
+### Computing kernel density estimation using adaptive bandwidth
+
+Given the varying densities in our data and the consistent results from automatic bandwidth methods such as **`bw.diggle`** and **`bw.ppl`**, we will try to compute the density by using [adaptive.density()](https://rdrr.io/cran/spatstat.explore/man/adaptive.density.html) of **spatstat package**. Adaptive bandwidth methods are often better suited to capture both global trends and local variations, providing a more accurate and nuanced understanding of the spatial patterns without the risk of oversmoothing or undersmoothing.
+
+```{r}
+kde_accidents_adaptive_kernel <- adaptive.density(accidents_bmr_ppp.km, method="kernel")
+
+par(mfrow=c(1,2))
+plot(kde_accidents_bmr_bw_diggle, main = "automatic - bw.diggle")
+plot(kde_accidents_adaptive_kernel, main = "adaptive - kernel")
+```
+
+> Visually, these results are very similar because both **bw.diggle** and the **adaptive kernel method** adjust the bandwidth based on the local density of points in the dataset. Since both methods are adaptive in nature, they capture the same underlying spatial patterns and point densities, leading to similar visual outcomes. This consistency indicates that the spatial distribution of accidents is being accurately reflected by both approaches.
+
+### Plotting Interactive KDE Maps
+
+We will create interactive map of the **KDE (Kernel Density Estimate)** map displayed over an **OpenStreetMap** basemap with a color palette ranging from yellow to red to represent density. It includes BMR boundary polygons, a scale bar, and sets the map projection to the UTM Zone 47N (EPSG:32647).
+
+```{r}
+#| code-fold: true
+raster_kde_adaptive <- raster(kde_accidents_adaptive_kernel)
+projection(raster_kde_adaptive) <- CRS("+init=EPSG:32647 +units=km")
+
+tmap_mode('view')
+
+kde_diggle_tmap <- tm_basemap(server = "OpenStreetMap") +
+  tm_shape(admin_boundary_bmr, ) +
+    tm_polygons(alpha=0.1, id="ADM1_EN") +
+  tm_shape(raster_kde_adaptive) +
+    tm_raster("layer",
+              n = 7,
+              title = "KDE Adaptive",
+              style = "pretty",
+              alpha = 0.6,
+              palette = "YlOrRd") +
+  tm_scale_bar()
+
+base_tmap <- tm_basemap(server = "OpenStreetMap")+
+  tm_shape(admin_boundary_bmr) +
+    tm_polygons(alpha=0.1, id="ADM1_EN") +
+  tm_scale_bar()
+
+tmap_arrange(kde_diggle_tmap, 
+             base_tmap,
+             ncol=1,
+             nrow=2,
+             sync = TRUE)
+
+tmap_mode('plot')
+
+```
+
+::: callout-note
+#### Observation
+
+-   The interactive map reveals that accidents are most concentrated in **Bangkok**, followed by **Samut Prakan** and **Pathum Thani** provinces.
+
+-   The highest concentration of accidents occurs along **Motorway Route 7** (Bangkok–Ban Chang Motorway), with significant densities also observed on other major highways, including **Motorway Route 9** (Kanchanaphisek Road, also known as the Bangkok Outer Ring Road) and **Highway 338** (Borommaratchachonnani Road).
+
+-   The concentration of accidents along these highways indicates that targeted safety interventions, such as traffic management, road safety improvements, or enhanced enforcement in these regions, may be effective in reducing accident rates.
+:::
+
+### Nearest neighbour analysis
+
+In this section, we will perform the Clark-Evans test of aggregation for a spatial point pattern using the `clarkevans.test()` function from the **`spatstat`** package.
+
+The test hypotheses are:
+
+-   **H₀**: The spatial distribution of road accidents in BMR are randomly distributed.
+-   **H₁**: The spatial distribution of road accidents in BMR are not randomly distributed.
+
+We will use a 95% confidence interval.
+
+```{r}
+clarkevans.test(accidents_bmr_ppp,
+                correction="none",
+                clipregion="admin_boundary_bmr_owin",
+                alternative=c("clustered"),
+                nsim=99)
+```
+
+> **Interpretations:**
+>
+> -   The **Clark-Evans test** result (R = 0.19109, p-value \< 2.2e-16) suggests that road accidents in the dataset are **not randomly distributed**. Instead, they exhibit **significant clustering**, meaning accidents tend to occur in close proximity to each other rather than being spread out randomly across the region.
+>
+> -   This clustering is likely tied to underlying factors such as high traffic volumes or specific road types (e.g., intersections, highways).
+
+## **Network Kernel Density Estimation (NKDE)**
+
+## Temporal Network Kernel Density Estimate **(TNKDE)**
+
+# References
+
+-   World Health Organization. (2023). *Road traffic injuries*. <https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries>
+
+-   World Health Organization. (2017). *Road traffic deaths and injuries in Thailand*. <https://cdn.who.int/media/docs/default-source/thailand/roadsafety/overview-en-final-25-7-19.pdf>
+
+-   **Asia Highlights.** (2024). *Best Time to Visit Thailand: Weather, Events, and Seasonal Travel Tips.* Retrieved from <https://www.asiahighlights.com/thailand/best-time-to-visit>
