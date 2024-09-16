@@ -1,5 +1,5 @@
 ---
-title: "In-class Exercise 4: Geographically Weighted Summary Statistics - gwModel methods"
+title: "In-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods"
 author: "Christover Manafe"
 date: "2024-09-16"
 date-modified: "last-modified"
@@ -18,4 +18,229 @@ format:
 
 # Overview
 
-## Geographically weighted summary statistics with adaptive bandwidth
+In this hands-on exercise, we will learn how to compute spatial weights, particularly using `GWmodel` methods.
+
+# Installing and launching the R packages
+
+::: panel-tabset
+## Packages
+
+We will use following packages in this exercise:
+
+| Package                                                                   | Description                                                                                                                                                                                                          |
+|---------------------------|---------------------------------------------|
+| [**sf**](https://r-spatial.github.io/sf/)                                 | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons. |
+| [**tidyverse**](https://www.tidyverse.org/)                               | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                   |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/)                 | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                   |
+| [**knitr**](https://cran.r-project.org/web/packages/knitr/)               | Provides a general-purpose tool for dynamic report generation in R using Literate Programming techniques.                                                                                                            |
+| [**GWmodel**](https://cran.r-project.org/web/packages/GWmodel/index.html) | Package for Exploring Spatial Heterogeneity Using Geographically Weighted Models.                                                                                                                                    |
+
+: {tbl-colwidths="\[15,85\]"}
+
+## Code
+
+To install and launch the four R packages.
+
+```{r}
+pacman::p_load(sf, ggstatsplot,tmap, tidyverse, knitr, GWmodel)
+```
+:::
+
+# The Data
+
+We will use following geospatial datasets in this exercise:
+
+| Dataset      | Description                                                    | Format         |
+|-------------------|--------------------------------|---------------------|
+| *Hunan*      | Hunan county boundary layer geospatial data                    | ESRI shapefile |
+| *Hunan_2012* | Contains selected Hunan’s local development indicators in 2012 | CSV file       |
+
+: {tbl-colwidths="\[15,65,20\]"}
+
+# Data Import and Preparation
+
+::: panel-tabset
+## Import geospatial data
+
+We use [*st_read()*](https://r-spatial.github.io/sf/reference/st_read.html) of **sf** package to import Hunan shapefile into R. The imported shapefile will be **simple features** Object of **sf**.
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+```{r}
+#| echo: false
+glimpse(hunan)
+```
+
+## Import aspatial data
+
+Then we will import *Hunan_2012.csv* into R by using *read_csv()* of **readr** package. The output is R dataframe class.
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+```{r}
+#| echo: false
+glimpse(hunan2012)
+```
+
+## Perform relational join
+
+We will also update the attribute table of *hunan*’s SpatialPolygonsDataFrame with the attribute fields of *hunan2012* dataframe. This is performed by using *left_join()* of **dplyr** package.
+
+```{r}
+colnames(hunan)
+```
+
+```{r}
+colnames(hunan2012)
+```
+
+```{r}
+hunan <- left_join(hunan,hunan2012) %>%
+  select(1:3, 7, 15, 16, 31, 32)
+```
+
+```{r}
+#| echo: false
+glimpse(hunan)
+```
+:::
+
+# Converting to SpatialPolygonDataFrame
+
+> GWmodel presently is built around the older `sp` and not `sf` formats for handling spatial data in R.
+
+Let's convert `hunan` data frame into SpatialPolygonDataFrame
+
+```{r}
+hunan_sp <- hunan %>%
+  as_Spatial()
+```
+
+# Geographically weighted summary statistics with adaptive bandwidth
+
+## Determine adaptive bandwidth
+
+::: panel-tabset
+## Cross-validation
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "CV",
+                adaptive = TRUE,
+                kernel = "bisquare",
+                longlat = TRUE)
+```
+
+```{r}
+bw_CV
+```
+
+## AIC
+
+```{r}
+bw_AIC <- bw.gwr(GDPPC ~ 1,
+                 data = hunan_sp,
+                 approach = "AIC",
+                 adaptive = TRUE,
+                 kernel = "bisquare",
+                 longlat = TRUE)
+```
+
+```{r}
+bw_AIC
+```
+:::
+
+The number of optimum neighbour for GDPPC is 22, and apparently it is the same for both CV and AIC this time.
+
+# Geographically weighted summary statistics with fixed bandwidth
+
+## Determine adaptive bandwidth
+
+::: panel-tabset
+## Cross-validation
+
+```{r}
+bw_CV <- bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "CV",
+                adaptive = FALSE,
+                kernel = "bisquare",
+                longlat = TRUE)
+```
+
+```{r}
+bw_CV
+```
+
+## AIC
+
+```{r}
+bw_AIC_fixed <- bw.gwr(GDPPC ~ 1,
+                       data = hunan_sp,
+                       approach = "AIC",
+                       adaptive = FALSE,
+                       kernel = "bisquare",
+                       longlat = TRUE)
+```
+
+```{r}
+bw_AIC_fixed
+```
+:::
+
+The fixed bandwidth is different this time for CV and AIC.
+
+## Computing geographically weighted summary statistics
+
+```{r}
+gwstat <- gwss(data = hunan_sp,
+               vars = "GDPPC",
+               bw = bw_AIC,
+               kernel = "bisquare",
+               adaptive = TRUE,
+               longlat = TRUE)
+```
+
+Let us prepare the output data. We will extract SDF data table from gwss object output from `gwss()`. It will be converted into data.frame by using `as.data.frame()` function.
+
+```{r}
+gwstat_df <- as.data.frame(gwstat$SDF)
+```
+
+Next, `cbind()` is used to append the newly derived data.frame onto *hunan* sf data.frame.
+
+```{r}
+hunan_gstat <- cbind(hunan, gwstat_df)
+```
+
+## Visualising geographically weighted summary statistics
+
+Let us visualize the geographically weighted mean.
+
+```{r fig.width=16, fig.height=8}
+tm_shape(hunan_gstat) +
+  tm_fill("GDPPC_LM",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "Distribution of geographically weighted mean",
+            main.title.position = "center",
+            main.title.size = 1.8,
+            legend.text.size = 1.2,
+            legend.height = 1.50,
+            legend.width = 1.50,
+            frame = TRUE)
+```
+
+Let us find out whether is there any relationship between GDP per capita and Gross Industry Output?
+
+```{r}
+
+```
