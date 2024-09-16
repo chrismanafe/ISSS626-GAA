@@ -1,0 +1,21 @@
+---
+title: "Hands-on Exercise 5b: Local Measures of Spatial Autocorrelation"
+author: "Christover Manafe"
+date: "2024-09-16"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: false
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# Overview
+
+In this hands-on exercise, we will learn how to compute Local Measures of Spatial Autocorrelation (LMSA) by using **spdep** package

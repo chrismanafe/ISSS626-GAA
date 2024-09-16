@@ -1,7 +1,7 @@
 ---
-title: "In-class Exercise 3: Advanced Spatial Point Patterns Analysis"
+title: "Hands-on Exercise 5a: Global Measures of Spatial Autocorrelation"
 author: "Christover Manafe"
-date: "2024-09-10"
+date: "2024-09-16"
 date-modified: "last-modified"
 execute: 
   eval: true
@@ -18,7 +18,21 @@ format:
 
 # Overview
 
-In this hands-on exercise, we will learn how to compute spatial weights using R.
+In this hands-on exercise, we will learn how to compute Global Measures of Spatial Autocorrelation (GMSA) by using **spdep** package. By the end to this hands-on exercise, we will be able to:
+
+-   import geospatial data using appropriate function(s) of **sf** package,
+
+-   import csv file using appropriate function of **readr** package,
+
+-   perform relational join using appropriate join function of **dplyr** package,
+
+-   compute Global Spatial Autocorrelation (GSA) statistics by using appropriate functions of **spdep** package,
+
+    -   plot Moran scatterplot,
+
+    -   compute and plot spatial correlogram using appropriate function of **spdep** package.
+
+-   provide statistically correct interpretation of GSA statistics.
 
 # The Data
 
@@ -43,7 +57,7 @@ We will use following packages in this exercise:
 | [**sf**](https://r-spatial.github.io/sf/)                   | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons. |
 | [**spdep**](https://cran.r-project.org/web/packages/spdep/) | Provides collection of functions to create spatial weights matrix objects from polygon 'contiguities', from point patterns by distance and tessellations.                                                            |
 | [**tidyverse**](https://www.tidyverse.org/)                 | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                   |
-| [**tmap**](https://cran.r-project.org/web/packages/tmap/)           | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                                                                                                                              |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/)   | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                   |
 | [**knitr**](https://cran.r-project.org/web/packages/knitr/) | Provides a general-purpose tool for dynamic report generation in R using Literate Programming techniques.                                                                                                            |
 
 : {tbl-colwidths="\[15,85\]"}
