@@ -1,5 +1,5 @@
 ---
-title: "In-class Exercise 3: Advanced Spatial Point Patterns Analysis"
+title: "Hands-on Exercise 4: Spatial Weights and Applications"
 author: "Christover Manafe"
 date: "2024-09-10"
 date-modified: "last-modified"
@@ -25,7 +25,7 @@ In this hands-on exercise, we will learn how to compute spatial weights using R.
 We will use following geospatial datasets in this exercise:
 
 | Dataset      | Description                                                    | Format         |
-|--------------|----------------------------------------------------------------|----------------|
+|-------------------|--------------------------------|---------------------|
 | *Hunan*      | Hunan county boundary layer geospatial data                    | ESRI shapefile |
 | *Hunan_2012* | Contains selected Hunan’s local development indicators in 2012 | CSV file       |
 
@@ -39,7 +39,7 @@ We will use following geospatial datasets in this exercise:
 We will use following packages in this exercise:
 
 | Package                                                     | Description                                                                                                                                                                                                          |
-|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|---------------------------|---------------------------------------------|
 | [**sf**](https://r-spatial.github.io/sf/)                   | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons. |
 | [**spdep**](https://cran.r-project.org/web/packages/spdep/) | Provides collection of functions to create spatial weights matrix objects from polygon 'contiguities', from point patterns by distance and tessellations.                                                            |
 | [**tidyverse**](https://www.tidyverse.org/)                 | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                   |
@@ -283,7 +283,7 @@ If unprojected coordinates are used and either specified in the coordinates obje
 We need to determine the upper limit for distance band by using following steps:
 
 | Step | Description                                                                                                                      | Function                                                                                   |
-|------|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+|-------------------|----------------------------------|-------------------|
 | 1    | Return a matrix with the indices of points belonging to the set of the k-nearest neighbours (knn) of each other.                 | [*knearneigh()*](https://r-spatial.github.io/spdep/reference/knearneigh.html) of **spdep** |
 | 2    | Convert the knn object into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids. | [*knn2nb()*](https://r-spatial.github.io/spdep/reference/knn2nb.html) of **spdep**         |
 | 3    | Return the length of neighbour relationship edges.                                                                               | [*nbdists()*](https://r-spatial.github.io/spdep/reference/nbdists.html) of **spdep**       |

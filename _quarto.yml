@@ -17,6 +17,8 @@ website:
           href: "hands_on_ex/hands_on_ex02/hands_on_ex02.2.html"
         - text: "3 Network Constrained Spatial Point Patterns Analysis"
           href: "hands_on_ex/hands_on_ex03/hands_on_ex03.html"
+        - text: "4 Spatial Weights and Applications"
+          href: "hands_on_ex/hands_on_ex04/hands_on_ex04.html"
     - text: "In-class Exercises"
       menu:
         - text: "1 Geospatial Analytics"
@@ -25,6 +27,8 @@ website:
           href: "in_class_ex/in_class_ex02/in_class_ex02.html"
         - text: "3 Network Constrained Spatial Point Patterns Analysis"
           href: "in_class_ex/in_class_ex03/in_class_ex03.html"
+        - text: "4 Spatial Weights and Applications"
+          href: "in_class_ex/in_class_ex04/in_class_ex04.html"
     - text: "Take-home Exercises"
       menu:
         - text: "1. Geospatial Analytics for Public Good"
