@@ -153,6 +153,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex04/hands_on_ex04.html">
  <span class="dropdown-text">4 Spatial Weights and Applications</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.1.html">
+ <span class="dropdown-text">5a Global Measures of Spatial Autocorrelation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.2.html">
+ <span class="dropdown-text">5b Local Measures of Spatial Autocorrelation</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -236,6 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#computing-geographically-weighted-summary-statistics" id="toc-computing-geographically-weighted-summary-statistics" class="nav-link" data-scroll-target="#computing-geographically-weighted-summary-statistics"><span class="header-section-number">7.2</span> Computing geographically weighted summary statistics</a></li>
   <li><a href="#visualising-geographically-weighted-summary-statistics" id="toc-visualising-geographically-weighted-summary-statistics" class="nav-link" data-scroll-target="#visualising-geographically-weighted-summary-statistics"><span class="header-section-number">7.3</span> Visualising geographically weighted summary statistics</a></li>
   </ul></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference"><span class="header-section-number">8</span> Reference</a></li>
   </ul>
 </nav>
     </div>
@@ -268,7 +277,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 16, 2024</p>
+      <p class="date-modified">September 18, 2024</p>
     </div>
   </div>
     
@@ -708,9 +717,43 @@ Fixed bandwidth: 160.5517 AICc value: 1919.391 </code></pre>
 </div>
 </div>
 <p>Let us find out whether is there any relationship between GDP per capita and Gross Industry Output?</p>
-
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatterstats</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hunan2012, </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> Agri, </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> GDPPC,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Gross Agriculture Output"</span>, <span class="do">## label for the x-axis</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"GDP per capita"</span>, </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">label.var =</span> County, </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">label.expression =</span> Agri <span class="sc">&gt;</span> <span class="dv">10000</span> <span class="sc">&amp;</span> GDPPC <span class="sc">&gt;</span> <span class="dv">50000</span>, </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">point.label.args =</span> <span class="fu">list</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"grey50"</span>),</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">xfill =</span> <span class="st">"#CC79A7"</span>, </span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">yfill =</span> <span class="st">"#009E73"</span>, </span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Relationship between GDP PC and Gross Agriculture Output"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'ggside':
+  method from   
+  +.gg   ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_xsidebin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_ysidebin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="in_class_ex04_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
+</section>
+<section id="reference" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Reference</h1>
+<p>Kam, T. S. Geographically Weighted Summary Statistics - gwModel methods. <em>ISSS626 Geospatial Analytics and Applications.</em> <a href="https://isss626-ay2024-25aug.netlify.app/in-class_ex/in-class_ex04/in-class_ex04" class="uri">https://isss626-ay2024-25aug.netlify.app/in-class_ex/in-class_ex04/in-class_ex04</a></p>
+
+
 </section>
 
 </main> <!-- /main -->

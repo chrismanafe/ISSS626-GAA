@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Christover Manafe">
+<meta name="dcterms.date" content="2024-09-10">
 
-<title>ISSS626-GAA - Welcome to ISSS626 Geospatial Analytics and Applications</title>
+<title>ISSS626-GAA - Hands-on Exercise 6: Geographical Segmentation with Spatially Constrained Clustering Techniques</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,25 +25,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./images/favicon.ico" rel="icon">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,107 +69,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-hands_on .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-image','listing-date','listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      page: 3,
-    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-hands_on'] = new List('listing-hands_on', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-in_class .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-date','listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      page: 3,
-    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-in_class'] = new List('listing-in_class', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">ISSS626-GAA</span>
     </a>
   </div>
@@ -185,36 +97,60 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercises">    
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex01/hands_on_ex01.1.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex01/hands_on_ex01.1.html">
  <span class="dropdown-text">1a Geospatial Data Wrangling</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex01/hands_on_ex01.2.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex01/hands_on_ex01.2.html">
  <span class="dropdown-text">1b Choropleth Mapping</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex02/hands_on_ex02.1.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex02/hands_on_ex02.1.html">
  <span class="dropdown-text">2a 1st Order Spatial Point Patterns Analysis Methods</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex02/hands_on_ex02.2.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex02/hands_on_ex02.2.html">
  <span class="dropdown-text">2b 2nd Order Spatial Point Patterns Analysis Methods</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex03/hands_on_ex03.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex03/hands_on_ex03.html">
  <span class="dropdown-text">3 Network Constrained Spatial Point Patterns Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex04/hands_on_ex04.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex04/hands_on_ex04.html">
  <span class="dropdown-text">4 Spatial Weights and Applications</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex05/hands_on_ex05.1.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.1.html">
  <span class="dropdown-text">5a Global Measures of Spatial Autocorrelation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./hands_on_ex/hands_on_ex05/hands_on_ex05.2.html">
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.2.html">
  <span class="dropdown-text">5b Local Measures of Spatial Autocorrelation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex06/hands_on_ex06.html">
+ <span class="dropdown-text">6 Geographical Segmentation with Spatially Constrained Clustering Techniques</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex07/hands_on_ex07.html">
+ <span class="dropdown-text">7 Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex08/hands_on_ex08.html">
+ <span class="dropdown-text">8 Geographically Weighted Predictive Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex09/hands_on_ex09.1.html">
+ <span class="dropdown-text">9a Processing and Visualising Flow Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex09/hands_on_ex09.2.html">
+ <span class="dropdown-text">9b Calibrating Spatial Interaction Models with R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex10/hands_on_ex10.html">
+ <span class="dropdown-text">10 Modelling Geographical Accessibility</span></a>
   </li>  
     </ul>
   </li>
@@ -224,20 +160,44 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercises">    
         <li>
-    <a class="dropdown-item" href="./in_class_ex/in_class_ex01/in_class_ex01.html">
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex01/in_class_ex01.html">
  <span class="dropdown-text">1 Geospatial Analytics</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./in_class_ex/in_class_ex02/in_class_ex02.html">
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex02/in_class_ex02.html">
  <span class="dropdown-text">2 Spatial Point Patterns Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./in_class_ex/in_class_ex03/in_class_ex03.html">
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex03/in_class_ex03.html">
  <span class="dropdown-text">3 Network Constrained Spatial Point Patterns Analysis</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./in_class_ex/in_class_ex04/in_class_ex04.html">
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex04/in_class_ex04.html">
  <span class="dropdown-text">4 Geographically Weighted Summary Statistics - GWmodel methods</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex05/in_class_ex05.html">
+ <span class="dropdown-text">5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex06/in_class_ex06.html">
+ <span class="dropdown-text">6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex07/in_class_ex07.html">
+ <span class="dropdown-text">7</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex08/in_class_ex08.html">
+ <span class="dropdown-text">8</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex09/in_class_ex09.html">
+ <span class="dropdown-text">9</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex10/in_class_ex10.html">
+ <span class="dropdown-text">10</span></a>
   </li>  
     </ul>
   </li>
@@ -247,15 +207,23 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercises">    
         <li>
-    <a class="dropdown-item" href="./take_home_ex/take_home_ex01/take_home_ex01.html">
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex01/take_home_ex01.html">
  <span class="dropdown-text">1. Geospatial Analytics for Public Good</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex02/take_home_ex02.html">
+ <span class="dropdown-text">2.</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex03/take_home_ex03.html">
+ <span class="dropdown-text">3.</span></a>
   </li>  
     </ul>
   </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item compact">
@@ -279,21 +247,48 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference"><span class="header-section-number">2</span> Reference</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Welcome to ISSS626 Geospatial Analytics and Applications</h1>
+<h1 class="title">Hands-on Exercise 6: Geographical Segmentation with Spatially Constrained Clustering Techniques</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Christover Manafe </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 10, 2024</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">September 18, 2024</p>
+    </div>
+  </div>
     
   </div>
   
@@ -302,259 +297,13 @@ window.Quarto = {
 </header>
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="world-choropleth-map-og.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="577"></p>
-</figure>
-</div>
-<p>This website showcases my coursework, featuring exercises and assignments enriched with geospatial visualizations and analytical insights. I invite you to explore the contents I’ve developed throughout the course.</p>
-<section id="hands-on-exercise" class="level2">
-<h2 class="anchored" data-anchor-id="hands-on-exercise"><a href="./hands_on_ex/">✍️ Hands-on Exercise</a></h2>
-<div id="listing-hands_on" class="quarto-listing quarto-listing-container-grid">
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-date-sort="1726588800000" data-listing-file-modified-sort="1726672338178" data-listing-date-modified-sort="1726672338000" data-listing-reading-time-sort="23" data-listing-word-count-sort="4581">
-<a href="./hands_on_ex/hands_on_ex05/hands_on_ex05.2.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="hands_on_ex/hands_on_ex05/hands_on_ex05.2_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 5b: Local Measures of Spatial Autocorrelation
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 18, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="1" data-listing-date-sort="1726588800000" data-listing-file-modified-sort="1726672330630" data-listing-date-modified-sort="1726672330000" data-listing-reading-time-sort="17" data-listing-word-count-sort="3238">
-<a href="./hands_on_ex/hands_on_ex05/hands_on_ex05.1.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="hands_on_ex/hands_on_ex05/hands_on_ex05.1_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 5a: Global Measures of Spatial Autocorrelation
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 18, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="2" data-listing-date-sort="1725897600000" data-listing-file-modified-sort="1726673935193" data-listing-date-modified-sort="1726673935000" data-listing-reading-time-sort="1" data-listing-word-count-sort="32">
-<a href="./hands_on_ex/hands_on_ex06/hands_on_ex06.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 6: Geographical Segmentation with Spatially Constrained Clustering Techniques
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 10, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="3" data-listing-date-sort="1725897600000" data-listing-file-modified-sort="1726491647250" data-listing-date-modified-sort="1726491647000" data-listing-reading-time-sort="20" data-listing-word-count-sort="3824">
-<a href="./hands_on_ex/hands_on_ex04/hands_on_ex04.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="hands_on_ex/hands_on_ex04/hands_on_ex04_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 4: Spatial Weights and Applications
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 10, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="4" data-listing-date-sort="1725552000000" data-listing-file-modified-sort="1725889769014" data-listing-date-modified-sort="1725889769000" data-listing-reading-time-sort="22" data-listing-word-count-sort="4321">
-<a href="./hands_on_ex/hands_on_ex03/hands_on_ex03.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="hands_on_ex/hands_on_ex03/hands_on_ex03_files/figure-html/unnamed-chunk-9-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 3: Network Constrained Spatial Point Patterns Analysis
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 6, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="5" data-listing-date-sort="1724947200000" data-listing-file-modified-sort="1725674368542" data-listing-date-modified-sort="1725674368000" data-listing-reading-time-sort="16" data-listing-word-count-sort="3054">
-<a href="./hands_on_ex/hands_on_ex02/hands_on_ex02.2.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="hands_on_ex/hands_on_ex02/hands_on_ex02.2_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 2b: 2nd Order Spatial Point Patterns Analysis Methods
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Aug 30, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="6" data-listing-date-sort="1724947200000" data-listing-file-modified-sort="1725674398272" data-listing-date-modified-sort="1725674398000" data-listing-reading-time-sort="19" data-listing-word-count-sort="3630">
-<a href="./hands_on_ex/hands_on_ex02/hands_on_ex02.1.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="hands_on_ex/hands_on_ex02/hands_on_ex02.1_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 2a: 1st Order Spatial Point Patterns Analysis Methods
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Aug 30, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="7" data-listing-date-sort="1724428800000" data-listing-file-modified-sort="1725674784181" data-listing-date-modified-sort="1725674784000" data-listing-reading-time-sort="14" data-listing-word-count-sort="2640">
-<a href="./hands_on_ex/hands_on_ex01/hands_on_ex01.2.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="hands_on_ex/hands_on_ex01/hands_on_ex01.2_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 1b: Choropleth Mapping
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Aug 24, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="8" data-listing-date-sort="1724428800000" data-listing-file-modified-sort="1725674739344" data-listing-date-modified-sort="1725674739000" data-listing-reading-time-sort="7" data-listing-word-count-sort="1213">
-<a href="./hands_on_ex/hands_on_ex01/hands_on_ex01.1.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="hands_on_ex/hands_on_ex01/hands_on_ex01.1_files/figure-html/unnamed-chunk-8-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Hands-on Exercise 1a: Geospatial Data Wrangling
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Aug 24, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-<nav id="hands_on-pagination" class="listing-pagination" aria-label="Page Navigation">
-  <ul class="pagination"></ul>
-</nav>
-</div>
+<section id="overview" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
+<p>In this hands-on exercise, we will learn how to compute spatial weights using R.</p>
 </section>
-<section id="in-class-exercise" class="level2">
-<h2 class="anchored" data-anchor-id="in-class-exercise"><a href="./in_class_ex/">🏫 In-class Exercise</a></h2>
-<div id="listing-in_class" class="quarto-listing quarto-listing-container-grid">
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-date-sort="1726416000000" data-listing-file-modified-sort="1726669544785" data-listing-date-modified-sort="1726669544000" data-listing-reading-time-sort="11" data-listing-word-count-sort="2048">
-<a href="./in_class_ex/in_class_ex04/in_class_ex04.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="in_class_ex/in_class_ex04/in_class_ex04_files/figure-html/unnamed-chunk-22-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-In-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 16, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="1" data-listing-date-sort="1725811200000" data-listing-file-modified-sort="1725889972003" data-listing-date-modified-sort="1725889972000" data-listing-reading-time-sort="22" data-listing-word-count-sort="4256">
-<a href="./in_class_ex/in_class_ex03/in_class_ex03.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="in_class_ex/in_class_ex03/in_class_ex03_files/figure-html/unnamed-chunk-8-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-In-class Exercise 3: Advanced Spatial Point Patterns Analysis
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 9, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="2" data-listing-date-sort="1725206400000" data-listing-file-modified-sort="1725674586344" data-listing-date-modified-sort="1725674586000" data-listing-reading-time-sort="5" data-listing-word-count-sort="977">
-<a href="./in_class_ex/in_class_ex02/in_class_ex02.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="in_class_ex/in_class_ex02/in_class_ex02_files/figure-html/unnamed-chunk-12-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-In-class Exercise 2: Spatial Point Patterns Analysis
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Sep 2, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="3" data-listing-date-sort="1724601600000" data-listing-file-modified-sort="1725674640204" data-listing-date-modified-sort="1725674640000" data-listing-reading-time-sort="11" data-listing-word-count-sort="2070">
-<a href="./in_class_ex/in_class_ex01/in_class_ex01.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img data-src="in_class_ex/in_class_ex01/in_class_ex01_files/figure-html/unnamed-chunk-12-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-In-class Exercise 1: Geospatial Analytics
-</h5>
-<div class="card-attribution card-text-small end">
-<div class="listing-date">
-Aug 26, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-<nav id="in_class-pagination" class="listing-pagination" aria-label="Page Navigation">
-  <ul class="pagination"></ul>
-</nav>
-</div>
-
+<section id="reference" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Reference</h1>
+<p>Kam, T. S. Geographical Segmentation with Spatially Constrained Clustering Techniques. <em>R for Geospatial Data Science and Analytics.</em> <a href="https://r4gdsa.netlify.app/chap12.html" class="uri">https://r4gdsa.netlify.app/chap12.html</a></p>
 
 
 </section>

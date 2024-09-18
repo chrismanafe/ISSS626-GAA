@@ -3,6 +3,7 @@ project:
 
 website:
   title: "ISSS626-GAA"
+  favicon: "images/favicon.ico"
   navbar:
     left:
     - text: "Hands-on Exercises"
@@ -19,6 +20,22 @@ website:
           href: "hands_on_ex/hands_on_ex03/hands_on_ex03.html"
         - text: "4 Spatial Weights and Applications"
           href: "hands_on_ex/hands_on_ex04/hands_on_ex04.html"
+        - text: "5a Global Measures of Spatial Autocorrelation"
+          href: "hands_on_ex/hands_on_ex05/hands_on_ex05.1.html"
+        - text: "5b Local Measures of Spatial Autocorrelation"
+          href: "hands_on_ex/hands_on_ex05/hands_on_ex05.2.html"
+        - text: "6 Geographical Segmentation with Spatially Constrained Clustering Techniques"
+          href: "hands_on_ex/hands_on_ex06/hands_on_ex06.html"
+        - text: "7 Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method"
+          href: "hands_on_ex/hands_on_ex07/hands_on_ex07.html"
+        - text: "8 Geographically Weighted Predictive Models"
+          href: "hands_on_ex/hands_on_ex08/hands_on_ex08.html"
+        - text: "9a Processing and Visualising Flow Data"
+          href: "hands_on_ex/hands_on_ex09/hands_on_ex09.1.html"
+        - text: "9b Calibrating Spatial Interaction Models with R"
+          href: "hands_on_ex/hands_on_ex09/hands_on_ex09.2.html"
+        - text: "10 Modelling Geographical Accessibility"
+          href: "hands_on_ex/hands_on_ex10/hands_on_ex10.html"
     - text: "In-class Exercises"
       menu:
         - text: "1 Geospatial Analytics"
@@ -29,10 +46,26 @@ website:
           href: "in_class_ex/in_class_ex03/in_class_ex03.html"
         - text: "4 Geographically Weighted Summary Statistics - GWmodel methods"
           href: "in_class_ex/in_class_ex04/in_class_ex04.html"
+        - text: "5 "
+          href: "in_class_ex/in_class_ex05/in_class_ex05.html"
+        - text: "6 "
+          href: "in_class_ex/in_class_ex06/in_class_ex06.html"
+        - text: "7 "
+          href: "in_class_ex/in_class_ex07/in_class_ex07.html"
+        - text: "8 "
+          href: "in_class_ex/in_class_ex08/in_class_ex08.html"
+        - text: "9 "
+          href: "in_class_ex/in_class_ex09/in_class_ex09.html"
+        - text: "10 "
+          href: "in_class_ex/in_class_ex10/in_class_ex10.html"
     - text: "Take-home Exercises"
       menu:
         - text: "1. Geospatial Analytics for Public Good"
           href: "take_home_ex/take_home_ex01/take_home_ex01.html"
+        - text: "2. "
+          href: "take_home_ex/take_home_ex02/take_home_ex02.html"
+        - text: "3. "
+          href: "take_home_ex/take_home_ex03/take_home_ex03.html"
     right:
       - href: index.qmd
         text: Home

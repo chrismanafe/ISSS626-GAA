@@ -1,0 +1,25 @@
+---
+title: "Hands-on Exercise 8: Geographically Weighted Predictive Models"
+author: "Christover Manafe"
+date: "2024-09-10"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: false
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# Overview
+
+In this hands-on exercise, we will learn how to compute spatial weights using R.
+
+# Reference
+
+Kam, T. S. Geographically Weighted Predictive Models. *R for Geospatial Data Science and Analytics.* <https://r4gdsa.netlify.app/chap14.html>
