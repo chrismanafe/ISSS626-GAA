@@ -28,7 +28,7 @@ This analysis will focus on the [Bangkok Metropolitan Region (BMR)](https://en.w
 In this exercise, we will use following packages:
 
 | Package                                                             | Description                                                                                                                                                                                                                                                                                                                     |
-|------------------------|-----------------------------------------------|
+|---------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [**sf**](https://r-spatial.github.io/sf/)                           | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.                                                                                                            |
 | [**spNetwork**](https://cran.r-project.org/web/packages/spNetwork/) | Provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances. |
 | [**spatstat**](https://spatstat.org/)                               | Provides functions for spatial statistics with a strong focus on analysing spatial point patterns.                                                                                                                                                                                                                              |
@@ -43,7 +43,7 @@ pacman::p_load(sf, spNetwork, spatstat, raster, tmap, tidyverse)
 ## The Data
 
 | **Dataset Name**                                 | **Description**                                                              | **Format**     | **Source**                                                                              |
-|------------------|-------------------|------------------|------------------|
+|--------------------------------------------------|------------------------------------------------------------------------------|----------------|-----------------------------------------------------------------------------------------|
 | Thailand Road Accident \[2019-2022\]             | Data on road accidents in Thailand, including accident location and severity | CSV            | [Kaggle](https://www.kaggle.com/datasets/thaweewatboy/thailand-road-accident-2019-2022) |
 | Thailand Roads (OpenStreetMap Export)            | A detailed export of road networks in Thailand from OpenStreetMap            | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/hotosm_tha_roads)   |
 | Thailand - Subnational Administrative Boundaries | Administrative boundary data for Thailand's subnational divisions            | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/cod-ab-tha?)        |
@@ -62,7 +62,7 @@ glimpse(accidents)
 The dataset consists of 81,735 rows and 18 columns. Below is a detailed description of each column, as provided on Kaggle:
 
 | **Column**                  | **Description**                                                                |
-|-------------------------|-----------------------------------------------|
+|-----------------------------|--------------------------------------------------------------------------------|
 | acc_code                    | The accident code or identifier.                                               |
 | incident_datetime           | The date and time of the accident occurrence.                                  |
 | report_datetime             | The date and time when the accident was reported.                              |

@@ -28,7 +28,7 @@ In this hands-on exercise, we will learn how to compute spatial weights, particu
 We will use following packages in this exercise:
 
 | Package                                                                   | Description                                                                                                                                                                                                          |
-|---------------------------|---------------------------------------------|
+|---------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [**sf**](https://r-spatial.github.io/sf/)                                 | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons. |
 | [**tidyverse**](https://www.tidyverse.org/)                               | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                   |
 | [**tmap**](https://cran.r-project.org/web/packages/tmap/)                 | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                   |
@@ -51,7 +51,7 @@ pacman::p_load(sf, ggstatsplot,tmap, tidyverse, knitr, GWmodel)
 We will use following geospatial datasets in this exercise:
 
 | Dataset      | Description                                                    | Format         |
-|-------------------|--------------------------------|---------------------|
+|--------------|----------------------------------------------------------------|----------------|
 | *Hunan*      | Hunan county boundary layer geospatial data                    | ESRI shapefile |
 | *Hunan_2012* | Contains selected Hunan’s local development indicators in 2012 | CSV file       |
 
@@ -242,5 +242,20 @@ tm_shape(hunan_gstat) +
 Let us find out whether is there any relationship between GDP per capita and Gross Industry Output?
 
 ```{r}
-
+ggscatterstats(
+  data = hunan2012, 
+  x = Agri, 
+  y = GDPPC,
+  xlab = "Gross Agriculture Output", ## label for the x-axis
+  ylab = "GDP per capita", 
+  label.var = County, 
+  label.expression = Agri > 10000 & GDPPC > 50000, 
+  point.label.args = list(alpha = 0.7, size = 4, color = "grey50"),
+  xfill = "#CC79A7", 
+  yfill = "#009E73", 
+  title = "Relationship between GDP PC and Gross Agriculture Output")
 ```
+
+# Reference
+
+Kam, T. S. Geographically Weighted Summary Statistics - gwModel methods. *ISSS626 Geospatial Analytics and Applications.* <https://isss626-ay2024-25aug.netlify.app/in-class_ex/in-class_ex04/in-class_ex04>
