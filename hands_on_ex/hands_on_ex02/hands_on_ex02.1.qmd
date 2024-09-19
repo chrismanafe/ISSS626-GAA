@@ -1,5 +1,6 @@
 ---
 title: "Hands-on Exercise 2a: 1st Order Spatial Point Patterns Analysis Methods"
+subtitle: "In this exercise, we will learn to analyze spatial point patterns in R, including importing geospatial data, performing kernel density estimation and nearest neighbor analysis, and visualizing results using spatstat, sf, and tmap packages."
 author: "Christover Manafe"
 date: "2024-08-30"
 date-modified: "last-modified"
@@ -691,6 +692,7 @@ We will use a 95% confidence interval.
 
 ::: panel-tabset
 ### Singapore Islandwide
+
 ```{r}
 clarkevans.test(childcareSG_ppp,
                 correction="none",
@@ -698,9 +700,11 @@ clarkevans.test(childcareSG_ppp,
                 alternative=c("clustered"),
                 nsim=99)
 ```
+
 Given that the p-value is less than 0.05, we can reject the null hypothesis and conclude that the distribution of childcare centers in Singapore is not random but rather clustered.
 
 ### Choa Chu Kang
+
 Using the `clarkevans.test()` function from `spatstat`, we conducted a Clark-Evans test to assess the aggregation of childcare centers in `Choa Chu Kang` planning area.
 
 ```{r}
@@ -710,10 +714,13 @@ clarkevans.test(childcare_ck_ppp,
                 alternative=c("two.sided"),
                 nsim=999)
 ```
+
 The locations of childcare in `Choa Chu Kang` appear to be randomly distributed, with no strong evidence of them being concentrated in specific areas or evenly spaced apart.
 
 ### Tampines
+
 Using the `clarkevans.test()` function from `spatstat`, we conducted a Clark-Evans test to assess the aggregation of childcare centers in `Tampines` planning area.
+
 ```{r}
 clarkevans.test(childcare_tm_ppp,
                 correction="none",
@@ -723,10 +730,8 @@ clarkevans.test(childcare_tm_ppp,
 ```
 
 The locations of childcare centers in Tampines are significantly clustered, with strong evidence suggesting that they tend to be closer together rather than being randomly distributed or evenly spaced apart.
-
 :::
 
 # Reference
 
 Kam, T. S. 1st Order Spatial Point Patterns Analysis Methods. R for Geospatial Data Science and Analytics. https://r4gdsa.netlify.app/chap04
-

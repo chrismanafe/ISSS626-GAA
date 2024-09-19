@@ -28,12 +28,12 @@ toc: false
 
 This website showcases my coursework, featuring exercises and assignments enriched with geospatial visualizations and analytical insights. I invite you to explore the contents I've developed throughout the course.
 
-## [✍️ Hands-on Exercise](/hands_on_ex/)
+## [Hands-on Exercise](/hands_on_ex/)
 
 ::: {#hands_on}
 :::
 
-## [🏫 In-class Exercise](/in_class_ex/)
+## [In-class Exercise](/in_class_ex/)
 
 ::: {#in_class}
 :::

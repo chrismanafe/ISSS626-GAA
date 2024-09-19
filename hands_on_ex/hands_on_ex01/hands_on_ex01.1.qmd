@@ -1,5 +1,6 @@
 ---
 title: "Hands-on Exercise 1a: Geospatial Data Wrangling"
+subtitle: "In this exercise, we will learn to use R for geospatial data handling, including importing, transforming, wrangling, and visualizing data with sf, tidyverse, and ggplot2."
 author: "Christover Manafe"
 date: "2024-08-24"
 date-modified: "last-modified"

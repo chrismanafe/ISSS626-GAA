@@ -1,5 +1,6 @@
 ---
 title: "Hands-on Exercise 3: Network Constrained Spatial Point Patterns Analysis"
+subtitle: "In this exercise, we will learn to use R and the `spNetwork` package for analyzing network-constrained spatial point patterns, focusing on kernel density estimation and G- and K-function analysis."
 author: "Christover Manafe"
 date: "2024-09-06"
 date-modified: "last-modified"
@@ -45,7 +46,7 @@ In this exercise, we will analyse the spatial distribution of childcare center i
 We will use following packages in this exercise:
 
 | Package                                                             | Description                                                                                                                                                                                                                                                                                                                     |
-|--------------------------|---------------------------------------------|
+|---------------------------|---------------------------------------------|
 | [**sf**](https://r-spatial.github.io/sf/)                           | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.                                                                                                            |
 | [**spNetwork**](https://cran.r-project.org/web/packages/spNetwork/) | Provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances. |
 | [**tidyverse**](https://www.tidyverse.org/)                         | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                                                                                                                              |
@@ -268,7 +269,7 @@ kfun_childcare <- kfunctions(network,
 :::
 
 | **Argument** | **Description**                                                                                                                                                                                                                                      |
-|------------------|------------------------------------------------------|
+|-------------------|-----------------------------------------------------|
 | `lines`      | A `SpatialLinesDataFrame` containing the sampling points. The geometries must be valid; invalid geometries may cause crashes.                                                                                                                        |
 | `points`     | A `SpatialPointsDataFrame` representing the points on the network, which will be snapped onto the network.                                                                                                                                           |
 | `start`      | A double indicating the starting value for evaluating the k and g functions.                                                                                                                                                                         |

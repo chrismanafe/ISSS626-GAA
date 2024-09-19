@@ -66,6 +66,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../../images/favicon.ico" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -153,6 +154,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex04/hands_on_ex04.html">
  <span class="dropdown-text">4 Spatial Weights and Applications</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.1.html">
+ <span class="dropdown-text">5a Global Measures of Spatial Autocorrelation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.2.html">
+ <span class="dropdown-text">5b Local Measures of Spatial Autocorrelation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex06/hands_on_ex06.html">
+ <span class="dropdown-text">6 Geographical Segmentation with Spatially Constrained Clustering Techniques</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex07/hands_on_ex07.html">
+ <span class="dropdown-text">7 Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex08/hands_on_ex08.html">
+ <span class="dropdown-text">8 Geographically Weighted Predictive Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex09/hands_on_ex09.1.html">
+ <span class="dropdown-text">9a Processing and Visualising Flow Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex09/hands_on_ex09.2.html">
+ <span class="dropdown-text">9b Calibrating Spatial Interaction Models with R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex10/hands_on_ex10.html">
+ <span class="dropdown-text">10 Modelling Geographical Accessibility</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -176,6 +209,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../in_class_ex/in_class_ex04/in_class_ex04.html">
  <span class="dropdown-text">4 Geographically Weighted Summary Statistics - GWmodel methods</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex05/in_class_ex05.html">
+ <span class="dropdown-text">5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex06/in_class_ex06.html">
+ <span class="dropdown-text">6</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex07/in_class_ex07.html">
+ <span class="dropdown-text">7</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex08/in_class_ex08.html">
+ <span class="dropdown-text">8</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex09/in_class_ex09.html">
+ <span class="dropdown-text">9</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex10/in_class_ex10.html">
+ <span class="dropdown-text">10</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -186,6 +243,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="../../take_home_ex/take_home_ex01/take_home_ex01.html">
  <span class="dropdown-text">1. Geospatial Analytics for Public Good</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex02/take_home_ex02.html">
+ <span class="dropdown-text">2.</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex03/take_home_ex03.html">
+ <span class="dropdown-text">3.</span></a>
   </li>  
     </ul>
   </li>
@@ -272,6 +337,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Hands-on Exercise 4: Spatial Weights and Applications</h1>
+<p class="subtitle lead">In this exercise, we will learn to compute spatial weights, visualize spatial distributions, and create spatially lagged variables using various functions from R packages such as sf,spdep, and tmap.</p>
 </div>
 
 
@@ -295,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 16, 2024</p>
+      <p class="date-modified">September 19, 2024</p>
     </div>
   </div>
     

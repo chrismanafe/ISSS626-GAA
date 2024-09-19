@@ -1,5 +1,6 @@
 ---
 title: "Hands-on Exercise 4: Spatial Weights and Applications"
+subtitle: "In this exercise, we will learn to compute spatial weights, visualize spatial distributions, and create spatially lagged variables using various functions from R packages such as sf,spdep, and tmap."
 author: "Christover Manafe"
 date: "2024-09-10"
 date-modified: "last-modified"

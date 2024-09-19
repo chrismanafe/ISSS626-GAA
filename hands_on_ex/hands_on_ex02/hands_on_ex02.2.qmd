@@ -1,5 +1,6 @@
 ---
 title: "Hands-on Exercise 2b: 2nd Order Spatial Point Patterns Analysis Methods"
+subtitle: "In this exercise, we will learn to apply 2nd-order spatial point pattern analysis methods in R, including G, F, K, and L functions, to evaluate spatial point distributions and perform hypothesis testing using the spatstat package."
 author: "Christover Manafe"
 date: "2024-08-30"
 date-modified: "last-modified"
@@ -460,6 +461,7 @@ The F function estimates the empty space function `F(r)` or its hazard rate `h(r
 ## Choa Chu Kang
 
 Let us compute F-function estimation using `Fest()` of `spatstat` package for Choa Chu Kang area.
+
 ```{r}
 F_CK = Fest(childcare_ck_ppp)
 plot(F_CK)
@@ -473,6 +475,7 @@ To confirm the observed spatial patterns, a hypothesis test will be conducted. T
 The null hypothesis will be rejected if the p-value is smaller than the alpha value of `0.001`.
 
 Let us perform Monte Carlo test with `F-function` and plot the test result.
+
 ```{r}
 F_CK.csr <- envelope(childcare_ck_ppp, Fest, nsim = 999)
 ```
@@ -510,7 +513,6 @@ plot(F_tm.csr)
 ```
 
 The F-function plot for Tampines suggests that the distribution of childcare centers is more dispersed than what would be expected under complete spatial randomness. The childcare centers are spread out more than a random pattern would predict, indicating a lower density of centers across the area compared to a random distribution.
-
 :::
 
 # Analysing spatial point process using K-Function
@@ -518,7 +520,6 @@ The F-function plot for Tampines suggests that the distribution of childcare cen
 The K-function measures the number of events found up to a given distance from any particular event. In this section, we will learn how to compute K-function estimates using the `Kest()` function from the `spatstat` package. We will also learn how to perform a Monte Carlo simulation test using the `envelope()` function from the same package.
 
 ::: panel-tabset
-
 ## Choa Chu Kang
 
 Let us compute K-function estimation using `Kest()` of `spatstat` package for Tampines area.
@@ -527,7 +528,6 @@ Let us compute K-function estimation using `Kest()` of `spatstat` package for Ta
 K_ck = Kest(childcare_ck_ppp, correction = "Ripley")
 plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
 ```
-
 
 To confirm the observed spatial patterns, a hypothesis test will be conducted. The hypotheses for the test are as follows:
 
@@ -578,7 +578,6 @@ plot(K_tm.csr, . - r ~ r,
 ```
 
 The K-function plot for Tampines reveals significant clustering in the distribution of childcare centers. The observed number of centers within various distances from any given center is much higher than what would be expected under complete spatial randomness, indicating a strong pattern of clustering.
-
 :::
 
 # Analysing spatial point process using L-Function
@@ -588,7 +587,6 @@ The L-function is a transformation of the K-function, providing a more linearize
 In this section, we will learn how to compute L-function estimation using the `Lest()` function from the `spatstat` package. We will also learn how to perform a Monte Carlo simulation test using the `envelope()` function from the same package.
 
 ::: panel-tabset
-
 ## Choa Chu Kang
 
 Let us compute L-function estimation using `Lest()` of `spatstat` package for Choa Chu Kang area.
@@ -648,7 +646,6 @@ plot(L_tm.csr, . - r ~ r,
 ```
 
 The L-function plot for Tampines reveals significant clustering in the distribution of childcare centers. The observed L-function consistently exceeds the envelope expected under complete spatial randomness, indicating that the centers are more densely packed together than a random distribution would predict. This strong deviation from randomness highlights the presence of spatial clustering in the area.
-
 :::
 
 # Reference

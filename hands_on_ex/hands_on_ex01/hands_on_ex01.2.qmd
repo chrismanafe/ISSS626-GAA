@@ -1,5 +1,6 @@
 ---
 title: "Hands-on Exercise 1b: Choropleth Mapping"
+subtitle: "In this exercise, we will learn to create thematic maps and perform geovisualization in R using the tmap package, including data preparation, classification, color schemes, and advanced mapping techniques."
 author: "Christover Manafe"
 date: "2024-08-24"
 date-modified: "last-modified"
@@ -480,7 +481,6 @@ tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N=="CENTRAL REGION", ])+
             frame = FALSE) +
   tm_borders(alpha = 0.5)
 ```
-
 
 # Reference
 
