@@ -253,7 +253,7 @@ bperm
 
 -   After 999 simulations, our P-value is 0.001.
 
--   We will **accept** / **do not reject** the null hypothesis at 99.9% as the p-value is equal to our alpha value 0.001.
+-   We **do not reject** the null hypothesis at 99.9% as the p-value is equal to our alpha value 0.001.
 
 -   Since the Monte Carlo statistic 0.30075 is \> 0 and is approaching 1 which is positive autocorrelation, we can infer that spatial patterns that we observed resemble a cluster.
 :::
@@ -358,7 +358,7 @@ bperm
 
 -   After running all simulations, the p-value = 0.001.
 
--   Hence, we will **accept** / **cannot reject** the null hypothesis at 99.9% as the p-value is equal to our alpha value, 0.001.
+-   Hence, we **do not reject** the null hypothesis at 99.9% as the p-value is equal to our alpha value, 0.001.
 
 -   The Geary C statistic is now, 0.69072, which is still \< 1, hence the spatial pattern is “clustered”.
 :::

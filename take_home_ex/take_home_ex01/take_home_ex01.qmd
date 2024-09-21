@@ -27,23 +27,27 @@ This analysis will focus on the [Bangkok Metropolitan Region (BMR)](https://en.w
 
 In this exercise, we will use following packages:
 
-| Package                                                             | Description                                                                                                                                                                                                                                                                                                                     |
-|---------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [**sf**](https://r-spatial.github.io/sf/)                           | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.                                                                                                            |
-| [**spNetwork**](https://cran.r-project.org/web/packages/spNetwork/) | Provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances. |
-| [**spatstat**](https://spatstat.org/)                               | Provides functions for spatial statistics with a strong focus on analysing spatial point patterns.                                                                                                                                                                                                                              |
-| [**raster**](https://cran.r-project.org/web/packages/raster/)       | Provides functions which reads, writes, manipulates, analyses and model of gridded spatial data (i.e. raster). In this hands-on exercise, it will be used to convert image output generate by spatstat into raster format.                                                                                                      |
-| [**tidyverse**](https://www.tidyverse.org/)                         | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                                                                                                                              |
-| [**tmap**](https://cran.r-project.org/web/packages/tmap/)           | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                                                                                                                              |
+| Package                                                                     | Description                                                                                                                                                                                                                                                                                                                     |
+|-----------------------|------------------------------------------------|
+| [**sf**](https://r-spatial.github.io/sf/)                                   | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.                                                                                                            |
+| [**spNetwork**](https://cran.r-project.org/web/packages/spNetwork/)         | Provides functions to perform Spatial Point Patterns Analysis such as kernel density estimation (KDE) and K-function on network. It also can be used to build spatial matrices (‘listw’ objects like in ‘spdep’ package) to conduct any kind of traditional spatial analysis with spatial weights based on reticular distances. |
+| [**spatstat**](https://spatstat.org/)                                       | Provides functions for spatial statistics with a strong focus on analysing spatial point patterns.                                                                                                                                                                                                                              |
+| [**raster**](https://cran.r-project.org/web/packages/raster/)               | Provides functions which reads, writes, manipulates, analyses and model of gridded spatial data (i.e. raster). In this hands-on exercise, it will be used to convert image output generate by spatstat into raster format.                                                                                                      |
+| [**tidyverse**](https://www.tidyverse.org/)                                 | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                                                                                                                              |
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/)                   | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                                                                                                                              |
+| [**classInt**](https://cran.r-project.org/web/packages/classInt/index.html) | Provides functions for choosing univariate class intervals for mapping or other graphics purposes.                                                                                                                                                                                                                              |
+| [**gifski**](https://cran.r-project.org/web/packages/gifski/index.html)     | Provides functions to converts images to GIF animations using pngquant's efficient cross-frame palettes and temporal dithering with thousands of colors per frame.                                                                                                                                                              |
+
+: {tbl-colwidths="\[15,85\]"}
 
 ```{r}
-pacman::p_load(sf, spNetwork, spatstat, raster, tmap, tidyverse)
+pacman::p_load(sf, spNetwork, spatstat, raster, tmap, tidyverse, classInt, gifski)
 ```
 
 ## The Data
 
 | **Dataset Name**                                 | **Description**                                                              | **Format**     | **Source**                                                                              |
-|--------------------------------------------------|------------------------------------------------------------------------------|----------------|-----------------------------------------------------------------------------------------|
+|------------------|------------------|------------------|-------------------|
 | Thailand Road Accident \[2019-2022\]             | Data on road accidents in Thailand, including accident location and severity | CSV            | [Kaggle](https://www.kaggle.com/datasets/thaweewatboy/thailand-road-accident-2019-2022) |
 | Thailand Roads (OpenStreetMap Export)            | A detailed export of road networks in Thailand from OpenStreetMap            | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/hotosm_tha_roads)   |
 | Thailand - Subnational Administrative Boundaries | Administrative boundary data for Thailand's subnational divisions            | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/cod-ab-tha?)        |
@@ -62,7 +66,7 @@ glimpse(accidents)
 The dataset consists of 81,735 rows and 18 columns. Below is a detailed description of each column, as provided on Kaggle:
 
 | **Column**                  | **Description**                                                                |
-|-----------------------------|--------------------------------------------------------------------------------|
+|-------------------------|----------------------------------------------|
 | acc_code                    | The accident code or identifier.                                               |
 | incident_datetime           | The date and time of the accident occurrence.                                  |
 | report_datetime             | The date and time when the accident was reported.                              |
@@ -112,6 +116,7 @@ accidents_bmr <- accidents %>%
     Month_lab = month(incident_datetime, label = TRUE),
     Day_of_Week_num = wday(incident_datetime),
     Day_of_Week_lab = wday(incident_datetime, label = TRUE),
+    Day_of_year = yday(incident_datetime),
     Hour = hour(incident_datetime)
   ) %>%
   st_as_sf(coords = c("longitude", "latitude"), crs=4326) %>%
@@ -257,28 +262,30 @@ admin_boundary_bmr <- read_rds("data/rds/admin_boundary_bmr.rds")
 
 Let's visualize the administrative boundaries map using **tmap**.
 
-```{r}
+```{r fig.height=8, fig.width=12}
 tmap_mode('plot')
 
 tm_shape(admin_boundary_bmr) +
-  tm_polygons() +
+  tm_polygons(col = "ADM1_EN", palette = "Pastel1") +
   tm_text("ADM1_EN", size = 0.8) +
-  tm_layout(title = "Bangkok Metropolitan Region (BMR) Administrative Boundaries",
+  tm_layout(main.title = "Bangkok Metropolitan Region (BMR) Administrative Boundaries",
+            main.title.position = "center",
             frame = FALSE)
 ```
 
 Let's plot the administrative boundaries along with the accident points from the earlier dataset to visualize their spatial distribution.
 
-```{r}
+```{r fig.height=8, fig.width=12}
 tmap_mode('plot')
 
 tm_shape(admin_boundary_bmr) +
-  tm_polygons() +
+  tm_polygons(col = "ADM1_EN", palette = "Pastel1") +
   tm_shape(accidents_bmr) +
   tm_dots(col='red',
           alpha=0.4, 
           size=0.04) +
-  tm_layout(title = "BMR Administrative Boundaries and Road Accidents",
+  tm_layout(main.title = "BMR Administrative Boundaries and Road Accidents",
+            main.title.position = "center",
             frame = FALSE)
 ```
 
@@ -308,14 +315,27 @@ Let us verify the CRS on \`roads_sf\`.
 st_crs(roads_sf)
 ```
 
-Since the OpenStreetMap data includes a wide range of [road types](https://wiki.openstreetmap.org/wiki/Key:highway), we will filter the dataset to keep only the road classes that are relevant to our analysis.
+> `roads_sf` has the correct CRS, EPSG:32647.
+
+Since the OpenStreetMap data includes a wide range of [road types](https://wiki.openstreetmap.org/wiki/Key:highway), we will filter the dataset to keep only the road classes that are relevant to our analysis. Based on the definition, we'll select the following road types:
+
+-   motorway
+-   trunk
+-   primary
+-   secondary
+-   tertiary
+-   motorway_link
+-   trunk_link
+-   primary_link
+-   secondary_link
+-   tertiary_link.
 
 ```{r}
 #| eval: false
 roads_sf <- roads_sf %>%
-  filter(highway %in% c("motorway", "trunk", "primary", "secondary", "tertiary", "unclassified",
-                        "residential", "motorway_link", "trunk_link", "primary_link", 
-                        "secondary_link", "tertiary_link", "living_street", "service"))
+  filter(highway %in% c("motorway", "trunk", "primary", "secondary", "tertiary",
+                        "motorway_link", "trunk_link", "primary_link", 
+                        "secondary_link", "tertiary_link"))
 
 ```
 
@@ -328,39 +348,52 @@ The `roads_sf` dataset contains all road information across Thailand. Since our 
 
 ```{r}
 #| eval: false
-roads_bmr <- st_intersection(roads_sf, admin_boundary_bmr)
+roads_bmr <- st_intersection(roads_sf, admin_boundary_bmr) %>%
+  filter(st_geometry_type(.) == "LINESTRING")
+```
+
+```{r}
+#| echo: false
+roads_bmr <- read_rds("data/rds/roads_bmr.rds")
 ```
 
 Let us check for any invalid geometries from `roads_bmr`.
 
 ```{r}
-#| eval: false
 invalid_geometries <- st_is_valid(roads_bmr, reason=TRUE)
 ```
 
 ```{r}
-#| eval: false
 length(which(invalid_geometries != "Valid Geometry"))
 ```
+
+There's no record with invalid geometries found in `roads_bmr`.
 
 ```{r}
 #| eval: false
 write_rds(roads_bmr, "data/rds/roads_bmr.rds")
 ```
 
-```{r}
-roads_bmr <- read_rds("data/rds/roads_bmr.rds")
-```
+Now, let's visualize the road network along with accident locations within the Bangkok Metropolitan Region (BMR) for a clearer understanding of high-risk areas.
 
-Now, let's visualize the road network within the Bangkok Metropolitan Region (BMR).
-
-```{r}
+```{r fig.height=8, fig.width=12}
 tmap_mode("plot")
 tm_shape(roads_bmr) +
-  tm_lines(col = "blue", lwd = 0.5) +
-  tm_layout(title = "Bangkok Metropolitan Region Road Network",
+  tm_lines(col = "gray", lwd = 0.7) +
+  tm_shape(accidents_bmr) +
+  tm_dots(col = "red", size = 0.1, alpha = 0.7) +
+  tm_layout(main.title = "Bangkok Metropolitan Region Road Network with Accident Locations",
+            main.title.position = "center",
             frame = FALSE)
 ```
+
+::: callout-note
+**Initial Observations:**
+
+-   Accidents are highly concentrated along major roads and highways, particularly in central urban areas.
+-   Peripheral areas show fewer accidents, suggesting lower traffic volumes outside the city center.
+-   Continuous accident clusters along key corridors indicate potential high-risk areas for traffic incidents.
+:::
 
 ### Converting sf data frame into spatstat's ppp format
 
@@ -401,82 +434,101 @@ Before conducting the Spatial Point Pattern Analysis, we will first perform Expl
 ::: panel-tabset
 ## Cause Category
 
-```{r}
-ggplot(accidents_bmr, aes(x=presumed_cause_category)) + 
-  geom_bar() +
+```{r fig.height=6}
+ggplot(accidents_bmr, aes(x = presumed_cause_category)) + 
+  geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Accidents Distribution by Cause Categories",
        x = "Road Accident Cause Categories",
-       y = "# of Accidents")
+       y = "Number of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal()
 ```
 
 ## Vehicle Category
 
-```{r}
+```{r fig.height=6}
 ggplot(accidents_bmr, aes(x=vehicle_category)) + 
-  geom_bar() +
+  geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Accidents Distribution by Vehicle Categories",
        x = "Vehicle Categories",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal()
 ```
 
 ## Season
 
-```{r}
+```{r fig.height=6}
 ggplot(accidents_bmr, aes(x=season)) + 
-  geom_bar() +
+  geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Accidents Distribution by Season",
        x = "Season",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal()
 ```
 
 ## Weather
 
-```{r}
+```{r fig.height=6}
 ggplot(accidents_bmr, aes(x=weather_condition)) + 
-  geom_bar() +
+  geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Accidents Distribution by Weather",
        x = "Weather",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal()
 ```
 
 ## Month
 
-```{r}
-ggplot(accidents_bmr, aes(x=Month_lab)) + 
+```{r fig.height=6}
+ggplot(accidents_bmr, aes(x=Month_lab, fill = season)) + 
   geom_bar() +
   labs(title = "Accident Distribution by Month",
        x = "Month",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal() +
+  scale_fill_manual(values = c("rainy" = "blue", "summer" = "orange", "winter" = "lightblue"))
+
 ```
 
 ## Day of the week
 
-```{r}
-ggplot(accidents_bmr, aes(x=Day_of_Week_lab)) + 
+```{r fig.height=6}
+ggplot(accidents_bmr, aes(x=Day_of_Week_lab, fill = weekday_or_weekend)) + 
   geom_bar() +
   labs(title = "Accident Distribution by Day of the week",
        x = " Day of the week",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal() +
+  scale_fill_manual(values = c("weekday" = "lightblue", "weekend" = "#e34a33"))
 ```
 
 ## Hour
 
-```{r}
+```{r fig.height=6}
 ggplot(accidents_bmr, aes(x=Hour)) + 
-  geom_bar() +
+  geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Accident Distribution by Hour of the Day",
        x = "Hour of the Day",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal()
 ```
 
 ## Songkran
 
-```{r}
+```{r fig.height=6}
 ggplot(accidents_bmr, aes(x = is_songkran)) + 
-  geom_bar() +
+  geom_bar(fill = "skyblue", color = "black") +
   labs(title = "Accident Frequency During Songkran Festival",
        x = "Songkran",
-       y = "# of Accidents")
+       y = "# of Accidents") +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal()
 ```
 :::
 
@@ -493,7 +545,13 @@ The following observations summarize key trends and patterns identified from the
 
 -   **Day of the Week**: Accidents are slightly more frequent on Fridays and Saturdays compared to other days.
 
--   **Time of Day**: Most accidents occur between 7 AM and 11 PM.
+-   **Hour of Day**:
+
+    -   **Two Accident Peaks**: There are two main peaks in accidents—one around 10 AM and another around 5 PM, likely corresponding to the morning and evening rush hours.
+
+    -   **High Accident Frequency During Daytime**: Accidents remain consistently high between 10 AM and 2 PM, indicating sustained traffic activity during the business hours.
+
+    -   **Low Accident Rates Late at Night**: Accident counts drop significantly between 2 AM and 6 AM, reflecting reduced traffic during late-night hours.
 
 -   **Monthly Trends**: Accident frequency remains fairly consistent across months, with no major variations.
 
@@ -545,16 +603,16 @@ plot(kde_accidents_adaptive_kernel, main = "adaptive - kernel")
 
 > Visually, these results are very similar because both **bw.diggle** and the **adaptive kernel method** adjust the bandwidth based on the local density of points in the dataset. Since both methods are adaptive in nature, they capture the same underlying spatial patterns and point densities, leading to similar visual outcomes. This consistency indicates that the spatial distribution of accidents is being accurately reflected by both approaches.
 
-### Plotting Interactive KDE Maps
+### Plotting KDE Maps
 
-We will create interactive map of the **KDE (Kernel Density Estimate)** map displayed over an **OpenStreetMap** basemap with a color palette ranging from yellow to red to represent density. It includes BMR boundary polygons, a scale bar, and sets the map projection to the UTM Zone 47N (EPSG:32647).
+We will visualise **KDE (Kernel Density Estimate)** map with a color palette ranging from yellow to red to represent density. It includes BMR boundary polygons, a scale bar, and sets the map projection to the UTM Zone 47N (EPSG:32647).
 
-```{r}
+```{r fig.height=8, fig.width=12}
 #| code-fold: true
 raster_kde_adaptive <- raster(kde_accidents_adaptive_kernel)
 projection(raster_kde_adaptive) <- CRS("+init=EPSG:32647 +units=km")
 
-tmap_mode('view')
+tmap_mode('plot')
 
 kde_diggle_tmap <- tm_basemap(server = "OpenStreetMap") +
   tm_shape(admin_boundary_bmr, ) +
@@ -566,27 +624,17 @@ kde_diggle_tmap <- tm_basemap(server = "OpenStreetMap") +
               style = "pretty",
               alpha = 0.6,
               palette = "YlOrRd") +
-  tm_scale_bar()
+  tm_layout(main.title = "KDE of Road Accidents in Bangkok Metropolitan Region",
+            main.title.position = "center",
+            frame = FALSE)
 
-base_tmap <- tm_basemap(server = "OpenStreetMap")+
-  tm_shape(admin_boundary_bmr) +
-    tm_polygons(alpha=0.1, id="ADM1_EN") +
-  tm_scale_bar()
-
-tmap_arrange(kde_diggle_tmap, 
-             base_tmap,
-             ncol=1,
-             nrow=2,
-             sync = TRUE)
-
-tmap_mode('plot')
-
+kde_diggle_tmap
 ```
 
 ::: callout-note
 #### Observation
 
--   The interactive map reveals that accidents are most concentrated in **Bangkok**, followed by **Samut Prakan** and **Pathum Thani** provinces.
+-   The map reveals that accidents are most concentrated in **Bangkok**, followed by **Samut Prakan** and **Pathum Thani** provinces.
 
 -   The highest concentration of accidents occurs along **Motorway Route 7** (Bangkok–Ban Chang Motorway), with significant densities also observed on other major highways, including **Motorway Route 9** (Kanchanaphisek Road, also known as the Bangkok Outer Ring Road) and **Highway 338** (Borommaratchachonnani Road).
 
@@ -618,9 +666,326 @@ clarkevans.test(accidents_bmr_ppp,
 >
 > -   This clustering is likely tied to underlying factors such as high traffic volumes or specific road types (e.g., intersections, highways).
 
-## **Network Kernel Density Estimation (NKDE)**
+## Network Constrained Spatial Point Pattern Analysis
 
-## Temporal Network Kernel Density Estimate **(TNKDE)**
+In this section, we aim to analyze the spatial distribution of road accidents within the Bangkok Metropolitan Region (BMR) using **Network Kernel Density Estimation (NKDE)**. Unlike traditional spatial point pattern analysis, NKDE considers the road network as a constraint, ensuring that density estimates are calculated along the network itself, rather than across a continuous surface. This method is particularly well-suited for transportation-related incidents, where events (such as accidents) are tied to specific roads.
+
+### Preparing the lixels objects
+
+To begin, the road network will be prepared by segmenting the road lines into smaller units, known as **lixels** (linear pixels), using the [lixelize_lines()](https://jeremygelb.github.io/spNetwork/reference/lixelize_lines.html) function of **spNetwork** package. Choosing the appropriate **lixel length** and **minimum distance** is crucial. Shorter lixels offer finer spatial resolution but may increase computational cost, while longer lixels capture broader patterns.
+
+We can determine the optimal lixel length by analyzing the distribution of road segment length.
+
+```{r}
+summary(st_length(roads_bmr))
+
+quantile(st_length(roads_bmr), probs = seq(.1, .9, by = .1))
+```
+
+Surprisingly, road lengths in the BMR vary significantly, with half of the roads being up to 118 meters long. However, since we know previously that the accidents concentrated on highway, we'll set the length of lixel to 5,000 meters and minimum distance to 2,500 meters.
+
+```{r}
+lixels <- lixelize_lines(lines = roads_bmr,
+                         lx_length = 5000,
+                         mindist = 2500)
+```
+
+### Generating line centre points
+
+Next, the [**`lines_center()`**](https://jeremygelb.github.io/spNetwork/reference/lines_center.html) function from the **spNetwork** package will be used to generate a `SpatialPointsDataFrame`(i.e., `samples`) by extracting the center points of each line segment. The following code chunk demonstrates this process.
+
+```{r}
+samples <- lines_center(lixels)
+```
+
+### Bandwidth selection
+
+Before computing NKDE, it is essential to define the appropriate **bandwidth**, as described in the NKDE documentation. According to the documentation, bandwidth is the most critical parameter when performing kernel density estimation, as it controls the smoothing of the density estimation. In this analysis, we will use the [bw_cv_likelihood_calc()](https://jeremygelb.github.io/spNetwork/reference/bw_cv_likelihood_calc.html) function, which applies likelihood cross-validation through a leave-one-out approach. The idea is to find a bandwidth that produces the most accurate results by minimizing the difference when an event is removed from the dataset.
+
+```{r}
+#| eval: false
+bws_selection_cv <- bw_cv_likelihood_calc(
+  bws = seq(200,3000,100),
+  lines = mtl_network, events = bike_accidents,
+  w = rep(1,nrow(bike_accidents)),
+  kernel_name = "quartic", method = "continuous",
+  diggle_correction = FALSE, study_area = NULL,
+  max_depth = 8,
+  digits=2, tol=1, agg=50,
+  sparse=TRUE, grid_shape=c(10,10),
+  verbose=FALSE, check=TRUE)
+
+write_rds(bws_selection_cv, "data/rds/bws_selection_cv.rds")
+```
+
+```{r}
+#| echo: false
+bws_selection_cv <- read_rds("data/rds/bws_selection_cv.rds")
+```
+
+```{r}
+cv_values <- data.frame(
+  "bw" = bws_selection_cv$bw,
+  "cv_likelihood_adpt_cont" = bws_selection_cv$cv_scores
+)
+cv_values
+```
+
+> -   Although the bandwidth range of **600-800** yields the lowest cross-validation likelihood scores, we have chosen a bandwidth of **1700** to produce smoother results.
+>
+> -   This larger bandwidth captures broader trends across the road network, offering a more generalized view of accident density.
+>
+> -   It is appropriate for our focus on overall patterns over BMR region rather than detailed, localized hotspots.
+
+### Performing NKDE
+
+We are now ready to compute the **Network Kernel Density Estimation (NKDE) using the bandwidth that we selected**, as demonstrated in the code chunk below.
+
+```{r}
+#| eval: false
+densities <- nkde(roads_bmr, 
+                  events = accidents_bmr,
+                  w = rep(1, nrow(accidents_bmr)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 1700, 
+                  div= "bw", 
+                  method = "simple", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(10,10), 
+                  max_depth = 8,
+                  agg = 50,
+                  sparse = TRUE,
+                  verbose = FALSE)
+write_rds(densities, "data/rds/densities_1700.rds")
+```
+
+```{r}
+#| eval: false
+#| echo: false
+write_rds(densities, "data/rds/densities_1700.rds")
+```
+
+We can rescale the density values from number of accidents per meter to number of accidents per kilometer using the following code:
+
+```{r}
+densities = read_rds("data/rds/densities_1700.rds")
+lixels$density <- densities*1000
+lixels$density_lwd <- densities*1000*10
+```
+
+### Visualise using tmap package
+
+Next, we will use the **tmap** package to visualize the Network Kernel Density Estimation (NKDE) results. To enhance the visibility of accident hotspots, we will represent network density through line widths. The line widths will be adjusted using the **`density_lwd`** column, which is calculated by multiplying the density by 10 to make the hotspots stand out more clearly on the map.
+
+```{r fig.height=8, fig.width=12}
+tmap_mode('plot')
+
+tm_shape(admin_boundary_bmr) +
+  tm_polygons(col = "white", border.col = "black", alpha = 0.5) +
+tm_shape(lixels) +
+  tm_lines(col = "density",
+           palette = "YlOrRd",
+           lwd = "density_lwd",
+           title.col = "Accident Density",
+           legend.lwd.show = F) +
+  tm_layout(main.title = "Network KDE of Road Accidents in the Bangkok Metropolitan Region",
+            main.title.position = "center",
+            frame = FALSE)
+
+```
+
+::: callout-note
+-   Road segments with a higher density of accidents are highlighted in darker colors, while those with lower density are shown in lighter colors.
+-   As expected, the concentration is mostly along highways, consistent with the earlier KDE map.
+-   However, this interactive map allows us to identify specific road segments with particularly high accident concentrations in greater detail.
+    -   For example, we can see the hot-spot on this part of the highway intersection on **Bangkok−Ban Chang Motorway**, located less than 11 km from **Suvarnabhumi Airport.**
+:::
+
+::: {.callout-warning icon="false"}
+Due to computational limitations, we are unable to run CSR test of road accidents on the network.
+
+However, based on the current density results from NKDE, it suggests that the accident points are not forming regular patterns along the road network.
+:::
+
+# Spatio-Temporal Network Constrained Point Pattern Analysis
+
+In this section, we aim to analyze the spatio-temporal distribution of road accidents using **Temporal Network Kernel Density Estimation (TNKDE)**. By incorporating both spatial and temporal dimensions, this analysis allows us to investigate how accident hotspots evolve over time across the road network.
+
+## Spatio-Temporal bandwidth selection
+
+We will calculate the **kernel density values over time** using several different bandwidths to explore how varying the bandwidth affects the temporal distribution of accidents. To find the optimal bandwidth, we will use [bw_tnkde_cv_likelihood_calc()](https://rdrr.io/cran/spNetwork/man/bw_tnkde_cv_likelihood_calc.html) function which employs cross-validation likelihood over lines length and time window.
+
+```{r}
+#| eval: false
+cv_scores <- bw_tnkde_cv_likelihood_calc(
+  bws_net = seq(100,3000,100),
+  bws_time = seq(10,90,10),
+  lines = roads_bmr,
+  events = accidents_bmr,
+  time_field = "Day_of_year",
+  w = rep(1, nrow(accidents_bmr)),
+  kernel_name = "quartic",
+  method = "discontinuous",
+  diggle_correction = FALSE,
+  study_area = NULL,
+  max_depth = 10,
+  digits = 2,
+  tol = 1,
+  agg = 50,
+  sparse=TRUE,
+  grid_shape=c(10,10),
+  sub_sample=1,
+  verbose = FALSE,
+  check = TRUE)
+
+write_rds(cv_scores, 'data/rds/cv_scores.rds')
+```
+
+```{r}
+#| echo: false
+cv_scores <- read_rds('data/rds/cv_scores.rds')
+```
+
+```{r}
+knitr::kable(cv_scores)
+```
+
+> We have obtained the cross-validation results for the bandwidth options in our spatio-temporal analysis.
+>
+> Using the **"leave one out cross-validation"** method, the optimal bandwidths are **3000 meters** for space and **90 days** for time.
+
+## Compute Temporal Network Kernel Density Estimate (TNKDE)
+
+Now, we will compute the **Temporal Network Kernel Density Estimation (TNKDE)** using the [tnkde()](https://cran.r-project.org/web/packages/spNetwork/vignettes/TNKDE.html) function of spNetwork package with the selected bandwidth.
+
+```{r}
+#| eval: false
+sample_time <- seq(0, max(accidents_bmr$Day_of_year), 90)
+
+# calculating densities
+tnkde_densities_adapt <- tnkde(lines = roads_bmr,
+                   events = accidents_bmr,
+                   time_field = "Day_of_year",
+                   w = rep(1, nrow(accidents_bmr)), 
+                   samples_loc = samples,
+                   samples_time = sample_time, 
+                   kernel_name = "quartic",
+                   bw_net = 3000,
+                   bw_time = 90,
+                   adaptive = T,
+                   trim_bw_net = 3100,
+                   trim_bw_time = 100,
+                   method = "discontinuous",
+                   div = "bw",
+                   max_depth = 10,
+                   digits = 2,
+                   tol = 1,
+                   agg = 50,
+                   grid_shape = c(10,10), 
+                   verbose  = FALSE)
+write_rds(tnkde_densities_adapt, "data/rds/tnkde_densities_adapt.rds")
+```
+
+```{r}
+#| echo: false
+tnkde_densities_adapt <- read_rds('data/rds/tnkde_densities_adapt.rds')
+```
+
+::: {.callout-tip title="Reflection"}
+This code chunk is adapted from spNetwork [documentations example on tnkde()](https://rdrr.io/cran/spNetwork/man/tnkde.html). Below is a breakdown of key arguments used in this code:
+
+-   **`bw_net = 3000, bw_time = 90`**: These parameters define the bandwidths for the network and time dimensions, set to `3000` meters and `90` days, respectively. These values were selected based on the results of the "leave one out cross-validation" discussed in the previous section.
+
+-   **`trim_bw_net = 3100, trim_bw_time = 100`**: These parameters set the maximum values for the adaptive bandwidth in the network and time dimensions. In this case, we used simple rule-of-thumb values for `3100` meters and `100` days.
+:::
+
+## Visualize TNKDE map
+
+Upon completing the TNKDE density calculations, we will visualize the results as an animated GIF.
+
+First, we will use the **`classInt`** package to create color breaks for the density values. The class intervals will be determined using the **k-means** algorithm to group the densities into meaningful ranges.
+
+```{r}
+all_densities <- c(tnkde_densities_adapt$k)
+color_breaks <- classIntervals(all_densities, n = 10, style = "kmeans")
+```
+
+Next, we will generate individual maps for each sample time and compile them into `all_maps` using the [lapply()](https://rdrr.io/r/base/lapply.html) function. Each map will visualize the TNKDE densities for a specific time point, with dots representing the density values. The colors of the dots will correspond to the density values, using the color breaks and palette defined earlier.
+
+We will create an **animated GIF** from the series of maps stored in the `all_maps` object using the [tmap_animation()](https://rdrr.io/cran/tmap/man/tmap_animation.html) function from the **tmap** package. After generating the GIF, we will display it using the [include_graphics()](https://rdrr.io/cran/knitr/man/include_graphics.html) function from the **knitr** package.
+
+```{r}
+#| eval: false
+all_maps <- lapply(1:ncol(tnkde_densities_adapt$k), function(i){
+  time <- sample_time[[i]]
+  
+  samples$density <- tnkde_densities_adapt$k[,i]
+  map1 <- tm_shape(samples) + 
+  tm_dots(col = "density", size = 0.01,
+          breaks = color_breaks$brks, 
+           palette = "YlOrRd",) + 
+    tm_layout(legend.show=FALSE, main.title = as.character(time), main.title.size = 0.5)
+  return(map1)
+})
+
+# creating a gif with all the maps
+tmap_animation(all_maps, filename = "images/animated_map2.gif", 
+               width = 1000, height = 1000, dpi = 300, delay = 50)
+```
+
+```{r}
+knitr::include_graphics("images/animated_map2.gif")
+```
+
+::: callout-note
+From the animated GIF, we can observe that while there are some **minor temporal shifts** in accident density across certain areas of the BMR, the primary hotspots remain largely unchanged.
+
+These consistent hotspots, as identified in the KDE analysis, suggest that certain locations consistently experience high accident rates over time.
+
+Although there is some density movement in less concentrated areas, the major hotspots appear to be long-standing, emphasizing the need for focused road safety measures in these critical zones.
+:::
+
+# Conclusions
+
+## Key findings
+
+1.  **Consistent Accident Hotspots**
+
+    The **Network Kernel Density Estimation (NKDE)** and **Temporal NKDE (TNKDE)** analyses identified **consistent accident hotspots** across the BMR, particularly on major highways in **Bangkok** and **Samut Prakan** provinces. These areas show persistent high-density accident zones, suggesting that these locations face ongoing road safety challenges.
+
+2.  Minimal Temporal Shifts
+
+    The major hotspots remained **largely stable over time**, with only **minor temporal shifts** observed in less concentrated areas. This indicates that the high-risk areas are consistently prone to accidents throughout the year, likely due to factors like traffic congestion or complex road layouts.
+
+3.  Accidents During Clear Weather
+
+    Interestingly, most accidents occurred during **clear weather** conditions, despite the increased accident rates typically associated with the **rainy season**. This suggests that other factors, such as **driver behavior**, may have a greater influence on accident occurrence than weather alone.
+
+4.  High-Risk Time Periods
+
+    **Rush hours** (both morning and evening) were identified as periods with a higher distribution of accidents, reflecting the increased traffic volumes during commuting times.
+
+## Limitation
+
+One challenge I encountered was the difficulty in finding appropriate references on spatial point analysis. Some library documentation lacked clarity or contained outdated code, making it harder to fully understand the functions provided by certain packages. Additionally, limited computational resources restricted my ability to perform more extensive bandwidth tests and experiment with adaptive estimation techniques from spNetwork in the analysis.
+
+## Future works
+
+There are several ideas that can be explored for future work on this topic. These improvements could provide more depth to the analysis of road accidents in BMR.
+
+1.  Focusing on High-Risk Provinces
+
+    Given that accidents are most concentrated in **Bangkok**, **Samut Prakan**, and **Pathum Thani**, future analysis could prioritize these provinces. A more granular study might help identify specific local risk factors contributing to the high accident rates in these provinces.
+
+2.  Exploring Different Temporal Aspects
+
+    So far, my spatio-temporal point analysis has focused on day of the year. Future work could explore density patterns by hour or month to reveal more detailed trends and temporal shifts.
+
+3.  Incorporating Additional Data
+
+    Incorporating data like **traffic volumes** and **road maintenance locations** could add more depth to the analysis. Since the accidents are mainly concentrated on major highways in the BMR, these factors could help our analysis.
 
 # References
 
@@ -628,4 +993,10 @@ clarkevans.test(accidents_bmr_ppp,
 
 -   World Health Organization. (2017). *Road traffic deaths and injuries in Thailand*. <https://cdn.who.int/media/docs/default-source/thailand/roadsafety/overview-en-final-25-7-19.pdf>
 
--   **Asia Highlights.** (2024). *Best Time to Visit Thailand: Weather, Events, and Seasonal Travel Tips.* Retrieved from <https://www.asiahighlights.com/thailand/best-time-to-visit>
+-   Wikipedia**.** (2024). <https://en.wikipedia.org/wiki/Bangkok#Climate>
+
+-   Kam, T. S. (2024). *Network Constrained Spatial Point Patterns*. <https://r4gdsa.netlify.app/chap07.html>
+
+-   Jeremy Gelb. (2024). *Temporal Network Kernel Density Estimate*. [Temporal Network Kernel Density Estimate](https://jeremygelb.github.io/spNetwork/articles/TNKDE.html)
+
+-   Jeremy Gelb. (2024). *Network Kernel Density Estimate*. [Network Kernel Density Estimate](https://jeremygelb.github.io/spNetwork/articles/NKDE.html)

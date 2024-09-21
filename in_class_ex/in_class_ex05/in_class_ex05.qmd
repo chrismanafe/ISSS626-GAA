@@ -1,0 +1,23 @@
+---
+title: "In-class Exercise 5: "
+author: "Christover Manafe"
+date: "2024-09-16"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: false
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# Overview
+
+# Reference
+
+Kam, T. S. Geographically Weighted Summary Statistics - gwModel methods. *ISSS626 Geospatial Analytics and Applications.* <https://isss626-ay2024-25aug.netlify.app/in-class_ex/in-class_ex05/in-class_ex05>
