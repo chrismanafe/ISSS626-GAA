@@ -1,5 +1,5 @@
 ---
-title: "In-class Exercise 5: Global and Local Measures of Spatial Association: sfdep"
+title: "In-class Exercise 5: Global and Local Measures of Spatial Association: sfdep methods"
 author: "Christover Manafe"
 date: "2024-09-23"
 date-modified: "last-modified"
