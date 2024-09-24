@@ -4,7 +4,7 @@ listing:
   - id: hands_on
     contents: "**/*/hands_on_*.qmd"
     type: grid
-    fields: [image, date, title]
+    fields: [image, date, title, reading-time]
     sort:
       - "date desc"
       - "title desc"
@@ -14,7 +14,17 @@ listing:
   - id: in_class
     contents: "**/*/in_class_*.qmd"
     type: grid
-    fields: [image, date, title]
+    fields: [image, date, title, reading-time]
+    sort:
+      - "date desc"
+      - "title desc"
+    sort-ui: false
+    filter-ui: false
+    page-size: 3
+  - id: take-home
+    contents: "**/*/take_home_*.qmd"
+    type: grid
+    fields: [image, date, title, reading-time]
     sort:
       - "date desc"
       - "title desc"
@@ -36,4 +46,9 @@ This website showcases my coursework, featuring exercises and assignments enrich
 ## [In-class Exercise](/in_class_ex/)
 
 ::: {#in_class}
+:::
+
+## Take-home Exercise
+
+::: {#take-home}
 :::

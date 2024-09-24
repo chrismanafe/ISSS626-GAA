@@ -79,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-image','listing-date','listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       page: 3,
     pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
       searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
@@ -108,7 +108,7 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-image','listing-date','listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       page: 3,
     pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
       searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
@@ -116,6 +116,34 @@ ul.task-list li input[type="checkbox"] {
 
     window['quarto-listings'] = window['quarto-listings'] || {};
     window['quarto-listings']['listing-in_class'] = new List('listing-in_class', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-take-home .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-take-home'] = new List('listing-take-home', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -376,6 +404,9 @@ window.Quarto = {
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 6: Geographical Segmentation with Spatially Constrained Clustering Techniques
 </h5>
+<div class="listing-reading-time card-text text-muted">
+49 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 19, 2024
@@ -393,6 +424,9 @@ Sep 19, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 5b: Local Measures of Spatial Autocorrelation
 </h5>
+<div class="listing-reading-time card-text text-muted">
+23 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 18, 2024
@@ -410,6 +444,9 @@ Sep 18, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 5a: Global Measures of Spatial Autocorrelation
 </h5>
+<div class="listing-reading-time card-text text-muted">
+17 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 18, 2024
@@ -427,6 +464,9 @@ Sep 18, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 9b: Calibrating Spatial Interaction Models with R
 </h5>
+<div class="listing-reading-time card-text text-muted">
+1 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 10, 2024
@@ -444,6 +484,9 @@ Sep 10, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 9a: Processing and Visualising Flow Data
 </h5>
+<div class="listing-reading-time card-text text-muted">
+1 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 10, 2024
@@ -461,6 +504,9 @@ Sep 10, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 8: Geographically Weighted Predictive Models
 </h5>
+<div class="listing-reading-time card-text text-muted">
+1 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 10, 2024
@@ -478,6 +524,9 @@ Sep 10, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 7: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method
 </h5>
+<div class="listing-reading-time card-text text-muted">
+1 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 10, 2024
@@ -495,6 +544,9 @@ Sep 10, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 4: Spatial Weights and Applications
 </h5>
+<div class="listing-reading-time card-text text-muted">
+20 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 10, 2024
@@ -512,6 +564,9 @@ Sep 10, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 10: Modelling Geographical Accessibility
 </h5>
+<div class="listing-reading-time card-text text-muted">
+1 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 10, 2024
@@ -529,6 +584,9 @@ Sep 10, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 3: Network Constrained Spatial Point Patterns Analysis
 </h5>
+<div class="listing-reading-time card-text text-muted">
+22 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 6, 2024
@@ -546,6 +604,9 @@ Sep 6, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 2b: 2nd Order Spatial Point Patterns Analysis Methods
 </h5>
+<div class="listing-reading-time card-text text-muted">
+16 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Aug 30, 2024
@@ -563,6 +624,9 @@ Aug 30, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 2a: 1st Order Spatial Point Patterns Analysis Methods
 </h5>
+<div class="listing-reading-time card-text text-muted">
+19 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Aug 30, 2024
@@ -580,6 +644,9 @@ Aug 30, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 1b: Choropleth Mapping
 </h5>
+<div class="listing-reading-time card-text text-muted">
+14 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Aug 24, 2024
@@ -597,6 +664,9 @@ Aug 24, 2024
 <h5 class="no-anchor card-title listing-title">
 Hands-on Exercise 1a: Geospatial Data Wrangling
 </h5>
+<div class="listing-reading-time card-text text-muted">
+7 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Aug 24, 2024
@@ -619,17 +689,20 @@ No matching items
 <h2 class="anchored" data-anchor-id="in-class-exercise"><a href="./in_class_ex/">In-class Exercise</a></h2>
 <div id="listing-in_class" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-date-sort="1726416000000" data-listing-file-modified-sort="1726674860309" data-listing-date-modified-sort="1726674860000" data-listing-reading-time-sort="1" data-listing-word-count-sort="17">
+<div class="g-col-1" data-index="0" data-listing-date-sort="1727020800000" data-listing-file-modified-sort="1727193706853" data-listing-date-modified-sort="1727193706000" data-listing-reading-time-sort="14" data-listing-word-count-sort="2797">
 <a href="./in_class_ex/in_class_ex05/in_class_ex05.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
+<p class="card-img-top"><img src="in_class_ex/in_class_ex05/in_class_ex05_files/figure-html/unnamed-chunk-10-1.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
-In-class Exercise 5:
+In-class Exercise 5: Global and Local Measures of Spatial Association: sfdep
 </h5>
+<div class="listing-reading-time card-text text-muted">
+14 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
-Sep 16, 2024
+Sep 23, 2024
 </div>
 </div>
 </div>
@@ -644,6 +717,9 @@ Sep 16, 2024
 <h5 class="no-anchor card-title listing-title">
 In-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods
 </h5>
+<div class="listing-reading-time card-text text-muted">
+11 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 16, 2024
@@ -661,6 +737,9 @@ Sep 16, 2024
 <h5 class="no-anchor card-title listing-title">
 In-class Exercise 3: Advanced Spatial Point Patterns Analysis
 </h5>
+<div class="listing-reading-time card-text text-muted">
+22 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 9, 2024
@@ -678,6 +757,9 @@ Sep 9, 2024
 <h5 class="no-anchor card-title listing-title">
 In-class Exercise 2: Spatial Point Patterns Analysis
 </h5>
+<div class="listing-reading-time card-text text-muted">
+5 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Sep 2, 2024
@@ -695,6 +777,9 @@ Sep 2, 2024
 <h5 class="no-anchor card-title listing-title">
 In-class Exercise 1: Geospatial Analytics
 </h5>
+<div class="listing-reading-time card-text text-muted">
+11 min
+</div>
 <div class="card-attribution card-text-small end">
 <div class="listing-date">
 Aug 26, 2024
@@ -711,6 +796,36 @@ No matching items
 <nav id="in_class-pagination" class="listing-pagination" aria-label="Page Navigation">
   <ul class="pagination"></ul>
 </nav>
+</div>
+</section>
+<section id="take-home-exercise" class="level2">
+<h2 class="anchored" data-anchor-id="take-home-exercise">Take-home Exercise</h2>
+<div id="listing-take-home" class="quarto-listing quarto-listing-container-grid">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-listing-date-sort="1725984000000" data-listing-file-modified-sort="1726940937161" data-listing-date-modified-sort="1726940937000" data-listing-reading-time-sort="53" data-listing-word-count-sort="10478">
+<a href="./take_home_ex/take_home_ex01/take_home_ex01.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top"><img src="take_home_ex/take_home_ex01/images/cropped.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Take-home Exercise 1: Geospatial Analytics for Social Good
+</h5>
+<div class="listing-reading-time card-text text-muted">
+53 min
+</div>
+<div class="card-attribution card-text-small end">
+<div class="listing-date">
+Sep 11, 2024
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
 </div>
 
 
