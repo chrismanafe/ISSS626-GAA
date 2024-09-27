@@ -48,7 +48,7 @@ This website showcases my coursework, featuring exercises and assignments enrich
 ::: {#in_class}
 :::
 
-## Take-home Exercise
+## [Take-home Exercise](/take_home_ex/)
 
 ::: {#take-home}
 :::
