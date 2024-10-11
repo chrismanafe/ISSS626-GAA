@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Christover Manafe">
+<meta name="dcterms.date" content="2024-10-01">
+
+<title>ISSS626-GAA - Take-home Exercise 2: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">ISSS626-GAA</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercises" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Hands-on Exercises</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercises">    
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex01/hands_on_ex01.1.html">
+ <span class="dropdown-text">1a Geospatial Data Wrangling</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex01/hands_on_ex01.2.html">
+ <span class="dropdown-text">1b Choropleth Mapping</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex02/hands_on_ex02.1.html">
+ <span class="dropdown-text">2a 1st Order Spatial Point Patterns Analysis Methods</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex02/hands_on_ex02.2.html">
+ <span class="dropdown-text">2b 2nd Order Spatial Point Patterns Analysis Methods</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex03/hands_on_ex03.html">
+ <span class="dropdown-text">3 Network Constrained Spatial Point Patterns Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex04/hands_on_ex04.html">
+ <span class="dropdown-text">4 Spatial Weights and Applications</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.1.html">
+ <span class="dropdown-text">5a Global Measures of Spatial Autocorrelation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex05/hands_on_ex05.2.html">
+ <span class="dropdown-text">5b Local Measures of Spatial Autocorrelation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex06/hands_on_ex06.html">
+ <span class="dropdown-text">6 Geographical Segmentation with Spatially Constrained Clustering Techniques</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex07/hands_on_ex07.html">
+ <span class="dropdown-text">7 Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex08/hands_on_ex08.html">
+ <span class="dropdown-text">8 Geographically Weighted Predictive Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex09/hands_on_ex09.1.html">
+ <span class="dropdown-text">9a Processing and Visualising Flow Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex09/hands_on_ex09.2.html">
+ <span class="dropdown-text">9b Calibrating Spatial Interaction Models with R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../hands_on_ex/hands_on_ex10/hands_on_ex10.html">
+ <span class="dropdown-text">10 Modelling Geographical Accessibility</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercises" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">In-class Exercises</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercises">    
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex01/in_class_ex01.html">
+ <span class="dropdown-text">1 Geospatial Analytics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex02/in_class_ex02.html">
+ <span class="dropdown-text">2 Spatial Point Patterns Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex03/in_class_ex03.html">
+ <span class="dropdown-text">3 Network Constrained Spatial Point Patterns Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex04/in_class_ex04.html">
+ <span class="dropdown-text">4 Geographically Weighted Summary Statistics - GWmodel methods</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex05/in_class_ex05.html">
+ <span class="dropdown-text">5 Global and Local Measures of Spatial Association: sfdep methods</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex06/in_class_ex06.html">
+ <span class="dropdown-text">6 Emerging Hot Spot Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex07/in_class_ex07.html">
+ <span class="dropdown-text">7</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex08/in_class_ex08.html">
+ <span class="dropdown-text">8</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex09/in_class_ex09.html">
+ <span class="dropdown-text">9</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../in_class_ex/in_class_ex10/in_class_ex10.html">
+ <span class="dropdown-text">10</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercises" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Take-home Exercises</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercises">    
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex01/take_home_ex01.html">
+ <span class="dropdown-text">1. Geospatial Analytics for Public Good</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex02/take_home_ex02.html">
+ <span class="dropdown-text">2. Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../take_home_ex/take_home_ex03/take_home_ex03.html">
+ <span class="dropdown-text">3.</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/chrismanafe/"> <i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/chrismanafe"> <i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives"><span class="header-section-number">2</span> Objectives</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">3</span> Getting Started</a>
+  <ul class="collapse">
+  <li><a href="#the-packages" id="toc-the-packages" class="nav-link" data-scroll-target="#the-packages"><span class="header-section-number">3.1</span> The Packages</a></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">3.2</span> The Data</a></li>
+  <li><a href="#importing-datasets-to-r-environment" id="toc-importing-datasets-to-r-environment" class="nav-link" data-scroll-target="#importing-datasets-to-r-environment"><span class="header-section-number">3.3</span> Importing Datasets to R environment</a>
+  <ul class="collapse">
+  <li><a href="#thailand-domestic-tourism-statistics" id="toc-thailand-domestic-tourism-statistics" class="nav-link" data-scroll-target="#thailand-domestic-tourism-statistics"><span class="header-section-number">3.3.1</span> Thailand Domestic Tourism Statistics</a></li>
+  <li><a href="#thailands-province-administrative-boundaries" id="toc-thailands-province-administrative-boundaries" class="nav-link" data-scroll-target="#thailands-province-administrative-boundaries"><span class="header-section-number">3.3.2</span> Thailand’s Province Administrative Boundaries</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis"><span class="header-section-number">4</span> Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#summary-statistics" id="toc-summary-statistics" class="nav-link" data-scroll-target="#summary-statistics"><span class="header-section-number">4.1</span> Summary statistics</a></li>
+  <li><a href="#check-missing-values" id="toc-check-missing-values" class="nav-link" data-scroll-target="#check-missing-values"><span class="header-section-number">4.2</span> Check Missing Values</a></li>
+  <li><a href="#distribution-plots-for-numerical-variables" id="toc-distribution-plots-for-numerical-variables" class="nav-link" data-scroll-target="#distribution-plots-for-numerical-variables"><span class="header-section-number">4.3</span> Distribution Plots for Numerical Variables</a></li>
+  </ul></li>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling"><span class="header-section-number">5</span> Data Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering"><span class="header-section-number">5.1</span> Feature engineering</a></li>
+  <li><a href="#province-name-alignment" id="toc-province-name-alignment" class="nav-link" data-scroll-target="#province-name-alignment"><span class="header-section-number">5.2</span> Province name alignment</a></li>
+  <li><a href="#perform-relational-join" id="toc-perform-relational-join" class="nav-link" data-scroll-target="#perform-relational-join"><span class="header-section-number">5.3</span> Perform relational join</a></li>
+  <li><a href="#province-level-summary-of-tourism-economy-indicators" id="toc-province-level-summary-of-tourism-economy-indicators" class="nav-link" data-scroll-target="#province-level-summary-of-tourism-economy-indicators"><span class="header-section-number">5.4</span> Province-level Summary of Tourism Economy Indicators</a></li>
+  <li><a href="#visualization-of-thailands-tourism-distribution" id="toc-visualization-of-thailands-tourism-distribution" class="nav-link" data-scroll-target="#visualization-of-thailands-tourism-distribution"><span class="header-section-number">5.5</span> Visualization of Thailand’s Tourism Distribution</a></li>
+  </ul></li>
+  <li><a href="#global-measures-of-spatial-autocorrelation" id="toc-global-measures-of-spatial-autocorrelation" class="nav-link" data-scroll-target="#global-measures-of-spatial-autocorrelation"><span class="header-section-number">6</span> Global Measures of Spatial Autocorrelation</a>
+  <ul class="collapse">
+  <li><a href="#computing-contiguity-neighbours" id="toc-computing-contiguity-neighbours" class="nav-link" data-scroll-target="#computing-contiguity-neighbours"><span class="header-section-number">6.1</span> Computing Contiguity Neighbours</a></li>
+  <li><a href="#global-morans-i-test-and-permutation-test" id="toc-global-morans-i-test-and-permutation-test" class="nav-link" data-scroll-target="#global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2</span> Global Moran’s I Test and Permutation Test</a>
+  <ul class="collapse">
+  <li><a href="#total-tourists-global-morans-i-test-and-permutation-test" id="toc-total-tourists-global-morans-i-test-and-permutation-test" class="nav-link" data-scroll-target="#total-tourists-global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2.1</span> Total Tourists: Global Moran’s I Test and Permutation Test</a></li>
+  <li><a href="#average-of-tourist-stay-rate-global-morans-i-test-and-permutation-test" id="toc-average-of-tourist-stay-rate-global-morans-i-test-and-permutation-test" class="nav-link" data-scroll-target="#average-of-tourist-stay-rate-global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2.2</span> Average of Tourist Stay Rate: Global Moran’s I Test and Permutation Test</a></li>
+  <li><a href="#average-revenue-per-tourists-global-morans-i-test-and-permutation-test" id="toc-average-revenue-per-tourists-global-morans-i-test-and-permutation-test" class="nav-link" data-scroll-target="#average-revenue-per-tourists-global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2.3</span> Average Revenue per Tourists: Global Moran’s I Test and Permutation Test</a></li>
+  </ul></li>
+  <li><a href="#interpreting-results" id="toc-interpreting-results" class="nav-link" data-scroll-target="#interpreting-results"><span class="header-section-number">6.3</span> Interpreting Results</a></li>
+  </ul></li>
+  <li><a href="#local-measures-of-spatial-autocorrelation" id="toc-local-measures-of-spatial-autocorrelation" class="nav-link" data-scroll-target="#local-measures-of-spatial-autocorrelation"><span class="header-section-number">7</span> Local Measures of Spatial Autocorrelation</a>
+  <ul class="collapse">
+  <li><a href="#cluster-and-outlier-analysis" id="toc-cluster-and-outlier-analysis" class="nav-link" data-scroll-target="#cluster-and-outlier-analysis"><span class="header-section-number">7.1</span> Cluster and Outlier Analysis</a>
+  <ul class="collapse">
+  <li><a href="#computing-local-morans-i" id="toc-computing-local-morans-i" class="nav-link" data-scroll-target="#computing-local-morans-i"><span class="header-section-number">7.1.1</span> Computing Local Moran’s I</a></li>
+  <li><a href="#plotting-lisa-map" id="toc-plotting-lisa-map" class="nav-link" data-scroll-target="#plotting-lisa-map"><span class="header-section-number">7.1.2</span> Plotting LISA map</a></li>
+  </ul></li>
+  <li><a href="#hot-and-cold-spot-analysis-with-local-gi" id="toc-hot-and-cold-spot-analysis-with-local-gi" class="nav-link" data-scroll-target="#hot-and-cold-spot-analysis-with-local-gi"><span class="header-section-number">7.2</span> Hot and Cold Spot Analysis with Local Gi*</a>
+  <ul class="collapse">
+  <li><a href="#compute-local-gi-statistic" id="toc-compute-local-gi-statistic" class="nav-link" data-scroll-target="#compute-local-gi-statistic"><span class="header-section-number">7.2.1</span> Compute Local Gi statistic</a></li>
+  <li><a href="#visualize-local-hot-spot-and-cold-spot-areas" id="toc-visualize-local-hot-spot-and-cold-spot-areas" class="nav-link" data-scroll-target="#visualize-local-hot-spot-and-cold-spot-areas"><span class="header-section-number">7.2.2</span> Visualize local hot spot and cold spot areas</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Take-home Exercise 2: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Christover Manafe </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 1, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">October 11, 2024</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
+<p>Tourism is one of Thailand’s largest industries, contributing approximately 20% to the country’s gross domestic product (GDP). In 2019, Thailand generated 90 billion US dollars from both domestic and international tourism, but this figure plummeted to 24 billion US dollars in 2020 due to the COVID-19 pandemic.</p>
+<p>Since September 2021, the tourism sector has been steadily recovering. However, it’s important to note that the tourism economy in Thailand is not evenly distributed across the country, with much of the activity concentrated in key provinces such as Bangkok, Phuket, and Chiang Mai.</p>
+</section>
+<section id="objectives" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Objectives</h1>
+<p>This exercise aims to:</p>
+<ol type="1">
+<li><p>Determine whether the key indicators of Thailand’s tourism economy are independent of spatial and spatio-temporal factors.</p></li>
+<li><p>If dependencies are identified, the goal is to locate clusters and outliers, and detect emerging hot spots and cold spots in the tourism economy.</p></li>
+</ol>
+</section>
+<section id="getting-started" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Getting Started</h1>
+<section id="the-packages" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="the-packages"><span class="header-section-number">3.1</span> The Packages</h2>
+<p>In this exercise, we will use following packages:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://r-spatial.github.io/sf/"><strong>sf</strong></a></td>
+<td>Provides functions to manage, processing, and manipulate <strong>Simple Features</strong>, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons.</td>
+</tr>
+<tr class="even">
+<td><a href="https://cran.r-project.org/web/packages/sfdep/"><strong>sfdep</strong></a></td>
+<td>Provides collection of functions to create spatial weights matrix objects from polygon ‘contiguities’, from point patterns by distance and tessellations.</td>
+</tr>
+<tr class="odd">
+<td><a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a></td>
+<td>Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.</td>
+</tr>
+<tr class="even">
+<td><a href="https://cran.r-project.org/web/packages/tmap/"><strong>tmap</strong></a></td>
+<td>Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using <a href="https://leafletjs.com/">leaflet</a> API</td>
+</tr>
+<tr class="odd">
+<td><a href="https://cran.r-project.org/web/packages/corrplot/"><strong>corrplot</strong></a></td>
+<td>Provides functions for visualizing correlation matrices.</td>
+</tr>
+<tr class="even">
+<td><a href="https://cran.r-project.org/web/packages/heatmaply/"><strong>heatmaply</strong></a></td>
+<td>Provides an easy-to-use interface for creating interactive heatmaps.</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, sfdep, tmap, tidyverse, corrplot, heatmaply)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-data" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="the-data"><span class="header-section-number">3.2</span> The Data</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Dataset Name</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Format</strong></th>
+<th><strong>Source</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>Thailand Domestic Tourism Statistics</p>
+<p>[2019-2023]</p></td>
+<td>Monthly Provincial Data on Tourist Numbers, Occupancy, and Revenue in Thailand</td>
+<td>CSV</td>
+<td><a href="https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics">Kaggle</a></td>
+</tr>
+<tr class="even">
+<td>Thailand - Subnational Administrative Boundaries</td>
+<td>Administrative boundary data for Thailand’s subnational divisions</td>
+<td>ESRI Shapefile</td>
+<td><a href="https://data.humdata.org/dataset/cod-ab-tha?">Humanitarian Data Exchange (HDX)</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="importing-datasets-to-r-environment" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="importing-datasets-to-r-environment"><span class="header-section-number">3.3</span> Importing Datasets to R environment</h2>
+<section id="thailand-domestic-tourism-statistics" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="thailand-domestic-tourism-statistics"><span class="header-section-number">3.3.1</span> Thailand Domestic Tourism Statistics</h3>
+<p>We will load Thailand Domestic Tourism Statistics data using <a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv()</a> function of <strong>readr</strong> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tourism <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> variable, <span class="at">values_from =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span><span class="sc">:</span><span class="dv">13</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 30800 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (5): province_thai, province_eng, region_thai, region_eng, variable
+dbl  (1): value
+date (1): date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,850
+Columns: 11
+$ date               &lt;date&gt; 2019-01-01, 2019-01-01, 2019-01-01, 2019-01-01, 20…
+$ province_eng       &lt;chr&gt; "Bangkok", "Lopburi", "Phra Nakhon Si Ayutthaya", "…
+$ region_eng         &lt;chr&gt; "central", "central", "central", "central", "centra…
+$ ratio_tourist_stay &lt;dbl&gt; 93.37, 61.32, 73.37, 67.33, 79.31, 71.70, 64.65, 71…
+$ no_tourist_stay    &lt;dbl&gt; 3334971, 51858, 117052, 89850, 27141, 118629, 18147…
+$ no_tourist_all     &lt;dbl&gt; 5959075, 268664, 730329, 207236, 79073, 296107, 494…
+$ no_tourist_thai    &lt;dbl&gt; 3534061, 266301, 561553, 201400, 78514, 284408, 491…
+$ no_tourist_foreign &lt;dbl&gt; 2425014, 2363, 168776, 5836, 559, 11699, 248, 5281,…
+$ revenue_all        &lt;dbl&gt; 81926490000, 457240000, 1438730000, 347790000, 1017…
+$ revenue_thai       &lt;dbl&gt; 29742580000, 451830000, 1054250000, 336190000, 1009…
+$ revenue_foreign    &lt;dbl&gt; 52183910000, 5410000, 384480000, 11600000, 890000, …</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The original dataset consists of 30,800 rows and 7 column in “long-format”, where each row represents a combination of a <code>variable</code> and its corresponding <code>value</code> for a specific province and time period.</p>
+<p>This format can make analysis more difficult since the different metrics are stored in rows instead of separate columns. Therefore we used <code>pivot_wider()</code> function from the <code>tidyr</code> package in R to transform the long format into a wider format. We also dropped <code>province_thai</code> and <code>region_thai</code> column as the information is already available in the English columns.</p>
+<p>The resulting dataset has 3,850 rows and 11 columns. The columns are described as follows:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 82%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>date</td>
+<td>The month and year in which the statistics were recorded. The dataset covers the years 2019-2023.</td>
+</tr>
+<tr class="even">
+<td>province_eng</td>
+<td>The name of the province in Thailand, in English.</td>
+</tr>
+<tr class="odd">
+<td>region_eng</td>
+<td>The name of the region in Thailand to which the province belongs, in English.</td>
+</tr>
+<tr class="even">
+<td>no_tourist_all</td>
+<td>The total number of domestic tourists who visited the province.</td>
+</tr>
+<tr class="odd">
+<td>no_tourist_foreign</td>
+<td>The number of foreign tourists who visited the province.</td>
+</tr>
+<tr class="even">
+<td>no_tourist_stay</td>
+<td>The number of tourists who stay over-night in the province.</td>
+</tr>
+<tr class="odd">
+<td>no_tourist_thai</td>
+<td>The number of Thai tourists who visited the province.</td>
+</tr>
+<tr class="even">
+<td>ratio_tourist_stay</td>
+<td>The percentage of occupied travel accommodations in the province.</td>
+</tr>
+<tr class="odd">
+<td>revenue_all</td>
+<td>The total revenue generated by the tourism industry in the province (in Thai Baht).</td>
+</tr>
+<tr class="even">
+<td>revenue_foreign</td>
+<td>The revenue generated specifically by foreign tourists (in Thai Baht).</td>
+</tr>
+<tr class="odd">
+<td>revenue_thai</td>
+<td>The revenue generated specifically by Thai tourists (in Thai Baht).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="thailands-province-administrative-boundaries" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="thailands-province-administrative-boundaries"><span class="header-section-number">3.3.2</span> Thailand’s Province Administrative Boundaries</h3>
+<p>The Thailand subnational administrative boundaries dataset is available at four levels: administrative level 0 (country), level 1 (province), level 2 (district), and level 3 (sub-district or tambon). For this analysis, we will use administrative level 1 (province).</p>
+<p>We will load the province-level boundaries using the <code>st_read()</code> function. The boundaries will then be transformed into <a href="https://epsg.io/32647">EPSG:32647</a>, which uses meters as units and is based on the UTM Zone 47N projection. Additionally, we will remove any unnecessary columns to streamline the dataset for analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>admin_boundary <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial/"</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">layer =</span> <span class="st">"tha_admbnda_adm1_rtsd_20220121"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">32647</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">province_eng =</span> ADM1_EN, <span class="at">pcode =</span> ADM1_PCODE) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `tha_admbnda_adm1_rtsd_20220121' from data source 
+  `/Users/cham/project/Geospatial-Analytics/chrismanafe/ISSS626-GAA/take_home_ex/take_home_ex02/data/geospatial' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 77 features and 16 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 97.34336 ymin: 5.613038 xmax: 105.637 ymax: 20.46507
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+</div>
+<p>Let’s verify the coordinate reference system of admin_boundary using <code>st_crs</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(admin_boundary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: EPSG:32647 
+  wkt:
+PROJCRS["WGS 84 / UTM zone 47N",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 47N",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",99,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",0,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Engineering survey, topographic mapping."],
+        AREA["Between 96°E and 102°E, northern hemisphere between equator and 84°N, onshore and offshore. China. Indonesia. Laos. Malaysia - West Malaysia. Mongolia. Myanmar (Burma). Russian Federation. Thailand."],
+        BBOX[0,96,84,102]],
+    ID["EPSG",32647]]</code></pre>
+</div>
+</div>
+<p>Next, we will visualize <code>admin_boundary</code> using <strong>tmap</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(admin_boundary)<span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col=</span><span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd=</span><span class="fl">0.3</span>, <span class="at">alpha=</span><span class="fl">0.6</span>)<span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"Thailand Administrative Boundaries by Province"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="dv">1</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.show =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">frame =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="exploratory-data-analysis" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Exploratory Data Analysis</h1>
+<section id="summary-statistics" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="summary-statistics"><span class="header-section-number">4.1</span> Summary statistics</h2>
+<p>Let’s find out the summary statistics of tourism data using <code>summary()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      date            province_eng        region_eng        ratio_tourist_stay
+ Min.   :2019-01-01   Length:3850        Length:3850        Min.   : 0.00     
+ 1st Qu.:2020-01-01   Class :character   Class :character   1st Qu.:20.18     
+ Median :2021-01-16   Mode  :character   Mode  :character   Median :41.81     
+ Mean   :2021-01-15                                         Mean   :38.93     
+ 3rd Qu.:2022-02-01                                         3rd Qu.:56.20     
+ Max.   :2023-02-01                                         Max.   :95.86     
+ no_tourist_stay   no_tourist_all    no_tourist_thai   no_tourist_foreign 
+ Min.   :      0   Min.   :      0   Min.   :      0   Min.   :      0.0  
+ 1st Qu.:  16271   1st Qu.:  39092   1st Qu.:  37169   1st Qu.:     49.2  
+ Median :  44579   Median :  92122   Median :  88782   Median :    553.0  
+ Mean   : 105161   Mean   : 206328   Mean   : 173962   Mean   :  32366.1  
+ 3rd Qu.:  90902   3rd Qu.: 203646   3rd Qu.: 184256   3rd Qu.:   5189.5  
+ Max.   :3335728   Max.   :6131044   Max.   :4087756   Max.   :2473725.0  
+  revenue_all         revenue_thai       revenue_foreign     
+ Min.   :0.000e+00   Min.   :0.000e+00   Min.   :-4.250e+03  
+ 1st Qu.:6.332e+07   1st Qu.:5.925e+07   1st Qu.: 1.100e+05  
+ Median :1.955e+08   Median :1.773e+08   Median : 1.540e+06  
+ Mean   :1.344e+09   Mean   :6.636e+08   Mean   : 6.802e+08  
+ 3rd Qu.:5.060e+08   3rd Qu.:4.600e+08   3rd Qu.: 1.742e+07  
+ Max.   :1.103e+11   Max.   :4.506e+10   Max.   : 8.503e+10  </code></pre>
+</div>
+</div>
+<p>We observed there’s negative value on revenue_foreign variables. Since the revenue represents earnings from tourism, let’s assume that this is likely data entry error. So let’s fix this.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tourism <span class="ot">&lt;-</span> tourism <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_foreign =</span> <span class="fu">ifelse</span>(revenue_foreign <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="dv">0</span>, revenue_foreign),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_all =</span> <span class="fu">ifelse</span>(revenue_foreign <span class="sc">==</span> <span class="dv">0</span>, revenue_thai, revenue_all)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      date            province_eng        region_eng        ratio_tourist_stay
+ Min.   :2019-01-01   Length:3850        Length:3850        Min.   : 0.00     
+ 1st Qu.:2020-01-01   Class :character   Class :character   1st Qu.:20.18     
+ Median :2021-01-16   Mode  :character   Mode  :character   Median :41.81     
+ Mean   :2021-01-15                                         Mean   :38.93     
+ 3rd Qu.:2022-02-01                                         3rd Qu.:56.20     
+ Max.   :2023-02-01                                         Max.   :95.86     
+ no_tourist_stay   no_tourist_all    no_tourist_thai   no_tourist_foreign 
+ Min.   :      0   Min.   :      0   Min.   :      0   Min.   :      0.0  
+ 1st Qu.:  16271   1st Qu.:  39092   1st Qu.:  37169   1st Qu.:     49.2  
+ Median :  44579   Median :  92122   Median :  88782   Median :    553.0  
+ Mean   : 105161   Mean   : 206328   Mean   : 173962   Mean   :  32366.1  
+ 3rd Qu.:  90902   3rd Qu.: 203646   3rd Qu.: 184256   3rd Qu.:   5189.5  
+ Max.   :3335728   Max.   :6131044   Max.   :4087756   Max.   :2473725.0  
+  revenue_all         revenue_thai       revenue_foreign    
+ Min.   :0.000e+00   Min.   :0.000e+00   Min.   :0.000e+00  
+ 1st Qu.:6.332e+07   1st Qu.:5.925e+07   1st Qu.:1.100e+05  
+ Median :1.955e+08   Median :1.773e+08   Median :1.540e+06  
+ Mean   :1.344e+09   Mean   :6.636e+08   Mean   :6.802e+08  
+ 3rd Qu.:5.060e+08   3rd Qu.:4.600e+08   3rd Qu.:1.742e+07  
+ Max.   :1.103e+11   Max.   :4.506e+10   Max.   :8.503e+10  </code></pre>
+</div>
+</div>
+</section>
+<section id="check-missing-values" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="check-missing-values"><span class="header-section-number">4.2</span> Check Missing Values</h2>
+<p>Let’s check of any missing values in the dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(tourism))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              date       province_eng         region_eng ratio_tourist_stay 
+                 0                  0                  0                  0 
+   no_tourist_stay     no_tourist_all    no_tourist_thai no_tourist_foreign 
+                 0                  0                  0                  0 
+       revenue_all       revenue_thai    revenue_foreign 
+                 0                  0                  0 </code></pre>
+</div>
+</div>
+</section>
+<section id="distribution-plots-for-numerical-variables" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="distribution-plots-for-numerical-variables"><span class="header-section-number">4.3</span> Distribution Plots for Numerical Variables</h2>
+<p>Let’s visualize the numerical variables by province. We will apply a log transformation since some provinces have significantly larger numbers of tourists, which could make the boxplot difficult to analyze without scaling.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Number of Tourist</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Revenue</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Overnight-Staying Tourists</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tourism, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(province_eng, no_tourist_all, <span class="at">FUN =</span> median), <span class="at">y =</span> no_tourist_all)) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span>  <span class="co"># Log transformation for better scaling</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Boxplot of Tourists by Province (Log-Scale)"</span>, </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Province"</span>, </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Tourists (Log Scale)"</span>) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in scale_y_log10(): log-10 transformation introduced infinite values.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 25 rows containing non-finite outside the scale range
+(`stat_boxplot()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tourism, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(province_eng, revenue_all, <span class="at">FUN =</span> median), <span class="at">y =</span> revenue_all)) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span>  <span class="co"># Log transformation for better scaling</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Boxplot of Revenue by Province (Log Scale)"</span>, <span class="at">x =</span> <span class="st">"Province"</span>, <span class="at">y =</span> <span class="st">"Total Revenue (Log Scale)"</span>) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in scale_y_log10(): log-10 transformation introduced infinite values.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 24 rows containing non-finite outside the scale range
+(`stat_boxplot()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tourism, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(province_eng, no_tourist_stay, <span class="at">FUN =</span> median), <span class="at">y =</span> no_tourist_stay)) <span class="sc">+</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span>  <span class="co"># Log transformation for better scaling</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Boxplot of Overnight-Staying Tourists (Log Scale) by Province"</span>, </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Province"</span>, </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Overnight-Staying Tourists (Log Scale)"</span>) <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in scale_y_log10(): log-10 transformation introduced infinite values.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 25 rows containing non-finite outside the scale range
+(`stat_boxplot()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Observations:</strong></p>
+<p>The three boxplots above provide insights into tourism activity across Thai provinces, focusing on total tourists, overnight-staying tourists, and total tourism revenue.</p>
+<ol type="1">
+<li><strong>Tourist Concentration</strong>: Provinces like <strong>Bangkok</strong>, <strong>Chiang Mai</strong>, and <strong>Phuket</strong> consistently show the highest median values across all three metrics, highlighting their dominance as key tourist hubs. These provinces also exhibit greater variability, indicating fluctuating tourism activity possibly due to factors like seasonality or COVID-19 pandemics.</li>
+<li><strong>Smaller Provinces</strong>: Provinces such as <strong>Amnat Charoen</strong> and <strong>Nong Bua Lamphu</strong> consistently display much lower median values and narrower interquartile ranges (IQR), suggesting smaller tourist volumes and revenues.</li>
+<li><strong>Outliers</strong>: Many provinces show significant lower-end outliers across all metrics, likely reflecting periods of reduced tourist activity due to external factors like travel restrictions during COVID-19 pandemics.</li>
+</ol>
+<p>Overall, Thailand’s tourism revenue and tourist distribution are concentrated in a few key provinces, with the majority of smaller provinces experiencing lower and more stable activity.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="data-wrangling" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Data Wrangling</h1>
+<section id="feature-engineering" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="feature-engineering"><span class="header-section-number">5.1</span> Feature engineering</h2>
+<p>We wanted to introduce new indicators to enhance our analysis of tourist behavior and economic impact. We’ll create two key indicators:</p>
+<ul>
+<li><strong>Tourist Stay Rate</strong>: The percentage of tourists staying overnight in each province.</li>
+<li><strong>Revenue Per Tourist (Overall)</strong>: The average revenue generated per tourist.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tourism <span class="ot">&lt;-</span> tourism <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">tourist_stay_rate =</span> <span class="fu">ifelse</span>(no_tourist_all <span class="sc">&gt;</span> <span class="dv">0</span>, (no_tourist_stay <span class="sc">/</span> no_tourist_all) <span class="sc">*</span> <span class="dv">100</span>, <span class="cn">NA</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">revenue_per_tourist_all =</span> <span class="fu">ifelse</span>(no_tourist_all <span class="sc">&gt;</span> <span class="dv">0</span>, revenue_all <span class="sc">/</span> no_tourist_all, <span class="cn">NA</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="province-name-alignment" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="province-name-alignment"><span class="header-section-number">5.2</span> Province name alignment</h2>
+<p>We will resolve discrepancies in province names between the boundary and tourism datasets to ensure consistency, enabling accurate analysis and spatial joins. First, we will extract unique province names from both datasets and checks for mismatches by identifying provinces present in one dataset but not the other.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract unique values from both columns</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>admin_provinces <span class="ot">&lt;-</span> <span class="fu">unique</span>(admin_boundary<span class="sc">$</span>province_eng)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>tourism_provinces <span class="ot">&lt;-</span> <span class="fu">unique</span>(tourism<span class="sc">$</span>province_eng)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for mismatches</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>admin_not_in_tourism <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(admin_provinces, tourism_provinces)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>tourism_not_in_admin <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(tourism_provinces, admin_provinces)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print mismatches</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(admin_not_in_tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Lop Buri"         "Chai Nat"         "Chon Buri"        "Prachin Buri"    
+[5] "Buri Ram"         "Si Sa Ket"        "Nong Bua Lam Phu" "Phangnga"        </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tourism_not_in_admin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Lopburi"         "Chainat"         "Chonburi"        "Prachinburi"    
+[5] "Phang Nga"       "Buriram"         "Sisaket"         "Nong Bua Lamphu"</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We identified 8 provinces with different English names between the two datasets, so we will use <code>mutate()</code> to align the province names in the <code>tourism</code> dataset to match those in the <code>admin_boundary</code> dataset.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>tourism <span class="ot">&lt;-</span> tourism <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">province_eng =</span> <span class="fu">case_when</span>(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Lopburi"</span> <span class="sc">~</span> <span class="st">"Lop Buri"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Chainat"</span> <span class="sc">~</span> <span class="st">"Chai Nat"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Chonburi"</span> <span class="sc">~</span> <span class="st">"Chon Buri"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Prachinburi"</span> <span class="sc">~</span> <span class="st">"Prachin Buri"</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Phang Nga"</span> <span class="sc">~</span> <span class="st">"Phangnga"</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Buriram"</span> <span class="sc">~</span> <span class="st">"Buri Ram"</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Sisaket"</span> <span class="sc">~</span> <span class="st">"Si Sa Ket"</span>,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    province_eng <span class="sc">==</span> <span class="st">"Nong Bua Lamphu"</span> <span class="sc">~</span> <span class="st">"Nong Bua Lam Phu"</span>,</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> province_eng  <span class="co"># Keep the original name if no match</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s verify the result.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract unique values from both columns</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>admin_provinces <span class="ot">&lt;-</span> <span class="fu">unique</span>(admin_boundary<span class="sc">$</span>province_eng)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>tourism_provinces <span class="ot">&lt;-</span> <span class="fu">unique</span>(tourism<span class="sc">$</span>province_eng)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for mismatches</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>admin_not_in_tourism <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(admin_provinces, tourism_provinces)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>tourism_not_in_admin <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(tourism_provinces, admin_provinces)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print mismatches</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(admin_not_in_tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>character(0)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tourism_not_in_admin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>character(0)</code></pre>
+</div>
+</div>
+</section>
+<section id="perform-relational-join" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="perform-relational-join"><span class="header-section-number">5.3</span> Perform relational join</h2>
+<p>Since the tourism dataset does not contain any geospatial properties, we will perform a relational join with the <code>admin_boundary</code> dataset, which includes the necessary spatial information. This will allow us to incorporate geospatial data into the tourism dataset. We will use the <code>left_join()</code> function from the <code>dplyr</code> package to merge the two datasets based on the province names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>tourism_geo <span class="ot">&lt;-</span> <span class="fu">left_join</span>(admin_boundary, tourism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(province_eng)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tourism_geo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,850
+Columns: 17
+$ Shape_Leng              &lt;dbl&gt; 2.417227, 2.417227, 2.417227, 2.417227, 2.4172…
+$ Shape_Area              &lt;dbl&gt; 0.1313387, 0.1313387, 0.1313387, 0.1313387, 0.…
+$ province_eng            &lt;chr&gt; "Bangkok", "Bangkok", "Bangkok", "Bangkok", "B…
+$ pcode                   &lt;chr&gt; "TH10", "TH10", "TH10", "TH10", "TH10", "TH10"…
+$ date                    &lt;date&gt; 2019-01-01, 2020-01-01, 2021-01-01, 2022-01-0…
+$ region_eng              &lt;chr&gt; "central", "central", "central", "central", "c…
+$ ratio_tourist_stay      &lt;dbl&gt; 93.37, 89.36, 7.54, 26.34, 75.02, 89.19, 68.37…
+$ no_tourist_stay         &lt;dbl&gt; 3334971, 3213765, 354676, 1009583, 2440463, 30…
+$ no_tourist_all          &lt;dbl&gt; 5959075, 6046765, 1681847, 2437497, 4872078, 5…
+$ no_tourist_thai         &lt;dbl&gt; 3534061, 3573040, 1632693, 2299906, 2749877, 2…
+$ no_tourist_foreign      &lt;dbl&gt; 2425014, 2473725, 49154, 137591, 2122201, 2291…
+$ revenue_all             &lt;dbl&gt; 81926490000, 88202890000, 9539730000, 11823610…
+$ revenue_thai            &lt;dbl&gt; 29742580000, 31137650000, 8447450000, 96426000…
+$ revenue_foreign         &lt;dbl&gt; 52183910000, 57065240000, 1092280000, 21810100…
+$ tourist_stay_rate       &lt;dbl&gt; 55.96458, 53.14850, 21.08848, 41.41884, 50.090…
+$ revenue_per_tourist_all &lt;dbl&gt; 13748.189, 14586.790, 5672.175, 4850.718, 1237…
+$ geometry                &lt;MULTIPOLYGON [m]&gt; MULTIPOLYGON (((674339.8 15..., M…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(tourism_geo, <span class="st">"data/rds/tourism_geo.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="province-level-summary-of-tourism-economy-indicators" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="province-level-summary-of-tourism-economy-indicators"><span class="header-section-number">5.4</span> Province-level Summary of Tourism Economy Indicators</h2>
+<p>We will prepare a province-level summary of key tourism indicators, including both original metrics such as total tourists, foreign tourists, and total revenue, as well as newly engineered indicators like the tourist stay rate and revenue per tourist. This summary will provide a overall view of tourism patterns and economic contributions across each province.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>province_summary <span class="ot">&lt;-</span> tourism_geo <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(province_eng) <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summarize original data</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_tourists_all =</span> <span class="fu">sum</span>(no_tourist_all, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_foreign_tourists =</span> <span class="fu">sum</span>(no_tourist_foreign, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_thai_tourists =</span> <span class="fu">sum</span>(no_tourist_thai, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_stay_tourists =</span> <span class="fu">sum</span>(no_tourist_stay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_occupancy_rate =</span> <span class="fu">mean</span>(ratio_tourist_stay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_revenue_all =</span> <span class="fu">sum</span>(revenue_all, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_revenue_foreign =</span> <span class="fu">sum</span>(revenue_foreign, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_revenue_thai =</span> <span class="fu">sum</span>(revenue_thai, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summarize engineered data</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_tourist_stay_rate =</span> <span class="fu">mean</span>(tourist_stay_rate, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_revenue_per_tourist =</span> <span class="fu">mean</span>(revenue_per_tourist_all, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(province_summary, <span class="st">"data/rds/province_summary.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>We will use following indicators for our analysis:</p>
+<ul>
+<li><strong>Total Tourists (<code>total_tourists_all</code>)</strong>, because it helps us understand how tourist numbers are distributed across provinces.</li>
+<li><strong>Tourist Stay Rate (<code>avg_tourist_stay_rate</code>)</strong>, because it could reveal regional patterns in how provinces retain visitors to stay over-night.</li>
+<li><strong>Revenue Per Tourist (<code>avg_revenue_per_tourist</code>)</strong>, because it helps identify areas where tourism generates the most economic benefit, potentially showing clusters of higher revenue generation.</li>
+</ul>
+</blockquote>
+</section>
+<section id="visualization-of-thailands-tourism-distribution" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="visualization-of-thailands-tourism-distribution"><span class="header-section-number">5.5</span> Visualization of Thailand’s Tourism Distribution</h2>
+<p>Using the <code>province_summary</code> data frame, we will create choropleth maps to visualize the geographical distribution of the 3 tourism economy indicators across Thailand.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>tourist <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(province_summary) <span class="sc">+</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"total_tourists_all"</span>,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>) <span class="sc">+</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Total Tourist"</span>, <span class="at">main.title.size =</span> <span class="dv">1</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>foreign_tourists <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(province_summary) <span class="sc">+</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"avg_tourist_stay_rate"</span>,</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>) <span class="sc">+</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Tourist Stay Rate"</span>, <span class="at">main.title.size =</span> <span class="dv">1</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>revenue_per_tourist <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(province_summary) <span class="sc">+</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"avg_revenue_per_tourist"</span>,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>) <span class="sc">+</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Revenue per Tourist"</span>, <span class="at">main.title.size =</span> <span class="dv">1</span>)</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(tourist,</span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>             foreign_tourists,</span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>             revenue_per_tourist,</span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp=</span><span class="dv">1</span>,</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="global-measures-of-spatial-autocorrelation" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Global Measures of Spatial Autocorrelation</h1>
+<p>In this section, we will compute global spatial autocorrelation statistics to evaluate whether the key indicators exhibit spatial dependence across provinces. Specifically, we will use Moran’s I to measure the degree of spatial autocorrelation.</p>
+<section id="computing-contiguity-neighbours" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="computing-contiguity-neighbours"><span class="header-section-number">6.1</span> Computing Contiguity Neighbours</h2>
+<p>Typically, we use the <code>st_contiguity()</code> function from the <strong>sfdep</strong> package to compute contiguity weight matrices, which build neighbor relationships based on shared boundaries between regions. However, because our dataset includes province located on separate island (i.e.&nbsp;Phuket), contiguity-based methods would leave some region without neighbors. To overcome this issue, we will use the <strong>K-Nearest Neighbors (KNN)</strong> approach to compute spatial weights. This method ensures that every province has neighbors, even for those on isolated islands, by assigning each region a fixed number of nearest neighbors based on distance rather than shared boundaries.</p>
+<p>First, we need to ensure that the centroids used for each province are correctly placed within the province boundaries and not in the sea or outside of the boundary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>province_centroids <span class="ot">&lt;-</span> province_summary <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">st_centroid</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(province_eng, geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: st_centroid assumes attributes are constant over geometries</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'plot'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(province_summary) <span class="sc">+</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>() <span class="sc">+</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(province_centroids) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Centroids of Thailand Provinces"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We verified that the centroids are correctly placed within the province boundaries, ensuring that none are positioned in the sea or outside their respective boundaries.</p>
+</blockquote>
+<p>With the centroids correctly positioned, we will proceed with two approaches for computing spatial weights:</p>
+<ol type="1">
+<li><p><strong>K-Nearest Neighbors (KNN)</strong>: Using the <code>st_knn()</code> function from the <strong>sfdep</strong> package, we will compute KNN-based spatial weights. This ensures that all provinces, including those on isolated islands, have neighbors based on geographic proximity rather than shared boundaries.</p></li>
+<li><p><strong>Distance Band Weights</strong>: We will also use the <code>st_dist_band()</code> function from <strong>sfdep</strong> to create a distance-based spatial weights matrix. This method defines neighbors for provinces based on a maximum distance threshold, ensuring that regions within a certain distance of each other are considered neighbors.</p></li>
+</ol>
+<p>Both methods will help account for geographic proximity while ensuring that all regions, including isolated provinces, are part of the spatial analysis.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">st_knn()</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">st_dist_band()</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>wm_knn <span class="ot">&lt;-</span> province_summary <span class="sc">%&gt;%</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb =</span> <span class="fu">st_knn</span>(geometry, <span class="at">k =</span> <span class="dv">8</span>),</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">st_inverse_distance</span>(nb, geometry, <span class="at">scale =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span>),</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">map</span>(wt, <span class="sc">~</span> .x <span class="sc">/</span> <span class="fu">sum</span>(.x)),</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Polygon provided. Using point on surface.
+! Polygon provided. Using point on surface.</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>wm_fd <span class="ot">&lt;-</span> province_summary <span class="sc">%&gt;%</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb =</span> <span class="fu">st_dist_band</span>(province_summary<span class="sc">$</span>geometry),</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">st_inverse_distance</span>(nb, geometry, <span class="at">scale =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span>),</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">map</span>(wt, <span class="sc">~</span> .x <span class="sc">/</span> <span class="fu">sum</span>(.x)),</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Polygon provided. Using point on surface.
+! Polygon provided. Using point on surface.</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We normalize the inverse distance weights to ensure that each province’s spatial influence is comparable and sum up to 1.</p>
+</blockquote>
+</section>
+<section id="global-morans-i-test-and-permutation-test" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2</span> Global Moran’s I Test and Permutation Test</h2>
+<p>In this section, we will assess the spatial dependence of three key tourism indicators across provinces in Thailand using the <strong>Global Moran’s I test</strong>. If the indicators are independent of space, Moran’s I should show no significant spatial autocorrelation.</p>
+<ul>
+<li><p><strong>Null Hypothesis (H₀)</strong>: The tourism economy indicators are spatially independent (randomly distributed in space).</p></li>
+<li><p><strong>Alternative Hypothesis (H₁)</strong>: There is spatial dependence, indicating that similar values are clustered or dispersed.</p></li>
+</ul>
+<p>We will conduct the analysis at a 95% confidence interval (significance level of 0.05) using the <code>global_moran_test</code> function from the <strong>sfdep</strong> package. Additionally, we will run a permutation test with 1,000 simulations to validate the results using <code>global_moran_perm</code> function.</p>
+<p>We will evaluate the following tourism economy indicators:</p>
+<ul>
+<li>Total Tourists</li>
+<li>Average of Tourist Stay Rate</li>
+<li>Revenue per Tourist</li>
+</ul>
+<p>For each indicator, we will apply both the <strong>K-Nearest Neighbors (KNN)</strong> and <strong>Distance Band</strong> weight matrices to observe the spatial patterns.</p>
+<section id="total-tourists-global-morans-i-test-and-permutation-test" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="total-tourists-global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2.1</span> Total Tourists: Global Moran’s I Test and Permutation Test</h3>
+<section id="knn-weights" class="level4" data-number="6.2.1.1">
+<h4 data-number="6.2.1.1" class="anchored" data-anchor-id="knn-weights"><span class="header-section-number">6.2.1.1</span> KNN Weights</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_knn<span class="sc">$</span>total_tourists_all,</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>           wm_knn<span class="sc">$</span>nb,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>           wm_knn<span class="sc">$</span>wt,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 1.1069, p-value = 0.1342
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.026678128      -0.013157895       0.001295218 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_knn<span class="sc">$</span>total_tourists_all,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                  wm_knn<span class="sc">$</span>nb,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>                  wm_knn<span class="sc">$</span>wt,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 1000 
+
+statistic = 0.026678, observed rank = 879, p-value = 0.242
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+</section>
+<section id="distance-band-weights" class="level4" data-number="6.2.1.2">
+<h4 data-number="6.2.1.2" class="anchored" data-anchor-id="distance-band-weights"><span class="header-section-number">6.2.1.2</span> Distance Band Weights</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_fd<span class="sc">$</span>total_tourists_all,</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>           wm_fd<span class="sc">$</span>nb,</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>           wm_fd<span class="sc">$</span>wt,</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 1.0694, p-value = 0.1424
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.040849188      -0.013157895       0.002550464 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_fd<span class="sc">$</span>total_tourists_all,</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                  wm_fd<span class="sc">$</span>nb,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>                  wm_fd<span class="sc">$</span>wt,</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 1000 
+
+statistic = 0.040849, observed rank = 881, p-value = 0.238
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Observations:</strong></p>
+<p><strong>K-Nearest Neighbors (KNN):</strong></p>
+<ul>
+<li>Moran’s I statistic: 0.0267</li>
+<li>p-value (Moran’s I test): 0.1342</li>
+<li>p-value (Monte Carlo permutation test): 0.242</li>
+</ul>
+<p>The Moran’s I statistic of 0.0267 shows very weak positive spatial autocorrelation, suggesting almost no spatial clustering of total tourists. Both the Moran’s I test and the Monte Carlo permutation test yield high p-values (above 0.05), indicating that we fail to reject the null hypothesis. This implies that the distribution of total tourists remains random, with no significant spatial clustering when using normalized KNN weights.</p>
+<hr>
+<p><strong>Distance Band Weights:</strong></p>
+<ul>
+<li>Moran’s I statistic: 0.0408</li>
+<li>p-value (Moran’s I test): 0.1424</li>
+<li>p-value (Monte Carlo permutation test): 0.238</li>
+</ul>
+<p>The Moran’s I statistic of 0.0408 also shows weak positive spatial autocorrelation, indicating no substantial clustering of total tourists across provinces. The high p-values from both the Moran’s I test and Monte Carlo permutation test further confirm that we fail to reject the null hypothesis. The total tourist distribution remains random, with no significant spatial dependence when using normalized distance-based weights.</p>
+<hr>
+<p>For total tourists, both the KNN and distance band methods show no significant spatial autocorrelation. The p-values from both tests indicate that we fail to reject the null hypothesis.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="average-of-tourist-stay-rate-global-morans-i-test-and-permutation-test" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="average-of-tourist-stay-rate-global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2.2</span> Average of Tourist Stay Rate: Global Moran’s I Test and Permutation Test</h3>
+<section id="knn-weights-1" class="level4" data-number="6.2.2.1">
+<h4 data-number="6.2.2.1" class="anchored" data-anchor-id="knn-weights-1"><span class="header-section-number">6.2.2.1</span> KNN Weights</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_knn<span class="sc">$</span>avg_tourist_stay_rate,</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>           wm_knn<span class="sc">$</span>nb,</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>           wm_knn<span class="sc">$</span>wt,</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 7.4571, p-value = 4.422e-14
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.409217712      -0.013157895       0.003208175 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_knn<span class="sc">$</span>avg_tourist_stay_rate,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>                  wm_knn<span class="sc">$</span>nb,</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>                  wm_knn<span class="sc">$</span>wt,</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 1000 
+
+statistic = 0.40922, observed rank = 1000, p-value &lt; 2.2e-16
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+</section>
+<section id="distance-band-weights-1" class="level4" data-number="6.2.2.2">
+<h4 data-number="6.2.2.2" class="anchored" data-anchor-id="distance-band-weights-1"><span class="header-section-number">6.2.2.2</span> Distance Band Weights</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_fd<span class="sc">$</span>avg_tourist_stay_rate,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>           wm_fd<span class="sc">$</span>nb,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>           wm_fd<span class="sc">$</span>wt,</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 5.9277, p-value = 1.536e-09
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.458854837      -0.013157895       0.006340634 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_fd<span class="sc">$</span>avg_tourist_stay_rate,</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                  wm_fd<span class="sc">$</span>nb,</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>                  wm_fd<span class="sc">$</span>wt,</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 1000 
+
+statistic = 0.45885, observed rank = 1000, p-value &lt; 2.2e-16
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Observations:</strong></p>
+<p><strong>K-Nearest Neighbors (KNN):</strong></p>
+<ul>
+<li>Moran’s I statistic: 0.4092</li>
+<li>p-value (Moran’s I test): 4.422e-14</li>
+<li>p-value (Monte Carlo permutation test): &lt; 2.2e-16</li>
+</ul>
+<p>The Moran’s I statistic of 0.4092 indicates strong positive spatial autocorrelation, suggesting that provinces with similar tourist stay rates tend to be clustered together. Both the Moran’s I test and the Monte Carlo permutation test return extremely low p-values, confirming that this clustering is highly statistically significant. Thus, we reject the null hypothesis, as there is strong evidence of spatial dependence in tourist stay rates when using normalized KNN weights.</p>
+<hr>
+<p><strong>Distance Band Weights:</strong></p>
+<ul>
+<li>Moran’s I statistic: 0.4586</li>
+<li>p-value (Moran’s I test): 1.536e-09</li>
+<li>p-value (Monte Carlo permutation test): &lt; 2.2e-16</li>
+</ul>
+<p>The Moran’s I statistic of 0.4586 shows strong positive spatial autocorrelation, indicating that provinces with similar tourist stay rates are geographically clustered. Both the Moran’s I test and the Monte Carlo permutation test yield very low p-values, confirming that this spatial clustering is highly statistically significant. Therefore, we reject the null hypothesis, as there is strong evidence of spatial dependence using normalized distance-based weights.</p>
+<hr>
+<p>For average tourist stay rate, both the KNN and distance band methods show strong spatial autocorrelation, and the results are highly statistically significant. In both cases, we reject the null hypothesis, indicating that provinces with similar tourist stay rates are spatially clustered.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="average-revenue-per-tourists-global-morans-i-test-and-permutation-test" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="average-revenue-per-tourists-global-morans-i-test-and-permutation-test"><span class="header-section-number">6.2.3</span> Average Revenue per Tourists: Global Moran’s I Test and Permutation Test</h3>
+<section id="knn-weights-2" class="level4" data-number="6.2.3.1">
+<h4 data-number="6.2.3.1" class="anchored" data-anchor-id="knn-weights-2"><span class="header-section-number">6.2.3.1</span> KNN Weights</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_knn<span class="sc">$</span>avg_revenue_per_tourist,</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>           wm_knn<span class="sc">$</span>nb,</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>           wm_knn<span class="sc">$</span>wt,</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 7.125, p-value = 5.204e-13
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.344633674      -0.013157895       0.002521688 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_knn<span class="sc">$</span>avg_revenue_per_tourist,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>                  wm_knn<span class="sc">$</span>nb,</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>                  wm_knn<span class="sc">$</span>wt,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 1000 
+
+statistic = 0.34463, observed rank = 1000, p-value &lt; 2.2e-16
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+</section>
+<section id="distance-band-weights-2" class="level4" data-number="6.2.3.2">
+<h4 data-number="6.2.3.2" class="anchored" data-anchor-id="distance-band-weights-2"><span class="header-section-number">6.2.3.2</span> Distance Band Weights</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_fd<span class="sc">$</span>avg_revenue_per_tourist,</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>           wm_fd<span class="sc">$</span>nb,</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>           wm_fd<span class="sc">$</span>wt,</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 6.3368, p-value = 1.173e-10
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.434043125      -0.013157895       0.004980487 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_fd<span class="sc">$</span>avg_revenue_per_tourist,</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>                  wm_fd<span class="sc">$</span>nb,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>                  wm_fd<span class="sc">$</span>wt,</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 1000 
+
+statistic = 0.43404, observed rank = 1000, p-value &lt; 2.2e-16
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Observations:</strong></p>
+<p><strong>K-Nearest Neighbors (KNN):</strong></p>
+<ul>
+<li>Moran’s I statistic: 0.3446</li>
+<li>p-value (Moran’s I test): 5.204e-13</li>
+<li>p-value (Monte Carlo permutation test): &lt; 2.2e-16</li>
+</ul>
+<p>The Moran’s I statistic of 0.3446 indicates moderate positive spatial autocorrelation, suggesting that provinces with similar revenue per tourist tend to be clustered. Both the Moran’s I test and the Monte Carlo permutation test return very low p-values, confirming that this clustering is highly statistically significant. Therefore, we reject the null hypothesis, as there is strong evidence of spatial dependence in revenue per tourist when using normalized KNN weights.</p>
+<hr>
+<p><strong>Distance Band Weights:</strong></p>
+<ul>
+<li>Moran’s I statistic: 0.4340</li>
+<li>p-value (Moran’s I test): 1.173e-10</li>
+<li>p-value (Monte Carlo permutation test): &lt; 2.2e-16</li>
+</ul>
+<p>The Moran’s I statistic of 0.4340 indicates strong positive spatial autocorrelation, showing that provinces with similar revenue per tourist are geographically clustered. Both the Moran’s I test and the Monte Carlo permutation test yield extremely low p-values, confirming that this spatial clustering is highly statistically significant. Therefore, we reject the null hypothesis, as there is clear evidence of spatial dependence using normalized distance-based weights.</p>
+<hr>
+<p>For average revenue per tourist, both the KNN and distance band methods with inverse distance weights show moderate spatial autocorrelation, and the results are statistically significant. In both cases, we reject the null hypothesis, indicating that provinces with similar revenue per tourist are spatially clustered.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="interpreting-results" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="interpreting-results"><span class="header-section-number">6.3</span> Interpreting Results</h2>
+<p>The results from the Global Moran’s I test and the Monte Carlo simulation tell us that:</p>
+<ul>
+<li><p>Total tourist numbers show weak spatial autocorrelation, indicating that while some provinces attract more tourists, there is no strong regional clustering. The distribution of tourists seems random, with individual provinces standing out rather than forming distinct regional patterns.</p></li>
+<li><p>In contrast, both average tourist stay rate and average revenue per tourist display moderate to strong and statistically significant spatial autocorrelation. Provinces that are geographically close tend to have similar tourist retention rates and revenue generated per tourist. This suggests that these tourism economy indicators are regionally concentrated, likely due to shared tourism infrastructure, similar attractions, or collaborative regional policies.</p></li>
+</ul>
+</section>
+</section>
+<section id="local-measures-of-spatial-autocorrelation" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Local Measures of Spatial Autocorrelation</h1>
+<p>Local Indicators of Spatial Association (LISA) allow us to evaluate clusters between regions. Simply put, LISA is a statistical method that helps identify areas where values are either clustered (similar values are found together) or where there are outliers. Higher LISA values indicate that a region is more strongly influenced by its neighboring regions, meaning it is part of a spatial cluster.</p>
+<p>In this section, we will apply <strong>Local Indicators of Spatial Association (LISA)</strong> to the same tourism indicators used in the Global Moran’s I analysis.</p>
+<section id="cluster-and-outlier-analysis" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="cluster-and-outlier-analysis"><span class="header-section-number">7.1</span> Cluster and Outlier Analysis</h2>
+<section id="computing-local-morans-i" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="computing-local-morans-i"><span class="header-section-number">7.1.1</span> Computing Local Moran’s I</h3>
+<p>We will compute Local Moran’s I of three selected indicators at province level by using <code>local_moran()</code> function of <strong>sfdep</strong> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>lisa_total_tourists_knn <span class="ot">&lt;-</span> wm_knn <span class="sc">%&gt;%</span> </span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_moran =</span> <span class="fu">local_moran</span>(</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>    total_tourists_all, nb, wt),</span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_moran)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>lisa_tourist_stay_rate_knn <span class="ot">&lt;-</span> wm_knn <span class="sc">%&gt;%</span> </span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_moran =</span> <span class="fu">local_moran</span>(</span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>    avg_tourist_stay_rate, nb, wt),</span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_moran)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>lisa_revenue_per_tourist_knn <span class="ot">&lt;-</span> wm_knn <span class="sc">%&gt;%</span> </span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_moran =</span> <span class="fu">local_moran</span>(</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>    avg_revenue_per_tourist, nb, wt),</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_moran)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plotting-lisa-map" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="plotting-lisa-map"><span class="header-section-number">7.1.2</span> Plotting LISA map</h3>
+<p>We will use the tmap package to visualize the results of the Local Moran’s I computation, specifically using the values from the ii and mean fields. To enable effective comparison, we will plot both maps side by side—one showing the local spatial autocorrelation (ii values) and the other highlighting the clusters or outliers of total tourists. Specifically, we will highlight clusters where the <strong>p-values</strong> from the <strong>Local Moran’s I</strong> are below 0.05, indicating potential spatial clusters or outliers.</p>
+<p>First, let’s define the label and palette for each cluster.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#ffffff"</span>, <span class="st">"#2c7bb6"</span>, <span class="st">"#abd9e9"</span>, <span class="st">"#fdae61"</span>, <span class="st">"#d7191c"</span>)</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>clusters <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Insignificant"</span>, <span class="st">"Low-Low"</span>, <span class="st">"Low-High"</span>, <span class="st">"High-Low"</span>, <span class="st">"High-High"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="total-number-of-tourists" class="level4" data-number="7.1.2.1">
+<h4 data-number="7.1.2.1" class="anchored" data-anchor-id="total-number-of-tourists"><span class="header-section-number">7.1.2.1</span> Total Number of Tourists</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>lisa_total_tourists_knn<span class="sc">$</span>quadrant <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  lisa_total_tourists_knn<span class="sc">$</span>p_ii_sim <span class="sc">&gt;=</span> <span class="fl">0.05</span> <span class="sc">~</span> <span class="dv">0</span>,  <span class="co"># Set quadrant to 0 if p_ii_sim is greater than or equal to 0.05</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  lisa_total_tourists_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"Low-Low"</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># Assign quadrant values for significant clusters</span></span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>  lisa_total_tourists_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"Low-High"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>  lisa_total_tourists_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"High-Low"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>  lisa_total_tourists_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"High-High"</span> <span class="sc">~</span> <span class="dv">4</span></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(lisa_total_tourists_knn) <span class="sc">+</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"ii"</span>) <span class="sc">+</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>() <span class="sc">+</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"Local Moran's I of Total Tourists"</span>,</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>map2 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(lisa_total_tourists_knn) <span class="sc">+</span></span>
+<span id="cb84-11"><a href="#cb84-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"quadrant"</span>,</span>
+<span id="cb84-12"><a href="#cb84-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>),</span>
+<span id="cb84-13"><a href="#cb84-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> colors,</span>
+<span id="cb84-14"><a href="#cb84-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> clusters)<span class="sc">+</span></span>
+<span id="cb84-15"><a href="#cb84-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb84-16"><a href="#cb84-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>() <span class="sc">+</span></span>
+<span id="cb84-17"><a href="#cb84-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb84-18"><a href="#cb84-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"LISA Map of Total Tourists"</span>,</span>
+<span id="cb84-19"><a href="#cb84-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb84-20"><a href="#cb84-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb84-21"><a href="#cb84-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-22"><a href="#cb84-22" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(map1, map2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Variable(s) "ii" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="average-of-tourist-stay-rate" class="level4" data-number="7.1.2.2">
+<h4 data-number="7.1.2.2" class="anchored" data-anchor-id="average-of-tourist-stay-rate"><span class="header-section-number">7.1.2.2</span> Average of Tourist Stay Rate</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>lisa_tourist_stay_rate_knn<span class="sc">$</span>quadrant <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  lisa_tourist_stay_rate_knn<span class="sc">$</span>p_ii_sim <span class="sc">&gt;=</span> <span class="fl">0.05</span> <span class="sc">~</span> <span class="dv">0</span>,  <span class="co"># Set quadrant to 0 if p_ii_sim is greater than or equal to 0.05</span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  lisa_tourist_stay_rate_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"Low-Low"</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># Assign quadrant values for significant clusters</span></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  lisa_tourist_stay_rate_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"Low-High"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>  lisa_tourist_stay_rate_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"High-Low"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>  lisa_tourist_stay_rate_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"High-High"</span> <span class="sc">~</span> <span class="dv">4</span></span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(lisa_tourist_stay_rate_knn) <span class="sc">+</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"ii"</span>) <span class="sc">+</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>(<span class="at">set.zoom.limits =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"Local Moran's I of Tourists Stay Rate"</span>,</span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>map2 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(lisa_tourist_stay_rate_knn) <span class="sc">+</span></span>
+<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"quadrant"</span>,</span>
+<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>),</span>
+<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> colors,</span>
+<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> clusters) <span class="sc">+</span></span>
+<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb88-16"><a href="#cb88-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>() <span class="sc">+</span></span>
+<span id="cb88-17"><a href="#cb88-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb88-18"><a href="#cb88-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"LISA Map of Tourists Stay Rate"</span>,</span>
+<span id="cb88-19"><a href="#cb88-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb88-20"><a href="#cb88-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb88-21"><a href="#cb88-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-22"><a href="#cb88-22" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(map1, map2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Variable(s) "ii" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+</div>
+</section>
+<section id="average-revenue-per-tourists" class="level4" data-number="7.1.2.3">
+<h4 data-number="7.1.2.3" class="anchored" data-anchor-id="average-revenue-per-tourists"><span class="header-section-number">7.1.2.3</span> Average Revenue Per Tourists</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>lisa_revenue_per_tourist_knn<span class="sc">$</span>quadrant <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  lisa_revenue_per_tourist_knn<span class="sc">$</span>p_ii_sim <span class="sc">&gt;=</span> <span class="fl">0.05</span> <span class="sc">~</span> <span class="dv">0</span>,  <span class="co"># Set quadrant to 0 if p_ii_sim is greater than or equal to 0.05</span></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  lisa_revenue_per_tourist_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"Low-Low"</span> <span class="sc">~</span> <span class="dv">1</span>,  <span class="co"># Assign quadrant values for significant clusters</span></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>  lisa_revenue_per_tourist_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"Low-High"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>  lisa_revenue_per_tourist_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"High-Low"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>  lisa_revenue_per_tourist_knn<span class="sc">$</span>mean <span class="sc">==</span> <span class="st">"High-High"</span> <span class="sc">~</span> <span class="dv">4</span></span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(lisa_revenue_per_tourist_knn) <span class="sc">+</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"ii"</span>) <span class="sc">+</span></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>() <span class="sc">+</span></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"Local Moran's I of Revenue per Tourist"</span>,</span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>map2 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(lisa_revenue_per_tourist_knn) <span class="sc">+</span></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"quadrant"</span>,</span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>),</span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> colors,</span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> clusters) <span class="sc">+</span></span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>() <span class="sc">+</span></span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"LISA Map of Revenue per Tourist"</span>,</span>
+<span id="cb94-19"><a href="#cb94-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb94-20"><a href="#cb94-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb94-21"><a href="#cb94-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-22"><a href="#cb94-22" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(map1, map2, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Variable(s) "ii" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Observations</strong>:</p>
+<p>In the analysis of total tourists, Samut Prakan emerges as a Low-High outlier. This province has 8 million tourists in contrast to its neighboring province, Bangkok, which sees 151 million tourists. For tourist stay rates, several Low-High outliers are observed in provinces surrounding Bangkok, likely due to the prevalence of day trips where tourists visit nearby locations but return to Bangkok by the end of the day. Additionally, High-High clusters are identified in Krabi and adjacent southern provinces, with a Low-High outlier in Phang Nga, which is in close proximity to the popular tourist destinations such as Phuket and Krabi.</p>
+<p>In terms of revenue per tourist, Bangkok is classified as a High-Low outlier, which aligns with its status as Thailand’s primary tourism hub, attracting the largest number of tourists. Furthermore, a High-High cluster is evident in Phuket, Krabi, and Phang Nga, which are well-known major tourism areas. However, neighboring provinces such as Nakhon Si Thammarat and Phatthalung are identified as Low-High outliers, despite their proximity to these popular destinations.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="hot-and-cold-spot-analysis-with-local-gi" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="hot-and-cold-spot-analysis-with-local-gi"><span class="header-section-number">7.2</span> Hot and Cold Spot Analysis with Local Gi*</h2>
+<p>Besides detecting clusters and outliers, localized spatial statistics can also be used to identify hot spots and/or cold spots.</p>
+<p>The High/Low Clustering (General G) tool measures the spatial concentration of high or low values within a given study area. The null hypothesis for this statistic states that there is no spatial clustering of feature values. When the p-value is small and statistically significant, the null hypothesis can be rejected, and the sign of the Gi value becomes crucial for interpretation.</p>
+<ul>
+<li><p>If the Gi value is positive and statistically significant, it indicates that the location is associated with high values in the surrounding area (i.e., hot spots).</p></li>
+<li><p>If the Gi value is negative and statistically significant, it indicates that the location is surrounded by low values (i.e., cold spots).</p></li>
+</ul>
+<p>The Getis-Ord General G tool is most effective when values are evenly distributed across the area, as it helps identify unexpected clusters of high values (hot spots). However, it has a limitation: when both high and low values are clustered within the same region, they tend to cancel each other out, reducing the tool’s effectiveness in such cases.</p>
+<p>In this study, we will compute the Local Gi statistic in R. First, we will use the <code>st_dist_band()</code> function to create a neighbor list, and then apply the <code>include_self()</code> function to ensure that the focal observation is included in its own neighbor list. Afterward, we will use this neighbor list to create a weight list by applying the <code>st_inverse_distance()</code> function. To ensure <strong>comparability</strong> and <strong>balanced influence</strong> across locations, we will <strong>normalize</strong> the weights, which helps prevent bias and stabilizes the effect of distance on the results.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>wm_idw <span class="ot">&lt;-</span> province_summary <span class="sc">%&gt;%</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb =</span> <span class="fu">include_self</span>(<span class="fu">st_dist_band</span>(geometry)),</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">st_inverse_distance</span>(nb, geometry,</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">scale =</span> <span class="dv">1</span>,</span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">alpha =</span> <span class="dv">1</span>),</span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">map</span>(wt, <span class="sc">~</span> .x <span class="sc">/</span> <span class="fu">sum</span>(.x)),</span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Polygon provided. Using point on surface.
+! Polygon provided. Using point on surface.</code></pre>
+</div>
+</div>
+<p>Now, we will calculate the Local Gi statistic using the <code>local_gstar_perm()</code> function from the <strong>sfdep</strong> package. This function takes a neighbor list (<code>nb</code>) and a weight list (<code>wt</code>) as inputs and generates the Gi statistics* through a Monte Carlo permutation with a specified number of simulations (<code>nsim</code>). The results will then be stored in a new object called <code>HCSA</code>.</p>
+<p>After we run the Montewe replace any p-values (p_sim) greater than 0.05 with NA to filter out non-significant results. Then, we update the Gi statistic (<code>gi_star</code>) by setting it to <code>NA</code> for any non-significant values, ensuring that only statistically significant hot spots and cold spots are retained in the final output.</p>
+<section id="compute-local-gi-statistic" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="compute-local-gi-statistic"><span class="header-section-number">7.2.1</span> Compute Local Gi statistic</h3>
+<p><strong>Total Number of Tourists</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>HCSA_total_tourist <span class="ot">&lt;-</span> wm_idw <span class="sc">%&gt;%</span> </span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_Gi =</span> <span class="fu">local_gstar_perm</span>(</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>    total_tourists_all, nb, wt, <span class="at">nsim =</span> <span class="dv">999</span>),</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_Gi) <span class="sc">%&gt;%</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">"p_sim"</span> <span class="ot">=</span> <span class="fu">replace</span>(<span class="st">`</span><span class="at">p_sim</span><span class="st">`</span>, <span class="st">`</span><span class="at">p_sim</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="fl">0.05</span>, <span class="cn">NA</span>),</span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">"gi_star"</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">p_sim</span><span class="st">`</span>), <span class="cn">NA</span>, <span class="st">`</span><span class="at">gi_star</span><span class="st">`</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Average of Tourist Stay Rate</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>HCSA_tourist_stay_rate <span class="ot">&lt;-</span> wm_idw <span class="sc">%&gt;%</span> </span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_Gi =</span> <span class="fu">local_gstar_perm</span>(</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>    avg_tourist_stay_rate, nb, wt, <span class="at">nsim =</span> <span class="dv">999</span>),</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_Gi) <span class="sc">%&gt;%</span></span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">"p_sim"</span> <span class="ot">=</span> <span class="fu">replace</span>(<span class="st">`</span><span class="at">p_sim</span><span class="st">`</span>, <span class="st">`</span><span class="at">p_sim</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="fl">0.05</span>, <span class="cn">NA</span>),</span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">"gi_star"</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">p_sim</span><span class="st">`</span>), <span class="cn">NA</span>, <span class="st">`</span><span class="at">gi_star</span><span class="st">`</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Average Revenue per Tourist</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>HCSA_revenue_per_tourist <span class="ot">&lt;-</span> wm_idw <span class="sc">%&gt;%</span> </span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_Gi =</span> <span class="fu">local_gstar_perm</span>(</span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>    avg_revenue_per_tourist, nb, wt, <span class="at">nsim =</span> <span class="dv">999</span>),</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_Gi) <span class="sc">%&gt;%</span></span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">"p_sim"</span> <span class="ot">=</span> <span class="fu">replace</span>(<span class="st">`</span><span class="at">p_sim</span><span class="st">`</span>, <span class="st">`</span><span class="at">p_sim</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="fl">0.05</span>, <span class="cn">NA</span>),</span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">"gi_star"</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">p_sim</span><span class="st">`</span>), <span class="cn">NA</span>, <span class="st">`</span><span class="at">gi_star</span><span class="st">`</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualize-local-hot-spot-and-cold-spot-areas" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="visualize-local-hot-spot-and-cold-spot-areas"><span class="header-section-number">7.2.2</span> Visualize local hot spot and cold spot areas</h3>
+<p>Next, we will visualize the locations of hot spot and cold spot areas. The choropleth mapping functions from the <strong>tmap</strong> package will be used to map the Gi values for each selected indicator.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(HCSA_total_tourist) <span class="sc">+</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"gi_star"</span>, <span class="at">palette=</span><span class="st">"-RdBu"</span>, <span class="at">midpoint=</span><span class="dv">0</span>, <span class="at">title=</span><span class="st">"Gi*"</span>) <span class="sc">+</span> </span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"HCSA: Total Tourists"</span>,</span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb103-8"><a href="#cb103-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-9"><a href="#cb103-9" aria-hidden="true" tabindex="-1"></a>map2 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(HCSA_tourist_stay_rate) <span class="sc">+</span></span>
+<span id="cb103-10"><a href="#cb103-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"gi_star"</span>, <span class="at">palette=</span><span class="st">"-RdBu"</span>, <span class="at">midpoint=</span><span class="dv">0</span>, <span class="at">title=</span><span class="st">"Gi*"</span>) <span class="sc">+</span> </span>
+<span id="cb103-11"><a href="#cb103-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb103-12"><a href="#cb103-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb103-13"><a href="#cb103-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"HCSA: Tourist Stay Rate"</span>,</span>
+<span id="cb103-14"><a href="#cb103-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb103-15"><a href="#cb103-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb103-16"><a href="#cb103-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-17"><a href="#cb103-17" aria-hidden="true" tabindex="-1"></a>map3 <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(HCSA_revenue_per_tourist) <span class="sc">+</span></span>
+<span id="cb103-18"><a href="#cb103-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"gi_star"</span>, <span class="at">palette=</span><span class="st">"-RdBu"</span>, <span class="at">midpoint=</span><span class="dv">0</span>, <span class="at">title=</span><span class="st">"Gi*"</span>) <span class="sc">+</span> </span>
+<span id="cb103-19"><a href="#cb103-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb103-20"><a href="#cb103-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(</span>
+<span id="cb103-21"><a href="#cb103-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title =</span> <span class="st">"HCSA: Revenue per Tourist"</span>,</span>
+<span id="cb103-22"><a href="#cb103-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">main.title.size =</span> <span class="fl">0.8</span></span>
+<span id="cb103-23"><a href="#cb103-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb103-24"><a href="#cb103-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-25"><a href="#cb103-25" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(map1, map2, map3, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="take_home_ex02_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Local Gi maps* highlight distinct patterns of hot spots and cold spots across Thailand, consistent with the earlier LISA analysis. In the total tourists map, a cold spot is visible in the north-eastern provinces, reflecting a lower concentration of tourists, while a small hot spot is visible in Bangkok Province. The tourist stay rate map shows cold spots in provinces surrounding Bangkok, likely due to day-trip tourists, while hot spots are observed in southern provinces like Krabi and Phang Nga, where tourists tend to stay longer. Finally, the revenue per tourist map identifies strong hot spots in the southern provinces of Phuket, Krabi, and Phang Nga, known for their tourism appeal, with cold spots in the north-eastern provinces, where fewer tourists visit and generate less revenue.</p>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

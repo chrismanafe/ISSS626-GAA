@@ -1,0 +1,945 @@
+---
+title: "Take-home Exercise 2: Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics"
+author: "Christover Manafe"
+date: "2024-10-01"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: false
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# Overview
+
+Tourism is one of Thailand’s largest industries, contributing approximately 20% to the country's gross domestic product (GDP). In 2019, Thailand generated 90 billion US dollars from both domestic and international tourism, but this figure plummeted to 24 billion US dollars in 2020 due to the COVID-19 pandemic.
+
+Since September 2021, the tourism sector has been steadily recovering. However, it’s important to note that the tourism economy in Thailand is not evenly distributed across the country, with much of the activity concentrated in key provinces such as Bangkok, Phuket, and Chiang Mai.
+
+# Objectives
+
+This exercise aims to:
+
+1.  Determine whether the key indicators of Thailand's tourism economy are independent of spatial and spatio-temporal factors.
+
+2.  If dependencies are identified, the goal is to locate clusters and outliers, and detect emerging hot spots and cold spots in the tourism economy.
+
+# Getting Started
+
+## The Packages
+
+In this exercise, we will use following packages:
+
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Package                                                             | Description                                                                                                                                                                                                          |
++=====================================================================+======================================================================================================================================================================================================================+
+| [**sf**](https://r-spatial.github.io/sf/)                           | Provides functions to manage, processing, and manipulate **Simple Features**, a formal geospatial data standard that specifies a storage and access model of spatial geometries such as points, lines, and polygons. |
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| [**sfdep**](https://cran.r-project.org/web/packages/sfdep/)         | Provides collection of functions to create spatial weights matrix objects from polygon 'contiguities', from point patterns by distance and tessellations.                                                            |
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| [**tidyverse**](https://www.tidyverse.org/)                         | Provides collection of functions for performing data science task such as importing, tidying, wrangling data and visualising data.                                                                                   |
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| [**tmap**](https://cran.r-project.org/web/packages/tmap/)           | Provides functions for plotting cartographic quality static point patterns maps or interactive maps by using [leaflet](https://leafletjs.com/) API                                                                   |
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| [**corrplot**](https://cran.r-project.org/web/packages/corrplot/)   | Provides functions for visualizing correlation matrices.                                                                                                                                                             |
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| [**heatmaply**](https://cran.r-project.org/web/packages/heatmaply/) | Provides an easy-to-use interface for creating interactive heatmaps.                                                                                                                                                 |
++---------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+: {tbl-colwidths="\[15,85\]"}
+
+```{r}
+pacman::p_load(sf, sfdep, tmap, tidyverse, corrplot, heatmaply)
+```
+
+## The Data
+
++--------------------------------------------------+--------------------------------------------------------------------------------+----------------+---------------------------------------------------------------------------------------------+
+| **Dataset Name**                                 | **Description**                                                                | **Format**     | **Source**                                                                                  |
++==================================================+================================================================================+================+=============================================================================================+
+| Thailand Domestic Tourism Statistics             | Monthly Provincial Data on Tourist Numbers, Occupancy, and Revenue in Thailand | CSV            | [Kaggle](https://www.kaggle.com/datasets/thaweewatboy/thailand-domestic-tourism-statistics) |
+|                                                  |                                                                                |                |                                                                                             |
+| \[2019-2023\]                                    |                                                                                |                |                                                                                             |
++--------------------------------------------------+--------------------------------------------------------------------------------+----------------+---------------------------------------------------------------------------------------------+
+| Thailand - Subnational Administrative Boundaries | Administrative boundary data for Thailand's subnational divisions              | ESRI Shapefile | [Humanitarian Data Exchange (HDX)](https://data.humdata.org/dataset/cod-ab-tha?)            |
++--------------------------------------------------+--------------------------------------------------------------------------------+----------------+---------------------------------------------------------------------------------------------+
+
+## Importing Datasets to R environment
+
+### Thailand Domestic Tourism Statistics
+
+We will load Thailand Domestic Tourism Statistics data using [read_csv()](https://readr.tidyverse.org/reference/read_delim.html) function of **readr** package.
+
+```{r}
+tourism <- read_csv("data/aspatial/thailand_domestic_tourism_2019_2023_ver2.csv") %>%
+  pivot_wider(names_from = variable, values_from = value) %>%
+  select(1,3,5:13)
+glimpse(tourism)
+```
+
+::: {.callout-note appearance="simple"}
+The original dataset consists of 30,800 rows and 7 column in "long-format", where each row represents a combination of a `variable` and its corresponding `value` for a specific province and time period.
+
+This format can make analysis more difficult since the different metrics are stored in rows instead of separate columns. Therefore we used `pivot_wider()` function from the `tidyr` package in R to transform the long format into a wider format. We also dropped `province_thai` and `region_thai` column as the information is already available in the English columns.
+
+The resulting dataset has 3,850 rows and 11 columns. The columns are described as follows:
+
++--------------------+---------------------------------------------------------------------------------------------------+
+| Column             | Description                                                                                       |
++====================+===================================================================================================+
+| date               | The month and year in which the statistics were recorded. The dataset covers the years 2019-2023. |
++--------------------+---------------------------------------------------------------------------------------------------+
+| province_eng       | The name of the province in Thailand, in English.                                                 |
++--------------------+---------------------------------------------------------------------------------------------------+
+| region_eng         | The name of the region in Thailand to which the province belongs, in English.                     |
++--------------------+---------------------------------------------------------------------------------------------------+
+| no_tourist_all     | The total number of domestic tourists who visited the province.                                   |
++--------------------+---------------------------------------------------------------------------------------------------+
+| no_tourist_foreign | The number of foreign tourists who visited the province.                                          |
++--------------------+---------------------------------------------------------------------------------------------------+
+| no_tourist_stay    | The number of tourists who stay over-night in the province.                                       |
++--------------------+---------------------------------------------------------------------------------------------------+
+| no_tourist_thai    | The number of Thai tourists who visited the province.                                             |
++--------------------+---------------------------------------------------------------------------------------------------+
+| ratio_tourist_stay | The percentage of occupied travel accommodations in the province.                                 |
++--------------------+---------------------------------------------------------------------------------------------------+
+| revenue_all        | The total revenue generated by the tourism industry in the province (in Thai Baht).               |
++--------------------+---------------------------------------------------------------------------------------------------+
+| revenue_foreign    | The revenue generated specifically by foreign tourists (in Thai Baht).                            |
++--------------------+---------------------------------------------------------------------------------------------------+
+| revenue_thai       | The revenue generated specifically by Thai tourists (in Thai Baht).                               |
++--------------------+---------------------------------------------------------------------------------------------------+
+:::
+
+### Thailand's Province Administrative Boundaries
+
+The Thailand subnational administrative boundaries dataset is available at four levels: administrative level 0 (country), level 1 (province), level 2 (district), and level 3 (sub-district or tambon). For this analysis, we will use administrative level 1 (province).
+
+We will load the province-level boundaries using the `st_read()` function. The boundaries will then be transformed into [EPSG:32647](https://epsg.io/32647), which uses meters as units and is based on the UTM Zone 47N projection. Additionally, we will remove any unnecessary columns to streamline the dataset for analysis.
+
+```{r}
+admin_boundary <- st_read(dsn = "data/geospatial/",
+                          layer = "tha_admbnda_adm1_rtsd_20220121") %>%
+  st_transform(crs = 32647) %>%
+  rename(province_eng = ADM1_EN, pcode = ADM1_PCODE) %>%
+  select(1:3,5)
+```
+
+Let's verify the coordinate reference system of admin_boundary using `st_crs` function.
+
+```{r}
+st_crs(admin_boundary)
+```
+
+Next, we will visualize `admin_boundary` using **tmap**.
+
+```{r fig.height=12, fig.width=8}
+tmap_mode("plot")
+tm_shape(admin_boundary)+
+  tm_fill(col="white") +
+  tm_borders(col = "black", lwd=0.3, alpha=0.6)+
+  tm_layout(
+    main.title = "Thailand Administrative Boundaries by Province",
+    main.title.size = 1,
+    main.title.position = "center",
+    legend.show = FALSE,
+     frame = FALSE)
+```
+
+# Exploratory Data Analysis
+
+## Summary statistics
+
+Let's find out the summary statistics of tourism data using `summary()` function.
+
+```{r}
+summary(tourism)
+```
+
+We observed there's negative value on revenue_foreign variables. Since the revenue represents earnings from tourism, let's assume that this is likely data entry error. So let's fix this.
+
+```{r}
+tourism <- tourism %>%
+  mutate(
+    revenue_foreign = ifelse(revenue_foreign < 0, 0, revenue_foreign),
+    revenue_all = ifelse(revenue_foreign == 0, revenue_thai, revenue_all)
+  )
+summary(tourism)
+```
+
+## Check Missing Values
+
+Let's check of any missing values in the dataset.
+
+```{r}
+colSums(is.na(tourism))
+```
+
+## Distribution Plots for Numerical Variables
+
+Let's visualize the numerical variables by province. We will apply a log transformation since some provinces have significantly larger numbers of tourists, which could make the boxplot difficult to analyze without scaling.
+
+::: panel-tabset
+## Number of Tourist
+
+```{r fig.height=8, fig.width=12}
+ggplot(tourism, aes(x = reorder(province_eng, no_tourist_all, FUN = median), y = no_tourist_all)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  theme_minimal() +
+  scale_y_log10() +  # Log transformation for better scaling
+  labs(title = "Boxplot of Tourists by Province (Log-Scale)", 
+       x = "Province", 
+       y = "Number of Tourists (Log Scale)") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+## Revenue
+
+```{r fig.height=8, fig.width=12}
+ggplot(tourism, aes(x = reorder(province_eng, revenue_all, FUN = median), y = revenue_all)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  theme_minimal() +
+  scale_y_log10() +  # Log transformation for better scaling
+  labs(title = "Boxplot of Revenue by Province (Log Scale)", x = "Province", y = "Total Revenue (Log Scale)") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+## Overnight-Staying Tourists
+
+```{r fig.height=8, fig.width=12}
+ggplot(tourism, aes(x = reorder(province_eng, no_tourist_stay, FUN = median), y = no_tourist_stay)) +
+  geom_boxplot(fill = "lightblue", color = "black") +
+  theme_minimal() +
+  scale_y_log10() +  # Log transformation for better scaling
+  labs(title = "Boxplot of Overnight-Staying Tourists (Log Scale) by Province", 
+       x = "Province", 
+       y = "Number of Overnight-Staying Tourists (Log Scale)") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+:::
+
+::: callout-note
+**Observations:**
+
+The three boxplots above provide insights into tourism activity across Thai provinces, focusing on total tourists, overnight-staying tourists, and total tourism revenue.
+
+1.  **Tourist Concentration**: Provinces like **Bangkok**, **Chiang Mai**, and **Phuket** consistently show the highest median values across all three metrics, highlighting their dominance as key tourist hubs. These provinces also exhibit greater variability, indicating fluctuating tourism activity possibly due to factors like seasonality or COVID-19 pandemics.
+2.  **Smaller Provinces**: Provinces such as **Amnat Charoen** and **Nong Bua Lamphu** consistently display much lower median values and narrower interquartile ranges (IQR), suggesting smaller tourist volumes and revenues.
+3.  **Outliers**: Many provinces show significant lower-end outliers across all metrics, likely reflecting periods of reduced tourist activity due to external factors like travel restrictions during COVID-19 pandemics.
+
+Overall, Thailand's tourism revenue and tourist distribution are concentrated in a few key provinces, with the majority of smaller provinces experiencing lower and more stable activity.
+:::
+
+# Data Wrangling
+
+## Feature engineering
+
+We wanted to introduce new indicators to enhance our analysis of tourist behavior and economic impact. We’ll create two key indicators:
+
+-   **Tourist Stay Rate**: The percentage of tourists staying overnight in each province.
+-   **Revenue Per Tourist (Overall)**: The average revenue generated per tourist.
+
+```{r}
+tourism <- tourism %>%
+  mutate(
+    tourist_stay_rate = ifelse(no_tourist_all > 0, (no_tourist_stay / no_tourist_all) * 100, NA),
+    revenue_per_tourist_all = ifelse(no_tourist_all > 0, revenue_all / no_tourist_all, NA)
+  )
+```
+
+## Province name alignment
+
+We will resolve discrepancies in province names between the boundary and tourism datasets to ensure consistency, enabling accurate analysis and spatial joins. First, we will extract unique province names from both datasets and checks for mismatches by identifying provinces present in one dataset but not the other.
+
+```{r}
+# Extract unique values from both columns
+admin_provinces <- unique(admin_boundary$province_eng)
+tourism_provinces <- unique(tourism$province_eng)
+
+# Check for mismatches
+admin_not_in_tourism <- setdiff(admin_provinces, tourism_provinces)
+tourism_not_in_admin <- setdiff(tourism_provinces, admin_provinces)
+
+# Print mismatches
+print(admin_not_in_tourism)
+print(tourism_not_in_admin)
+
+```
+
+> We identified 8 provinces with different English names between the two datasets, so we will use `mutate()` to align the province names in the `tourism` dataset to match those in the `admin_boundary` dataset.
+
+```{r}
+tourism <- tourism %>%
+  mutate(province_eng = case_when(
+    province_eng == "Lopburi" ~ "Lop Buri",
+    province_eng == "Chainat" ~ "Chai Nat",
+    province_eng == "Chonburi" ~ "Chon Buri",
+    province_eng == "Prachinburi" ~ "Prachin Buri",
+    province_eng == "Phang Nga" ~ "Phangnga",
+    province_eng == "Buriram" ~ "Buri Ram",
+    province_eng == "Sisaket" ~ "Si Sa Ket",
+    province_eng == "Nong Bua Lamphu" ~ "Nong Bua Lam Phu",
+    TRUE ~ province_eng  # Keep the original name if no match
+  ))
+
+```
+
+Let's verify the result.
+
+```{r}
+# Extract unique values from both columns
+admin_provinces <- unique(admin_boundary$province_eng)
+tourism_provinces <- unique(tourism$province_eng)
+
+# Check for mismatches
+admin_not_in_tourism <- setdiff(admin_provinces, tourism_provinces)
+tourism_not_in_admin <- setdiff(tourism_provinces, admin_provinces)
+
+# Print mismatches
+print(admin_not_in_tourism)
+print(tourism_not_in_admin)
+```
+
+## Perform relational join
+
+Since the tourism dataset does not contain any geospatial properties, we will perform a relational join with the `admin_boundary` dataset, which includes the necessary spatial information. This will allow us to incorporate geospatial data into the tourism dataset. We will use the `left_join()` function from the `dplyr` package to merge the two datasets based on the province names.
+
+```{r}
+tourism_geo <- left_join(admin_boundary, tourism)
+glimpse(tourism_geo)
+```
+
+```{r}
+#| eval: False
+write_rds(tourism_geo, "data/rds/tourism_geo.rds")
+```
+
+```{r}
+#| echo: false
+tourism_geo <- read_rds("data/rds/tourism_geo.rds")
+```
+
+## Province-level Summary of Tourism Economy Indicators
+
+We will prepare a province-level summary of key tourism indicators, including both original metrics such as total tourists, foreign tourists, and total revenue, as well as newly engineered indicators like the tourist stay rate and revenue per tourist. This summary will provide a overall view of tourism patterns and economic contributions across each province.
+
+```{r}
+#| eval: False
+province_summary <- tourism_geo %>%
+  group_by(province_eng) %>%
+  summarise(
+    # Summarize original data
+    total_tourists_all = sum(no_tourist_all, na.rm = TRUE),
+    total_foreign_tourists = sum(no_tourist_foreign, na.rm = TRUE),
+    total_thai_tourists = sum(no_tourist_thai, na.rm = TRUE),
+    total_stay_tourists = sum(no_tourist_stay, na.rm = TRUE),
+    avg_occupancy_rate = mean(ratio_tourist_stay, na.rm = TRUE),
+    total_revenue_all = sum(revenue_all, na.rm = TRUE),
+    total_revenue_foreign = sum(revenue_foreign, na.rm = TRUE),
+    total_revenue_thai = sum(revenue_thai, na.rm = TRUE),
+    
+    # Summarize engineered data
+    avg_tourist_stay_rate = mean(tourist_stay_rate, na.rm = TRUE),
+    avg_revenue_per_tourist = mean(revenue_per_tourist_all, na.rm = TRUE)
+  )
+write_rds(province_summary, "data/rds/province_summary.rds")
+```
+
+```{r}
+#| echo: false
+province_summary <- read_rds("data/rds/province_summary.rds")
+```
+
+> We will use following indicators for our analysis:
+>
+> -   **Total Tourists (`total_tourists_all`)**, because it helps us understand how tourist numbers are distributed across provinces.
+> -   **Tourist Stay Rate (`avg_tourist_stay_rate`)**, because it could reveal regional patterns in how provinces retain visitors to stay over-night.
+> -   **Revenue Per Tourist (`avg_revenue_per_tourist`)**, because it helps identify areas where tourism generates the most economic benefit, potentially showing clusters of higher revenue generation.
+
+## Visualization of Thailand's Tourism Distribution
+
+Using the `province_summary` data frame, we will create choropleth maps to visualize the geographical distribution of the 3 tourism economy indicators across Thailand.
+
+```{r fig.height=6, fig.width=12}
+tourist <- tm_shape(province_summary) +
+  tm_fill("total_tourists_all",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "Total Tourist", main.title.size = 1)
+
+foreign_tourists <- tm_shape(province_summary) +
+  tm_fill("avg_tourist_stay_rate",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "Tourist Stay Rate", main.title.size = 1)
+
+revenue_per_tourist <- tm_shape(province_summary) +
+  tm_fill("avg_revenue_per_tourist",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "Revenue per Tourist", main.title.size = 1)
+
+tmap_arrange(tourist,
+             foreign_tourists,
+             revenue_per_tourist,
+             asp=1,
+             ncol=3)
+```
+
+# Global Measures of Spatial Autocorrelation
+
+In this section, we will compute global spatial autocorrelation statistics to evaluate whether the key indicators exhibit spatial dependence across provinces. Specifically, we will use Moran’s I to measure the degree of spatial autocorrelation.
+
+## Computing Contiguity Neighbours
+
+Typically, we use the `st_contiguity()` function from the **sfdep** package to compute contiguity weight matrices, which build neighbor relationships based on shared boundaries between regions. However, because our dataset includes province located on separate island (i.e. Phuket), contiguity-based methods would leave some region without neighbors. To overcome this issue, we will use the **K-Nearest Neighbors (KNN)** approach to compute spatial weights. This method ensures that every province has neighbors, even for those on isolated islands, by assigning each region a fixed number of nearest neighbors based on distance rather than shared boundaries.
+
+First, we need to ensure that the centroids used for each province are correctly placed within the province boundaries and not in the sea or outside of the boundary.
+
+```{r}
+province_centroids <- province_summary %>%
+      st_centroid() %>%
+      select(province_eng, geometry)
+```
+
+```{r fig.height=12, fig.width=8}
+tmap_mode('plot')
+tm_shape(province_summary) +
+  tm_borders() +
+  tm_shape(province_centroids) +
+  tm_dots(col = "red", size = 0.1) +
+  tm_layout(main.title = "Centroids of Thailand Provinces",
+            main.title.position = "center",
+            frame = FALSE)
+```
+
+> We verified that the centroids are correctly placed within the province boundaries, ensuring that none are positioned in the sea or outside their respective boundaries.
+
+With the centroids correctly positioned, we will proceed with two approaches for computing spatial weights:
+
+1.  **K-Nearest Neighbors (KNN)**: Using the `st_knn()` function from the **sfdep** package, we will compute KNN-based spatial weights. This ensures that all provinces, including those on isolated islands, have neighbors based on geographic proximity rather than shared boundaries.
+
+2.  **Distance Band Weights**: We will also use the `st_dist_band()` function from **sfdep** to create a distance-based spatial weights matrix. This method defines neighbors for provinces based on a maximum distance threshold, ensuring that regions within a certain distance of each other are considered neighbors.
+
+Both methods will help account for geographic proximity while ensuring that all regions, including isolated provinces, are part of the spatial analysis.
+
+::: panel-tabset
+## st_knn()
+
+```{r}
+wm_knn <- province_summary %>%
+  mutate(nb = st_knn(geometry, k = 8),
+         wt = st_inverse_distance(nb, geometry, scale = 1, alpha = 1),
+         wt = map(wt, ~ .x / sum(.x)),
+         .before = 1)
+```
+
+## st_dist_band()
+
+```{r}
+wm_fd <- province_summary %>%
+  mutate(nb = st_dist_band(province_summary$geometry),
+         wt = st_inverse_distance(nb, geometry, scale = 1, alpha = 1),
+         wt = map(wt, ~ .x / sum(.x)),
+         .before = 1)
+```
+:::
+
+> We normalize the inverse distance weights to ensure that each province's spatial influence is comparable and sum up to 1.
+
+## Global Moran’s I Test and Permutation Test
+
+In this section, we will assess the spatial dependence of three key tourism indicators across provinces in Thailand using the **Global Moran’s I test**. If the indicators are independent of space, Moran's I should show no significant spatial autocorrelation.
+
+-   **Null Hypothesis (H₀)**: The tourism economy indicators are spatially independent (randomly distributed in space).
+
+-   **Alternative Hypothesis (H₁)**: There is spatial dependence, indicating that similar values are clustered or dispersed.
+
+We will conduct the analysis at a 95% confidence interval (significance level of 0.05) using the `global_moran_test` function from the **sfdep** package. Additionally, we will run a permutation test with 1,000 simulations to validate the results using `global_moran_perm` function.
+
+We will evaluate the following tourism economy indicators:
+
+-   Total Tourists
+-   Average of Tourist Stay Rate
+-   Revenue per Tourist
+
+For each indicator, we will apply both the **K-Nearest Neighbors (KNN)** and **Distance Band** weight matrices to observe the spatial patterns.
+
+### Total Tourists: Global Moran’s I Test and Permutation Test
+
+#### KNN Weights
+
+```{r}
+global_moran_test(wm_knn$total_tourists_all,
+           wm_knn$nb,
+           wm_knn$wt,
+           zero.policy = TRUE,
+           na.action=na.omit)
+```
+
+```{r}
+set.seed(2024)
+global_moran_perm(wm_knn$total_tourists_all,
+                  wm_knn$nb,
+                  wm_knn$wt,
+                  nsim = 999)
+```
+
+#### Distance Band Weights
+
+```{r}
+global_moran_test(wm_fd$total_tourists_all,
+           wm_fd$nb,
+           wm_fd$wt,
+           zero.policy = TRUE,
+           na.action=na.omit)
+```
+
+```{r}
+set.seed(2024)
+global_moran_perm(wm_fd$total_tourists_all,
+                  wm_fd$nb,
+                  wm_fd$wt,
+                  nsim = 999)
+```
+
+::: {.callout-note appearance="simple"}
+**Observations:**
+
+**K-Nearest Neighbors (KNN):**
+
+-   Moran's I statistic: 0.0267
+-   p-value (Moran’s I test): 0.1342
+-   p-value (Monte Carlo permutation test): 0.242
+
+The Moran's I statistic of 0.0267 shows very weak positive spatial autocorrelation, suggesting almost no spatial clustering of total tourists. Both the Moran’s I test and the Monte Carlo permutation test yield high p-values (above 0.05), indicating that we fail to reject the null hypothesis. This implies that the distribution of total tourists remains random, with no significant spatial clustering when using normalized KNN weights.
+
+------------------------------------------------------------------------
+
+**Distance Band Weights:**
+
+-   Moran's I statistic: 0.0408
+-   p-value (Moran’s I test): 0.1424
+-   p-value (Monte Carlo permutation test): 0.238
+
+The Moran’s I statistic of 0.0408 also shows weak positive spatial autocorrelation, indicating no substantial clustering of total tourists across provinces. The high p-values from both the Moran’s I test and Monte Carlo permutation test further confirm that we fail to reject the null hypothesis. The total tourist distribution remains random, with no significant spatial dependence when using normalized distance-based weights.
+
+------------------------------------------------------------------------
+
+For total tourists, both the KNN and distance band methods show no significant spatial autocorrelation. The p-values from both tests indicate that we fail to reject the null hypothesis.
+:::
+
+### Average of Tourist Stay Rate: Global Moran’s I Test and Permutation Test
+
+#### KNN Weights
+
+```{r}
+global_moran_test(wm_knn$avg_tourist_stay_rate,
+           wm_knn$nb,
+           wm_knn$wt,
+           zero.policy = TRUE,
+           na.action=na.omit)
+```
+
+```{r}
+set.seed(2024)
+global_moran_perm(wm_knn$avg_tourist_stay_rate,
+                  wm_knn$nb,
+                  wm_knn$wt,
+                  nsim = 999)
+```
+
+#### Distance Band Weights
+
+```{r}
+global_moran_test(wm_fd$avg_tourist_stay_rate,
+           wm_fd$nb,
+           wm_fd$wt,
+           zero.policy = TRUE,
+           na.action=na.omit)
+```
+
+```{r}
+set.seed(2024)
+global_moran_perm(wm_fd$avg_tourist_stay_rate,
+                  wm_fd$nb,
+                  wm_fd$wt,
+                  nsim = 999)
+```
+
+::: {.callout-note appearance="simple"}
+**Observations:**
+
+**K-Nearest Neighbors (KNN):**
+
+-   Moran's I statistic: 0.4092
+-   p-value (Moran’s I test): 4.422e-14
+-   p-value (Monte Carlo permutation test): \< 2.2e-16
+
+The Moran's I statistic of 0.4092 indicates strong positive spatial autocorrelation, suggesting that provinces with similar tourist stay rates tend to be clustered together. Both the Moran’s I test and the Monte Carlo permutation test return extremely low p-values, confirming that this clustering is highly statistically significant. Thus, we reject the null hypothesis, as there is strong evidence of spatial dependence in tourist stay rates when using normalized KNN weights.
+
+------------------------------------------------------------------------
+
+**Distance Band Weights:**
+
+-   Moran's I statistic: 0.4586
+-   p-value (Moran’s I test): 1.536e-09
+-   p-value (Monte Carlo permutation test): \< 2.2e-16
+
+The Moran’s I statistic of 0.4586 shows strong positive spatial autocorrelation, indicating that provinces with similar tourist stay rates are geographically clustered. Both the Moran’s I test and the Monte Carlo permutation test yield very low p-values, confirming that this spatial clustering is highly statistically significant. Therefore, we reject the null hypothesis, as there is strong evidence of spatial dependence using normalized distance-based weights.
+
+------------------------------------------------------------------------
+
+For average tourist stay rate, both the KNN and distance band methods show strong spatial autocorrelation, and the results are highly statistically significant. In both cases, we reject the null hypothesis, indicating that provinces with similar tourist stay rates are spatially clustered.
+:::
+
+### Average Revenue per Tourists: Global Moran’s I Test and Permutation Test
+
+#### KNN Weights
+
+```{r}
+global_moran_test(wm_knn$avg_revenue_per_tourist,
+           wm_knn$nb,
+           wm_knn$wt,
+           zero.policy = TRUE,
+           na.action=na.omit)
+```
+
+```{r}
+set.seed(2024)
+global_moran_perm(wm_knn$avg_revenue_per_tourist,
+                  wm_knn$nb,
+                  wm_knn$wt,
+                  nsim = 999)
+```
+
+#### Distance Band Weights
+
+```{r}
+global_moran_test(wm_fd$avg_revenue_per_tourist,
+           wm_fd$nb,
+           wm_fd$wt,
+           zero.policy = TRUE,
+           na.action=na.omit)
+```
+
+```{r}
+set.seed(2024)
+global_moran_perm(wm_fd$avg_revenue_per_tourist,
+                  wm_fd$nb,
+                  wm_fd$wt,
+                  nsim = 999)
+```
+
+::: {.callout-note appearance="simple"}
+**Observations:**
+
+**K-Nearest Neighbors (KNN):**
+
+-   Moran's I statistic: 0.3446
+-   p-value (Moran’s I test): 5.204e-13
+-   p-value (Monte Carlo permutation test): \< 2.2e-16
+
+The Moran's I statistic of 0.3446 indicates moderate positive spatial autocorrelation, suggesting that provinces with similar revenue per tourist tend to be clustered. Both the Moran’s I test and the Monte Carlo permutation test return very low p-values, confirming that this clustering is highly statistically significant. Therefore, we reject the null hypothesis, as there is strong evidence of spatial dependence in revenue per tourist when using normalized KNN weights.
+
+------------------------------------------------------------------------
+
+**Distance Band Weights:**
+
+-   Moran's I statistic: 0.4340
+-   p-value (Moran’s I test): 1.173e-10
+-   p-value (Monte Carlo permutation test): \< 2.2e-16
+
+The Moran’s I statistic of 0.4340 indicates strong positive spatial autocorrelation, showing that provinces with similar revenue per tourist are geographically clustered. Both the Moran’s I test and the Monte Carlo permutation test yield extremely low p-values, confirming that this spatial clustering is highly statistically significant. Therefore, we reject the null hypothesis, as there is clear evidence of spatial dependence using normalized distance-based weights.
+
+------------------------------------------------------------------------
+
+For average revenue per tourist, both the KNN and distance band methods with inverse distance weights show moderate spatial autocorrelation, and the results are statistically significant. In both cases, we reject the null hypothesis, indicating that provinces with similar revenue per tourist are spatially clustered.
+:::
+
+## Interpreting Results
+
+The results from the Global Moran’s I test and the Monte Carlo simulation tell us that:
+
+-   Total tourist numbers show weak spatial autocorrelation, indicating that while some provinces attract more tourists, there is no strong regional clustering. The distribution of tourists seems random, with individual provinces standing out rather than forming distinct regional patterns.
+
+-   In contrast, both average tourist stay rate and average revenue per tourist display moderate to strong and statistically significant spatial autocorrelation. Provinces that are geographically close tend to have similar tourist retention rates and revenue generated per tourist. This suggests that these tourism economy indicators are regionally concentrated, likely due to shared tourism infrastructure, similar attractions, or collaborative regional policies.
+
+# Local Measures of Spatial Autocorrelation
+
+Local Indicators of Spatial Association (LISA) allow us to evaluate clusters between regions. Simply put, LISA is a statistical method that helps identify areas where values are either clustered (similar values are found together) or where there are outliers. Higher LISA values indicate that a region is more strongly influenced by its neighboring regions, meaning it is part of a spatial cluster.
+
+In this section, we will apply **Local Indicators of Spatial Association (LISA)** to the same tourism indicators used in the Global Moran’s I analysis.
+
+## Cluster and Outlier Analysis
+
+### Computing Local Moran's I
+
+We will compute Local Moran's I of three selected indicators at province level by using `local_moran()` function of **sfdep** package.
+
+```{r}
+set.seed(2024)
+lisa_total_tourists_knn <- wm_knn %>% 
+  mutate(local_moran = local_moran(
+    total_tourists_all, nb, wt),
+         .before = 1) %>%
+  unnest(local_moran)
+```
+
+```{r}
+set.seed(2024)
+lisa_tourist_stay_rate_knn <- wm_knn %>% 
+  mutate(local_moran = local_moran(
+    avg_tourist_stay_rate, nb, wt),
+         .before = 1) %>%
+  unnest(local_moran)
+```
+
+```{r}
+set.seed(2024)
+lisa_revenue_per_tourist_knn <- wm_knn %>% 
+  mutate(local_moran = local_moran(
+    avg_revenue_per_tourist, nb, wt),
+         .before = 1) %>%
+  unnest(local_moran)
+```
+
+### Plotting LISA map
+
+We will use the tmap package to visualize the results of the Local Moran’s I computation, specifically using the values from the ii and mean fields. To enable effective comparison, we will plot both maps side by side—one showing the local spatial autocorrelation (ii values) and the other highlighting the clusters or outliers of total tourists. Specifically, we will highlight clusters where the **p-values** from the **Local Moran’s I** are below 0.05, indicating potential spatial clusters or outliers.
+
+First, let's define the label and palette for each cluster.
+
+```{r}
+colors <- c("#ffffff", "#2c7bb6", "#abd9e9", "#fdae61", "#d7191c")
+clusters <- c("Insignificant", "Low-Low", "Low-High", "High-Low", "High-High")
+```
+
+#### Total Number of Tourists
+
+```{r}
+lisa_total_tourists_knn$quadrant <- case_when(
+  lisa_total_tourists_knn$p_ii_sim >= 0.05 ~ 0,  # Set quadrant to 0 if p_ii_sim is greater than or equal to 0.05
+  lisa_total_tourists_knn$mean == "Low-Low" ~ 1,  # Assign quadrant values for significant clusters
+  lisa_total_tourists_knn$mean == "Low-High" ~ 2,
+  lisa_total_tourists_knn$mean == "High-Low" ~ 3,
+  lisa_total_tourists_knn$mean == "High-High" ~ 4
+)
+
+tmap_mode("plot")
+map1 <- tm_shape(lisa_total_tourists_knn) +
+  tm_fill("ii") +
+  tm_borders(alpha = 0.5) +
+  tm_view() +
+  tm_layout(
+    main.title = "Local Moran's I of Total Tourists",
+    main.title.size = 0.8
+  )
+
+map2 <- tm_shape(lisa_total_tourists_knn) +
+  tm_fill("quadrant",
+          breaks = c(-0.5, 0.5, 1.5, 2.5, 3.5, 4.5),
+          palette = colors,
+          labels = clusters)+
+  tm_borders(alpha = 0.5) +
+  tm_view() +
+  tm_layout(
+    main.title = "LISA Map of Total Tourists",
+    main.title.size = 0.8
+  )
+
+tmap_arrange(map1, map2, ncol = 2)
+```
+
+#### Average of Tourist Stay Rate
+
+```{r}
+lisa_tourist_stay_rate_knn$quadrant <- case_when(
+  lisa_tourist_stay_rate_knn$p_ii_sim >= 0.05 ~ 0,  # Set quadrant to 0 if p_ii_sim is greater than or equal to 0.05
+  lisa_tourist_stay_rate_knn$mean == "Low-Low" ~ 1,  # Assign quadrant values for significant clusters
+  lisa_tourist_stay_rate_knn$mean == "Low-High" ~ 2,
+  lisa_tourist_stay_rate_knn$mean == "High-Low" ~ 3,
+  lisa_tourist_stay_rate_knn$mean == "High-High" ~ 4
+)
+
+tmap_mode("plot")
+map1 <- tm_shape(lisa_tourist_stay_rate_knn) +
+  tm_fill("ii") +
+  tm_borders(alpha = 0.5) +
+  tm_view(set.zoom.limits = c(6,8)) +
+  tm_layout(
+    main.title = "Local Moran's I of Tourists Stay Rate",
+    main.title.size = 0.8
+  )
+
+map2 <- tm_shape(lisa_tourist_stay_rate_knn) +
+  tm_fill("quadrant",
+          breaks = c(-0.5, 0.5, 1.5, 2.5, 3.5, 4.5),
+          palette = colors,
+          labels = clusters) +
+  tm_borders(alpha = 0.5) +
+  tm_view() +
+  tm_layout(
+    main.title = "LISA Map of Tourists Stay Rate",
+    main.title.size = 0.8
+  )
+
+tmap_arrange(map1, map2, ncol = 2)
+tmap_mode("plot")
+```
+
+#### Average Revenue Per Tourists
+
+```{r}
+lisa_revenue_per_tourist_knn$quadrant <- case_when(
+  lisa_revenue_per_tourist_knn$p_ii_sim >= 0.05 ~ 0,  # Set quadrant to 0 if p_ii_sim is greater than or equal to 0.05
+  lisa_revenue_per_tourist_knn$mean == "Low-Low" ~ 1,  # Assign quadrant values for significant clusters
+  lisa_revenue_per_tourist_knn$mean == "Low-High" ~ 2,
+  lisa_revenue_per_tourist_knn$mean == "High-Low" ~ 3,
+  lisa_revenue_per_tourist_knn$mean == "High-High" ~ 4
+)
+
+tmap_mode("plot")
+map1 <- tm_shape(lisa_revenue_per_tourist_knn) +
+  tm_fill("ii") +
+  tm_borders(alpha = 0.5) +
+  tm_view() +
+  tm_layout(
+    main.title = "Local Moran's I of Revenue per Tourist",
+    main.title.size = 0.8
+  )
+
+map2 <- tm_shape(lisa_revenue_per_tourist_knn) +
+  tm_fill("quadrant",
+          breaks = c(-0.5, 0.5, 1.5, 2.5, 3.5, 4.5),
+          palette = colors,
+          labels = clusters) +
+  tm_borders(alpha = 0.5) +
+  tm_view() +
+  tm_layout(
+    main.title = "LISA Map of Revenue per Tourist",
+    main.title.size = 0.8
+  )
+
+tmap_arrange(map1, map2, ncol = 2)
+```
+
+::: callout-note
+**Observations**:
+
+In the analysis of total tourists, Samut Prakan emerges as a Low-High outlier. This province has 8 million tourists in contrast to its neighboring province, Bangkok, which sees 151 million tourists. For tourist stay rates, several Low-High outliers are observed in provinces surrounding Bangkok, likely due to the prevalence of day trips where tourists visit nearby locations but return to Bangkok by the end of the day. Additionally, High-High clusters are identified in Krabi and adjacent southern provinces, with a Low-High outlier in Phang Nga, which is in close proximity to the popular tourist destinations such as Phuket and Krabi.
+
+In terms of revenue per tourist, Bangkok is classified as a High-Low outlier, which aligns with its status as Thailand's primary tourism hub, attracting the largest number of tourists. Furthermore, a High-High cluster is evident in Phuket, Krabi, and Phang Nga, which are well-known major tourism areas. However, neighboring provinces such as Nakhon Si Thammarat and Phatthalung are identified as Low-High outliers, despite their proximity to these popular destinations.
+:::
+
+## Hot and Cold Spot Analysis with Local Gi\*
+
+Besides detecting clusters and outliers, localized spatial statistics can also be used to identify hot spots and/or cold spots.
+
+The High/Low Clustering (General G) tool measures the spatial concentration of high or low values within a given study area. The null hypothesis for this statistic states that there is no spatial clustering of feature values. When the p-value is small and statistically significant, the null hypothesis can be rejected, and the sign of the Gi value becomes crucial for interpretation.
+
+-   If the Gi value is positive and statistically significant, it indicates that the location is associated with high values in the surrounding area (i.e., hot spots).
+
+-   If the Gi value is negative and statistically significant, it indicates that the location is surrounded by low values (i.e., cold spots).
+
+The Getis-Ord General G tool is most effective when values are evenly distributed across the area, as it helps identify unexpected clusters of high values (hot spots). However, it has a limitation: when both high and low values are clustered within the same region, they tend to cancel each other out, reducing the tool’s effectiveness in such cases.
+
+In this study, we will compute the Local Gi statistic in R. First, we will use the `st_dist_band()` function to create a neighbor list, and then apply the `include_self()` function to ensure that the focal observation is included in its own neighbor list. Afterward, we will use this neighbor list to create a weight list by applying the `st_inverse_distance()` function. To ensure **comparability** and **balanced influence** across locations, we will **normalize** the weights, which helps prevent bias and stabilizes the effect of distance on the results.
+
+```{r}
+wm_idw <- province_summary %>%
+  mutate(nb = include_self(st_dist_band(geometry)),
+         wt = st_inverse_distance(nb, geometry,
+                                   scale = 1,
+                                   alpha = 1),
+         wt = map(wt, ~ .x / sum(.x)),
+         .before = 1)
+```
+
+Now, we will calculate the Local Gi statistic using the `local_gstar_perm()` function from the **sfdep** package. This function takes a neighbor list (`nb`) and a weight list (`wt`) as inputs and generates the Gi statistics\* through a Monte Carlo permutation with a specified number of simulations (`nsim`). The results will then be stored in a new object called `HCSA`.
+
+After we run the Montewe replace any p-values (p_sim) greater than 0.05 with NA to filter out non-significant results. Then, we update the Gi statistic (`gi_star`) by setting it to `NA` for any non-significant values, ensuring that only statistically significant hot spots and cold spots are retained in the final output.
+
+### Compute Local Gi statistic
+
+**Total Number of Tourists**
+
+```{r}
+HCSA_total_tourist <- wm_idw %>% 
+  mutate(local_Gi = local_gstar_perm(
+    total_tourists_all, nb, wt, nsim = 999),
+         .before = 1) %>%
+  unnest(local_Gi) %>%
+  mutate("p_sim" = replace(`p_sim`, `p_sim` > 0.05, NA),
+         "gi_star" = ifelse(is.na(`p_sim`), NA, `gi_star`))
+```
+
+**Average of Tourist Stay Rate**
+
+```{r}
+HCSA_tourist_stay_rate <- wm_idw %>% 
+  mutate(local_Gi = local_gstar_perm(
+    avg_tourist_stay_rate, nb, wt, nsim = 999),
+         .before = 1) %>%
+  unnest(local_Gi) %>%
+  mutate("p_sim" = replace(`p_sim`, `p_sim` > 0.05, NA),
+         "gi_star" = ifelse(is.na(`p_sim`), NA, `gi_star`))
+```
+
+**Average Revenue per Tourist**
+
+```{r}
+HCSA_revenue_per_tourist <- wm_idw %>% 
+  mutate(local_Gi = local_gstar_perm(
+    avg_revenue_per_tourist, nb, wt, nsim = 999),
+         .before = 1) %>%
+  unnest(local_Gi) %>%
+  mutate("p_sim" = replace(`p_sim`, `p_sim` > 0.05, NA),
+         "gi_star" = ifelse(is.na(`p_sim`), NA, `gi_star`))
+```
+
+### Visualize local hot spot and cold spot areas
+
+Next, we will visualize the locations of hot spot and cold spot areas. The choropleth mapping functions from the **tmap** package will be used to map the Gi values for each selected indicator.
+
+```{r fig.height=8, fig.width=12}
+tmap_mode("plot")
+map1 <- tm_shape(HCSA_total_tourist) +
+  tm_fill("gi_star", palette="-RdBu", midpoint=0, title="Gi*") + 
+  tm_borders(alpha = 0.5) +
+  tm_layout(
+    main.title = "HCSA: Total Tourists",
+    main.title.size = 0.8
+  )
+
+map2 <- tm_shape(HCSA_tourist_stay_rate) +
+  tm_fill("gi_star", palette="-RdBu", midpoint=0, title="Gi*") + 
+  tm_borders(alpha = 0.5) +
+  tm_layout(
+    main.title = "HCSA: Tourist Stay Rate",
+    main.title.size = 0.8
+  )
+
+map3 <- tm_shape(HCSA_revenue_per_tourist) +
+  tm_fill("gi_star", palette="-RdBu", midpoint=0, title="Gi*") + 
+  tm_borders(alpha = 0.5) +
+  tm_layout(
+    main.title = "HCSA: Revenue per Tourist",
+    main.title.size = 0.8
+  )
+
+tmap_arrange(map1, map2, map3, ncol = 3)
+```
+
+::: callout-note
+The Local Gi maps\* highlight distinct patterns of hot spots and cold spots across Thailand, consistent with the earlier LISA analysis. In the total tourists map, a cold spot is visible in the north-eastern provinces, reflecting a lower concentration of tourists, while a small hot spot is visible in Bangkok Province. The tourist stay rate map shows cold spots in provinces surrounding Bangkok, likely due to day-trip tourists, while hot spots are observed in southern provinces like Krabi and Phang Nga, where tourists tend to stay longer. Finally, the revenue per tourist map identifies strong hot spots in the southern provinces of Phuket, Krabi, and Phang Nga, known for their tourism appeal, with cold spots in the north-eastern provinces, where fewer tourists visit and generate less revenue.
+:::

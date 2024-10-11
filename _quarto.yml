@@ -62,7 +62,7 @@ website:
       menu:
         - text: "1. Geospatial Analytics for Public Good"
           href: "take_home_ex/take_home_ex01/take_home_ex01.html"
-        - text: "2. "
+        - text: "2. Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics"
           href: "take_home_ex/take_home_ex02/take_home_ex02.html"
         - text: "3. "
           href: "take_home_ex/take_home_ex03/take_home_ex03.html"
