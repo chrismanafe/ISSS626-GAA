@@ -248,8 +248,8 @@ We wanted to introduce new indicators to enhance our analysis of tourist behavio
 ```{r}
 tourism <- tourism %>%
   mutate(
-    tourist_stay_rate = ifelse(no_tourist_all > 0, (no_tourist_stay / no_tourist_all) * 100, NA),
-    revenue_per_tourist_all = ifelse(no_tourist_all > 0, revenue_all / no_tourist_all, NA)
+    tourist_stay_rate = ifelse(no_tourist_all > 0, (no_tourist_stay / no_tourist_all) * 100, 0),
+    revenue_per_tourist_all = ifelse(no_tourist_all > 0, revenue_all / no_tourist_all, 0)
   )
 ```
 
@@ -361,6 +361,46 @@ province_summary <- read_rds("data/rds/province_summary.rds")
 > -   **Total Tourists (`total_tourists_all`)**, because it helps us understand how tourist numbers are distributed across provinces.
 > -   **Tourist Stay Rate (`avg_tourist_stay_rate`)**, because it could reveal regional patterns in how provinces retain visitors to stay over-night.
 > -   **Revenue Per Tourist (`avg_revenue_per_tourist`)**, because it helps identify areas where tourism generates the most economic benefit, potentially showing clusters of higher revenue generation.
+
+## Spacetime Cube
+
+The **sfdep** package introduces an S3 class called spacetime, developed by Edzer Pebesma (2012), to represent spatio-temporal data. The spacetime class links a flat dataset containing both spatial and temporal information with the corresponding geometry. By encapsulating both spatial and temporal aspects, it is ideal for conducting spatio-temporal analysis. We will utilize this spacetime cube for our spatio-temporal analysis in the `Emerging Hot Spot Analysis` section.
+
+We will use the `spacetime()` function from the **sfdep** package to create a spatio-temporal cube of the data. The year and month will serve as our temporal factors for structuring the analysis.
+
+First, we will add `period` column to our tourism data by combining the year and month using the `format()` function, and then converting it to an integer with `as.integer()`.
+
+```{r}
+tourism <- tourism %>%
+  mutate(period = as.integer(format(date, "%Y%m")))
+```
+
+Next, we will create a spatio-temporal cube using the `spacetime()` function from the **sfdep** package. We will use the `period` as the `time_col` and `province_eng` as the `loc_col` to represent the temporal and spatial dimensions. We'll also set `NA` values in revenue_per_tourist_all and tourist_stay_rate to 0, as this will help us identify potential cold spots in the analysis later.
+
+```{r}
+tourism$tourist_stay_rate[is.na(tourism$tourist_stay_rate)] <- 0
+tourism$revenue_per_tourist_all[is.na(tourism$revenue_per_tourist_all)] <- 0
+tourism_st <- spacetime(tourism, admin_boundary,
+                        .loc_col = "province_eng",
+                        .time_col = "period")
+```
+
+Next, we will use `is_spacetime_cube()` of **sfdep** package to verify if `tourism_st` is indeed an space-time cube object.
+
+```{r}
+is_spacetime_cube(tourism_st)
+```
+
+```{r}
+ tourism_st <- tourism_st %>%
+  activate("geometry") %>%
+  mutate(nb = st_knn(geometry, k = 8),
+         wt = st_inverse_distance(nb, geometry, scale = 1, alpha = 1),
+         wt = map(wt, ~ .x / sum(.x)),
+         .before = 1) %>%
+  set_nbs("nb") %>%
+  set_wts("wt")
+```
 
 ## Visualization of Thailand's Tourism Distribution
 
@@ -943,3 +983,291 @@ tmap_arrange(map1, map2, map3, ncol = 3)
 ::: callout-note
 The Local Gi maps\* highlight distinct patterns of hot spots and cold spots across Thailand, consistent with the earlier LISA analysis. In the total tourists map, a cold spot is visible in the north-eastern provinces, reflecting a lower concentration of tourists, while a small hot spot is visible in Bangkok Province. The tourist stay rate map shows cold spots in provinces surrounding Bangkok, likely due to day-trip tourists, while hot spots are observed in southern provinces like Krabi and Phang Nga, where tourists tend to stay longer. Finally, the revenue per tourist map identifies strong hot spots in the southern provinces of Phuket, Krabi, and Phang Nga, known for their tourism appeal, with cold spots in the north-eastern provinces, where fewer tourists visit and generate less revenue.
 :::
+
+# Emerging Hot Spots Analysis (EHSA)
+
+Emerging Hot Spot Analysis (EHSA) is a spatio-temporal method used to uncover how hot spots and cold spots evolve over time.
+
+## Time Horizons
+
+As hot spots and cold spots may shift over time, we aim to perform the **Emerging Hot Spot Analysis (EHSA)** across different time horizons to capture these changes. The analysis will be conducted in four distinct periods:
+
+1.  **Across All Time**: This phase includes all available data within the dataset, providing a comprehensive view of hot and cold spot evolution over the entire time span.
+
+2.  **Pre-COVID-19 Pandemic**: This period covers tourism trends before the pandemic began affecting Thailand, specifically before **January 13, 2020**, when Thailand confirmed its first COVID-19 case.
+
+3.  **COVID-19 Pandemic Period**: This period starts in **January 2020**, when Thailand reported its first COVID-19 case, and extends until the country began reopening its borders in **June 2022**.
+
+4.  **Post-COVID-19 Pandemic**: This period begins in **June 2022**, when Thailand started to lift pandemic-related restrictions and resumed international travel, this phase reflects the gradual recovery of the tourism industry.
+
+## Performing Emerging Hotspot Analysis
+
+We'll use the following function to ensure consistent coloring for each kind of hot/cold spot, making it easier to compare across maps. This function is originally found from [Matthew Ho's IS415 Geospatial Analytics & Applications](https://is415-gaa-matthew-ho.netlify.app/takehomeex/takehomeex2/the2#emerging-hotspot-analysis), with a slight adaptation in the color map to enhance contrast and clarity between categories.
+
+```{r}
+create_color_mapping <- function(all_breaks, all_colors, map_breaks) {
+  color_mapping <- rep(NA, length(map_breaks))
+  for (i in seq_along(map_breaks)) {
+    match_index <- match(map_breaks[i], all_breaks)
+    if (!is.na(match_index)) {
+      color_mapping[i] <- all_colors[match_index]
+    }
+  }
+  return(color_mapping)
+}
+
+all_breaks <- c("consecutive coldspot", "consecutive hotspot", "new coldspot", "new hotspot", "no pattern detected", "intensifying coldspot", "intensifying hotspot", "oscilating coldspot", "oscilating hotspot", "persistent coldspot", "persistent hotspot", "sporadic coldspot", "sporadic hotspot")
+
+all_colors <- c(
+  "#1E90FF",  # Consecutive coldspot - bright blue (strong cool)
+  "#FF4500",  # Consecutive hotspot - strong orange-red (strong heat)
+  "#87CEEB",  # New coldspot - sky blue (mild cool)
+  "#FFA07A",  # New hotspot - light salmon (mild heat)
+  "#A9A9A9",  # No pattern detected - neutral grey
+  "#00008B",  # Intensifying coldspot - dark blue (intensifying cool)
+  "#FF8C00",  # Intensifying hotspot - dark orange (intensifying heat)
+  "#5F9EA0",  # Oscillating coldspot - cadet blue (moderate cool)
+  "#FF6347",  # Oscillating hotspot - tomato (moderate heat)
+  "#4682B4",  # Persistent coldspot - steel blue (long-term cool)
+  "#FF0000",  # Persistent hotspot - red (long-term heat)
+  "#00CED1",  # Sporadic coldspot - dark turquoise (irregular cool)
+  "#FFD700"   # Sporadic hotspot - gold (irregular heat)
+)
+```
+
+As we plan to run the analysis over multiple time horizons and across multiple tourism economy indicators, we will use the following function. This function will accept a space-time object, the indicator name, and the start and end periods to perform a series of computations and visualizations of the *Emerging Hotspot Analysis* results.
+
+```{r}
+perform_ehsa_analysis <- function(space_time_object, indicator, admin_boundary, start_period = NULL, end_period = NULL) {
+  
+  # Step 1: Filter the space-time object based on the period if provided
+  filtered_data <- tourism_st %>%
+    filter(
+      if (!is.null(start_period)) period >= start_period else TRUE,
+      if (!is.null(end_period)) period <= end_period else TRUE
+    )
+  
+  set.seed(2024)
+  # Step 2: Perform the Emerging Hotspot Analysis
+  ehsa <- emerging_hotspot_analysis(
+    x = filtered_data,
+    .var = indicator, 
+    k = 1, 
+    nsim = 499,
+    nb_col = 'nb',
+    wt_col = 'wt'
+  )
+  
+  # Step 3: Visualize the classification distribution as a bar plot
+  gghist <- ggplot(data = ehsa, aes(x = classification)) +
+    geom_bar(fill="light blue") + 
+    coord_flip()
+  
+  plot(gghist)
+
+  # Step 4: Join EHSA results with the admin boundary data
+  result_ehsa <- admin_boundary %>%
+    left_join(ehsa, by = join_by(province_eng == location))
+  
+  # Step 5: Filter the significant results with p-value < 0.05
+  ehsa_sig <- result_ehsa %>%
+    filter(p_value < 0.05)
+  
+  # Step 6: Create color mapping for the significant classifications
+  color_mapping <- create_color_mapping(all_breaks, all_colors, sort(unique(ehsa_sig$classification)))
+
+  # Step 7: Visualize the results using tmap
+  tmap_mode("plot")
+  tm_shape(result_ehsa) +
+    tm_borders(alpha = 0.2) +
+    tm_shape(ehsa_sig) +
+    tm_fill("classification", title = "Classification", palette = color_mapping) + 
+    tm_borders(alpha = 0.2)
+}
+```
+
+### Number of All Tourists
+
+::: panel-tabset
+## All time
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "no_tourist_all",
+  admin_boundary = admin_boundary
+)
+```
+
+## Pre-pandemic
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "no_tourist_all",
+  admin_boundary = admin_boundary,
+  end_period = 201912
+)
+```
+
+## Pandemic period
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "no_tourist_all",
+  admin_boundary = admin_boundary,
+  start_period = 202001,
+  end_period = 202205
+)
+```
+
+## Post-pandemic
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "no_tourist_all",
+  admin_boundary = admin_boundary,
+  start_period = 202206
+)
+```
+:::
+
+::: callout-note
+The analysis of the Number of All Tourists across various time periods reveals distinct patterns of hot and cold spots in different provinces. All time data shows Sukhothai and Rayong as sporadic hotspots, indicating occasional high tourist activity in these provinces. Before the pandemic, Nakhon Si Thammarat and Chachoengsao were identified as sporadic cold spots, reflecting lower tourist numbers. During the pandemic, Phuket, a major tourist destination, experienced a sporadic cold spot, likely due to the severe impact of travel restrictions. In the post-pandemic period, several patterns emerged: Trang remained a sporadic cold spot, while Ang Thong and Phitsanulok became consecutive hotspots, showing sustained increases in tourist numbers. Meanwhile, Phichit is experiencing an intensifying cold spot, and Nong Bua Lamphu is classified as a persistent cold spot, indicating a continuous lack of tourist activity.
+:::
+
+### Tourist Stay Rate
+
+::: panel-tabset
+## All time
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "tourist_stay_rate",
+  admin_boundary = admin_boundary
+)
+```
+
+## Pre-pandemic
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "tourist_stay_rate",
+  admin_boundary = admin_boundary,
+  end_period = 201912
+)
+```
+
+## Pandemic period
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "tourist_stay_rate",
+  admin_boundary = admin_boundary,
+  start_period = 202001,
+  end_period = 202205
+)
+```
+
+## Post-pandemic
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "tourist_stay_rate",
+  admin_boundary = admin_boundary,
+  start_period = 202206
+)
+```
+:::
+
+::: callout-note
+The analysis of Tourist Stay Rate reveals varying patterns of hot and cold spots across different time periods. Across all time, Phang Nga, Prachuap Khiri Khan, Samut Prakan, and Prachin Buri show intensifying cold spots, indicating a decline in tourist stay rates. Several provinces, including Phuket, Chumphon, Yala, Songkhla, and Ayutthaya, experienced sporadic hotspots, reflecting occasional spikes in overnight stays, while others, like Bangkok and Kanchanaburi, displayed sporadic cold spots. Additionally, provinces like Sisaket, Pathum Thani, and Udon Thani showed oscillating cold spots, meaning fluctuating tourist stay rate.
+
+Before the pandemic, Samut Prakan was a persistent cold spot, while Mukdahan was a persistent hotspot. Lamphun and Samut Songkhram saw consecutive hotspots, with steady increases in tourist stays. Sporadic cold spots were observed in Khon Kaen, while Pathum Thani and Sukhothai exhibited consecutive cold spots. Trat emerged as a new cold spot during this period.
+
+During the pandemic, Phuket, Chumphon, and other provinces like Tak and Chainat became sporadic hotspots, while Samut Prakan, Phang Nga, and Prachin Buri showed intensifying cold spots. Sporadic cold spots were present in Pathum Thani, Sukhothai, and Sisaket, and Udon Thani displayed oscillating cold spot behavior.
+
+In the post-pandemic phase, Chiang Rai, Phang Nga, and Samut Sakhon became persistent cold spots, indicating a continuous decline in tourist stay rates. Nakhon Pathom and Nonthaburi exhibited consecutive cold spots, while Samut Prakan and Sukhothai saw intensifying cold spots. On the other hand, Tak maintained a persistent hotspot, and Yala and Mukdahan experienced sporadic hotspots.
+:::
+
+### Revenue Per Tourist
+
+::: panel-tabset
+## All time
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "revenue_per_tourist_all",
+  admin_boundary = admin_boundary
+)
+```
+
+## Pre-pandemic
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "revenue_per_tourist_all",
+  admin_boundary = admin_boundary,
+  end_period = 201912
+)
+```
+
+## Pandemic period
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "revenue_per_tourist_all",
+  admin_boundary = admin_boundary,
+  start_period = 202001,
+  end_period = 202205
+)
+```
+
+## Post-pandemic
+
+```{r}
+perform_ehsa_analysis(
+  space_time_object = tourism_st,
+  indicator = "revenue_per_tourist_all",
+  admin_boundary = admin_boundary,
+  start_period = 202206
+)
+```
+:::
+
+::: callout-note
+The analysis of Revenue per Tourist shows notable patterns across various time horizons. Across all time, many provinces, including Bangkok and Ratchaburi, experienced sporadic cold spots, indicating occasional drops in revenue generated per tourist. In contrast, Phang Nga and Satun saw intensifying hotspots, suggesting consistent growth in tourist spending. Other provinces like Phuket, Kanchanaburi, and Chiang Mai were identified as sporadic hotspots, while Trang and Trat faced consecutive cold spots, showing a steady decline in revenue.
+
+Before the pandemic, Chaiyaphum was a persistent cold spot, maintaining low tourist revenue throughout this period.
+
+During the pandemic, several patterns emerged: Phang Nga became a persistent cold spot, while Satun faced consecutive cold spots. Udon Thani displayed oscillating cold spot behavior, showing fluctuations in revenue. Sporadic cold spots appeared in several provinces, including Krabi, Surat Thani, and Nonthaburi, while Phuket, Nakhon Si Thammarat, and Yala emerged as sporadic hotspots, reflecting occasional spikes in revenue despite the challenging pandemic environment.
+
+In the post-pandemic phase, Phang Nga and Prachuap Khiri Khan became persistent cold spots, indicating prolonged declines in revenue. Several other provinces, such as Surat Thani and Nonthaburi, exhibited consecutive cold spots. Meanwhile, intensifying cold spots appeared in Bangkok, Samut Prakan, and Phichit, showing a worsening trend in revenue per tourist. On the other hand, Ratchaburi and Phatthalung experienced sporadic cold spots, signaling occasional dips in tourist revenue.
+:::
+
+# Conclusion
+
+In this study, we explored the impacts of COVID-19 on Thailand’s tourism economy indicators using Exploratory Spatial Data Analysis (ESDA) techniques. Through the application of global spatial autocorrelation statistics, we discovered significant spatial autocorrelation in both average tourist stay rate and revenue per tourist, indicating that these metrics tend to cluster geographically. However, no significant spatial autocorrelation was observed in the number of tourists, suggesting that tourist distribution is more randomly spread across Thailand. This observation prompted us to delve deeper into local spatial patterns using methods like Local Moran’s I and LISA cluster maps, which allowed us to identify specific regions where clusters, outliers, and hot or cold spots emerged throughout the study period. Additionally, we conducted an Emerging Hot Spot Analysis (EHSA) to assess how these hot and cold spots evolved over time, particularly across different phases of the pandemic.
+
+Our cluster and outlier analysis revealed distinct spatial patterns across each tourism economy indicator. Average tourist stay rate showed significant clustering, with certain provinces emerging as clear hot spots where more tourists stay overnight, while other provinces were classified as cold spots, indicating lower overnight stay rates, often due to shorter visits or day trips. Similarly, revenue per tourist exhibited strong spatial clustering, with regions generating high revenues, while several provinces were identified as outliers with persistently low revenue levels. In the number of tourists indicator, Samut Prakan stood out as a notable Low-High outlier, indicating fewer tourists despite being close to areas with high tourist activity, such as Bangkok.
+
+In our hot and cold spot analysis, the Local Gi maps highlighted significant spatial trends across the indicators. For the total number of tourists, cold spots were visible in the north-eastern provinces, while a small hot spot appeared in Bangkok. The tourist stay rate analysis showed cold spots surrounding Bangkok, likely due to day trips, while hot spots emerged in southern provinces such as Krabi and Phang Nga, where tourists tend to stay longer. The revenue per tourist analysis confirmed strong hot spots in Phuket, Krabi, and Phang Nga, with cold spots persisting in the north-eastern provinces, where fewer tourists visit and generate less revenue. These insights provide a clear understanding of how tourism activity and revenue are distributed across Thailand.
+
+In our Emerging Hot Spot Analysis (EHSA), we observed significant temporal shifts in tourism patterns across all three key indicators: Number of All Tourists, Tourist Stay Rate, and Revenue per Tourist. The analysis revealed a mix of sporadic, consecutive, and persistent hot and cold spots across various regions over time. Before the pandemic, sporadic cold spots were identified, reflecting lower activity in some provinces, while certain areas saw occasional increases in tourist numbers or spending. During the pandemic, many regions that were traditionally tourist-heavy saw significant cold spots, likely due to travel restrictions and decreased tourism activity. Post-pandemic, several regions experienced consecutive or persistent hot spots, signaling a steady recovery in tourism, while others continued to struggle with prolonged cold spots, particularly in terms of revenue and tourist stay rates.
+
+Overall, our analysis of Thailand’s tourism economy indicators across different time periods highlighted shifting patterns of tourist activity and revenue before, during, and after the pandemic. Through spatial methods like the Emerging Hot Spot Analysis (EHSA), we identified key regions that experienced variations in tourist numbers, stay rates, and revenue generation over time. These findings could offer insights for understanding regional tourism trends and could help in guiding efforts to support the recovery and long-term growth of Thailand's tourism sector.
+
+# Reference
+
+-   COVID-19 pandemic in Thailand. (n.d.). In *Wikipedia*. Retrieved October 2024, from <https://en.wikipedia.org/wiki/COVID-19_pandemic_in_Thailand>
+
+-   Matthew Ho's IS415 Takehome Exercise 2. (March 2024). In *IS415-GAA*. Retrieved October 2024, from <https://is415-gaa-matthew-ho.netlify.app/takehomeex/takehomeex2/the2#choosing-time-horizons>
