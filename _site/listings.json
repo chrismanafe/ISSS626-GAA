@@ -2,20 +2,21 @@
   {
     "listing": "/index.html",
     "items": [
+      "/hands_on_ex/hands_on_ex10/hands_on_ex10b.html",
+      "/hands_on_ex/hands_on_ex10/hands_on_ex10a.html",
       "/hands_on_ex/hands_on_ex09/hands_on_ex09.html",
       "/hands_on_ex/hands_on_ex08/hands_on_ex08.html",
       "/hands_on_ex/hands_on_ex07/hands_on_ex07.html",
       "/hands_on_ex/hands_on_ex06/hands_on_ex06.html",
       "/hands_on_ex/hands_on_ex05/hands_on_ex05.2.html",
       "/hands_on_ex/hands_on_ex05/hands_on_ex05.1.html",
-      "/hands_on_ex/hands_on_ex10/hands_on_ex10b.html",
-      "/hands_on_ex/hands_on_ex10/hands_on_ex10a.html",
       "/hands_on_ex/hands_on_ex04/hands_on_ex04.html",
       "/hands_on_ex/hands_on_ex03/hands_on_ex03.html",
       "/hands_on_ex/hands_on_ex02/hands_on_ex02.2.html",
       "/hands_on_ex/hands_on_ex02/hands_on_ex02.1.html",
       "/hands_on_ex/hands_on_ex01/hands_on_ex01.2.html",
       "/hands_on_ex/hands_on_ex01/hands_on_ex01.1.html",
+      "/in_class_ex/in_class_ex08/in_class_ex08.html",
       "/in_class_ex/in_class_ex07/in_class_ex07.html",
       "/in_class_ex/in_class_ex06/in_class_ex06.html",
       "/in_class_ex/in_class_ex05/in_class_ex05.html",
@@ -30,14 +31,14 @@
   {
     "listing": "/hands_on_ex/index.html",
     "items": [
+      "/hands_on_ex/hands_on_ex10/hands_on_ex10b.html",
+      "/hands_on_ex/hands_on_ex10/hands_on_ex10a.html",
       "/hands_on_ex/hands_on_ex09/hands_on_ex09.html",
       "/hands_on_ex/hands_on_ex08/hands_on_ex08.html",
       "/hands_on_ex/hands_on_ex07/hands_on_ex07.html",
       "/hands_on_ex/hands_on_ex06/hands_on_ex06.html",
       "/hands_on_ex/hands_on_ex05/hands_on_ex05.2.html",
       "/hands_on_ex/hands_on_ex05/hands_on_ex05.1.html",
-      "/hands_on_ex/hands_on_ex10/hands_on_ex10b.html",
-      "/hands_on_ex/hands_on_ex10/hands_on_ex10a.html",
       "/hands_on_ex/hands_on_ex04/hands_on_ex04.html",
       "/hands_on_ex/hands_on_ex03/hands_on_ex03.html",
       "/hands_on_ex/hands_on_ex02/hands_on_ex02.2.html",
@@ -49,6 +50,7 @@
   {
     "listing": "/in_class_ex/index.html",
     "items": [
+      "/in_class_ex/in_class_ex08/in_class_ex08.html",
       "/in_class_ex/in_class_ex07/in_class_ex07.html",
       "/in_class_ex/in_class_ex06/in_class_ex06.html",
       "/in_class_ex/in_class_ex05/in_class_ex05.html",
