@@ -1,0 +1,139 @@
+---
+title: "In-class Exercise 9: Modelling Geographical Accessibility"
+author: "Christover Manafe"
+date: "2024-10-28"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+format: 
+  html:
+    code-fold: false
+    code-summary: "code chunk"
+    number-sections: true
+    number-depth: 4
+---
+
+# The Packages
+
+We'll load following packages in R environment.
+
+```{r}
+pacman::p_load(tmap, SpatialAcc, sf, ggstatsplot, reshape2, tidyverse)
+```
+
+# The Data
+
+Importing geospatial data and aspatial data. We'll use the same data as those in `Hands-on Exercise 9`.
+
+::: panel-tabset
+## Geospatial
+
+```{r}
+
+mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_NO_SEA_PL") %>%
+  st_transform(3414)
+hexagons <- st_read(dsn = "data/geospatial", layer = "hexagons") %>%
+  st_transform(3414)
+eldercare <- st_read(dsn = "data/geospatial", layer = "ELDERCARE") %>%
+  st_transform(3414)
+```
+
+## Aspatial
+
+```{r}
+ODMatrix <- read_csv("data/aspatial/OD_Matrix.csv", skip = 0)
+```
+:::
+
+# Data cleaning and updating attributes
+
+## Supply
+
+Let's use only `fid` and `ADDRESSPOS` from `eldercare` data frame, and we'll add new column `capacity` with value `100` for simplicity. In real life analysis, we would need to survey these eldercare facilities to find the actual capacity.
+
+```{r}
+eldercare <- eldercare%>%
+  select(fid, ADDRESSPOS) %>%
+  mutate(capacity = 100)
+```
+
+## Demand
+
+Let's use only `fid` from `hexagons` data frame, and we'll add new column `demand` with value `100` for simplicity.
+
+```{r}
+hexagons <- hexagons %>%
+  select(fid) %>%
+  mutate(demand = 100)
+```
+
+## OD Matrix
+
+```{r}
+distmat <- ODMatrix %>%
+  select(origin_id, destination_id, total_cost) %>%
+  spread(destination_id, total_cost) %>%
+  select(c(-c('origin_id')))
+```
+
+Let's create a large matrix from `distmat` and also convert the unit of measurement from meters to kilometers.
+
+```{r}
+distmat_km <- as.matrix(distmat/1000)
+```
+
+# Computing Hansen's Accessibility
+
+```{r}
+acc_hansen <- data.frame(ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km,
+                            d0 = 50,
+                            power = 2,
+                            family = "Hansen"))
+colnames(acc_hansen) <- "accHansen"
+acc_hansen <- as_tibble(acc_hansen)
+hexagon_hansen <- bind_cols(hexagons, acc_hansen)
+```
+
+# Visualising Accesibility
+
+```{r fig.height=8, fig.width=12}
+mapex <- st_bbox(hexagons)
+tmap_mode("plot")
+tm_shape(hexagon_hansen, bbox = mapex) +
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "block",
+          border.lwd = 1) +
+  tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+# Statistical Graphic
+
+```{r fig.height=8, fig.width=12}
+hexagon_hansen <- st_join(hexagon_hansen, mpsz, join = st_intersects)
+ggbetweenstats(
+  data = hexagon_hansen,
+  x = REGION_N,
+  y = accHansen,
+  type = "p"
+)
+```

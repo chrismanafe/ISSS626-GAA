@@ -1236,7 +1236,7 @@
     "href": "index.html#in-class-exercise",
     "title": "Welcome to ISSS626 Geospatial Analytics and Applications",
     "section": "In-class Exercise",
-    "text": "In-class Exercise\n\n\n\n\n\n\n\n\nIn-class Exercise 8: Geographically Weighted Predictive Models\n\n\n10 min\n\n\n\nOct 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 7: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method\n\n\n17 min\n\n\n\nOct 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 6: Emerging Hot Spot Analysis\n\n\n10 min\n\n\n\nSep 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 5: Global and Local Measures of Spatial Association: sfdep methods\n\n\n14 min\n\n\n\nSep 23, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods\n\n\n11 min\n\n\n\nSep 16, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 3: Advanced Spatial Point Patterns Analysis\n\n\n22 min\n\n\n\nSep 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 2: Spatial Point Patterns Analysis\n\n\n5 min\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 1: Geospatial Analytics\n\n\n11 min\n\n\n\nAug 26, 2024\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "In-class Exercise\n\n\n\n\n\n\n\n\nIn-class Exercise 9: Modelling Geographical Accessibility\n\n\n3 min\n\n\n\nOct 28, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 8: Geographically Weighted Predictive Models\n\n\n10 min\n\n\n\nOct 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 7: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method\n\n\n17 min\n\n\n\nOct 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 6: Emerging Hot Spot Analysis\n\n\n10 min\n\n\n\nSep 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 5: Global and Local Measures of Spatial Association: sfdep methods\n\n\n14 min\n\n\n\nSep 23, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods\n\n\n11 min\n\n\n\nSep 16, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 3: Advanced Spatial Point Patterns Analysis\n\n\n22 min\n\n\n\nSep 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 2: Spatial Point Patterns Analysis\n\n\n5 min\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 1: Geospatial Analytics\n\n\n11 min\n\n\n\nAug 26, 2024\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "hands_on_ex/hands_on_ex06/hands_on_ex06.html",
@@ -1292,7 +1292,7 @@
     "href": "in_class_ex/index.html",
     "title": "In-class Exercise",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nIn-class Exercise 8: Geographically Weighted Predictive Models\n\n\n\nOct 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 7: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method\n\n\n\nOct 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 6: Emerging Hot Spot Analysis\n\n\n\nSep 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 5: Global and Local Measures of Spatial Association: sfdep methods\n\n\n\nSep 23, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods\n\n\n\nSep 16, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 3: Advanced Spatial Point Patterns Analysis\n\n\n\nSep 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 2: Spatial Point Patterns Analysis\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 1: Geospatial Analytics\n\n\n\nAug 26, 2024\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nIn-class Exercise 9: Modelling Geographical Accessibility\n\n\n\nOct 28, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 8: Geographically Weighted Predictive Models\n\n\n\nOct 21, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 7: Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method\n\n\n\nOct 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 6: Emerging Hot Spot Analysis\n\n\n\nSep 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 5: Global and Local Measures of Spatial Association: sfdep methods\n\n\n\nSep 23, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 4: Geographically Weighted Summary Statistics - GWmodel methods\n\n\n\nSep 16, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 3: Advanced Spatial Point Patterns Analysis\n\n\n\nSep 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 2: Spatial Point Patterns Analysis\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nIn-class Exercise 1: Geospatial Analytics\n\n\n\nAug 26, 2024\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "hands_on_ex/hands_on_ex06/hands_on_ex06.html#derive-new-variables-using-dplyr-package",
@@ -2476,5 +2476,47 @@
     "title": "In-class Exercise 8: Geographically Weighted Predictive Models",
     "section": "2.10 Predicting by using test data",
     "text": "2.10 Predicting by using test data\n\ntest_data_nogeom &lt;- cbind(test_data, coords_test) %&gt;%\n  st_drop_geometry()\n\nNext, predict.grf() of spatialML package will be used to predict the resale value by using the test data and gwRF_adaptive model calibrated earlier.\n\n#|eval: FALSE\ngwRF_pred &lt;- predict.grf(gwRF_adaptive, \n                           test_data_nogeom, \n                           x.var.name=\"X\",\n                           y.var.name=\"Y\", \n                           local.w=1,\n                           global.w=0)\n\n\n#|eval: FALSE\nGRF_pred &lt;- write_rds(gwRF_pred, \"data/rds/GRF_pred.rds\")\n\nConverting the predictive output into a data frame\n\nGRF_pred &lt;- read_rds(\"data/rds/GRF_pred.rds\")\nGRF_pred_df &lt;- as.data.frame(GRF_pred)\n\nPlot out the differences: This should be able to plot and see which are the properties we tend to overestimate or underestimate. Plot the test data.\nTo do a comparison, we combine back with test data.\n\ntest_data_p &lt;- cbind(test_data, GRF_pred_df)\n\n\nwrite_rds(test_data_p, \"data/rds/test_data_p.rds\")\n\n\ntest_data_p &lt;- read_rds(\"data/rds/test_data_p.rds\")\n\n\n2.10.1 Calculating Root Mean Square Error\n\nrmse(test_data_p$resale_price, \n     test_data_p$GRF_pred)\n\n[1] 27302.9\n\n\n\n\n2.10.2 Visualising the predicted values\n\nggplot(data = test_data_p,\n       aes(x = GRF_pred,\n           y = resale_price)) +\n  geom_point()"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex09/in_class_ex09.html",
+    "href": "in_class_ex/in_class_ex09/in_class_ex09.html",
+    "title": "In-class Exercise 9: Modelling Geographical Accessibility",
+    "section": "",
+    "text": "We’ll load following packages in R environment.\n\npacman::p_load(tmap, SpatialAcc, sf, ggstatsplot, reshape2, tidyverse)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex09/in_class_ex09.html#supply",
+    "href": "in_class_ex/in_class_ex09/in_class_ex09.html#supply",
+    "title": "In-class Exercise 9: Modelling Geographical Accessibility",
+    "section": "3.1 Supply",
+    "text": "3.1 Supply\nLet’s use only fid and ADDRESSPOS from eldercare data frame, and we’ll add new column capacity with value 100 for simplicity. In real life analysis, we would need to survey these eldercare facilities to find the actual capacity.\n\neldercare &lt;- eldercare%&gt;%\n  select(fid, ADDRESSPOS) %&gt;%\n  mutate(capacity = 100)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex09/in_class_ex09.html#demand",
+    "href": "in_class_ex/in_class_ex09/in_class_ex09.html#demand",
+    "title": "In-class Exercise 9: Modelling Geographical Accessibility",
+    "section": "3.2 Demand",
+    "text": "3.2 Demand\nLet’s use only fid from hexagons data frame, and we’ll add new column demand with value 100 for simplicity.\n\nhexagons &lt;- hexagons %&gt;%\n  select(fid) %&gt;%\n  mutate(demand = 100)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex09/in_class_ex09.html#od-matrix",
+    "href": "in_class_ex/in_class_ex09/in_class_ex09.html#od-matrix",
+    "title": "In-class Exercise 9: Modelling Geographical Accessibility",
+    "section": "3.3 OD Matrix",
+    "text": "3.3 OD Matrix\n\ndistmat &lt;- ODMatrix %&gt;%\n  select(origin_id, destination_id, total_cost) %&gt;%\n  spread(destination_id, total_cost) %&gt;%\n  select(c(-c('origin_id')))\n\nLet’s create a large matrix from distmat and also convert the unit of measurement from meters to kilometers.\n\ndistmat_km &lt;- as.matrix(distmat/1000)"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex09/data/geospatial/hexagons.html",
+    "href": "in_class_ex/in_class_ex09/data/geospatial/hexagons.html",
+    "title": "ISSS626-GAA",
+    "section": "",
+    "text": "&lt;!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’&gt;     dataset\n\n\n                 0 0     false"
+  },
+  {
+    "objectID": "in_class_ex/in_class_ex09/data/geospatial/ELDERCARE.html",
+    "href": "in_class_ex/in_class_ex09/data/geospatial/ELDERCARE.html",
+    "title": "ISSS626-GAA",
+    "section": "",
+    "text": "&lt;!DOCTYPE qgis PUBLIC ‘http://mrcc.com/qgis.dtd’ ‘SYSTEM’&gt;  ELDERCARE  ENG dataset\n\nELDERCARE\n\n                 0 0     false"
   }
 ]
