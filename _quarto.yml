@@ -56,7 +56,7 @@ website:
           href: "in_class_ex/in_class_ex08/in_class_ex08.html"
         - text: "9 Modelling Geographical Accessibility"
           href: "in_class_ex/in_class_ex09/in_class_ex09.html"
-        - text: "10 "
+        - text: "10 Spatial Interaction Models"
           href: "in_class_ex/in_class_ex10/in_class_ex10.html"
     - text: "Take-home Exercises"
       menu:
@@ -64,7 +64,7 @@ website:
           href: "take_home_ex/take_home_ex01/take_home_ex01.html"
         - text: "2. Discovering impacts of COVID-19 on Thailand tourism economy at the province level using spatial and spatio-temporal statistics"
           href: "take_home_ex/take_home_ex02/take_home_ex02.html"
-        - text: "3. "
+        - text: "3. Predicting HDB Resale Prices with Geographically Weighted Machine Learning Methods"
           href: "take_home_ex/take_home_ex03/take_home_ex03.html"
     right:
       - href: index.qmd
